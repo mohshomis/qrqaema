@@ -231,19 +231,6 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
             <Container className="my-5">
                 <Row className="justify-content-center">
                     <Col lg={10} md={12}>
-                        <div className="text-center mb-5 fade-in">
-                            <h1 className="display-4 mb-3">
-                                <FaUtensils className="me-3" />
-                                {restaurantName}
-                            </h1>
-                            <Badge bg="primary" className="px-3 py-2">
-                                {t('customerMenuPage.table')}: {tableNumber}
-                            </Badge>
-                            <p className="text-light mt-3">
-                                {t('customerMenuPage.subtitle')}
-                            </p>
-                        </div>
-
                         <Row className="g-4">
                             {categories.length > 0 ? (
                                 categories.map(category => (
