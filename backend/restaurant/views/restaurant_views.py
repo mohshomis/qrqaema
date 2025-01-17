@@ -45,7 +45,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     def get_qr_codes(self, request, pk=None):
         restaurant = self.get_object()
         qr_codes = restaurant.generate_all_qr_codes()
-        return Response({'qr_codes': qr_codes, 'total_tables': restaurant.tables})
+        return Response({'qr_codes': qr_codes, 'total_tables': restaurant.tables.count()})
 
     @action(detail=True, methods=['get'], permission_classes=[IsAuthenticated])
     def retrieve_profile(self, request, pk=None):

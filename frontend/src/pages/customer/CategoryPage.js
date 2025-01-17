@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getMenuItemsByCategory, getRestaurantPublicDetails } from '../../services/api';
 import Footer from '../../components/Footer'; // Removed Header
 import '../../styles/Footer.css';
-import '../../styles/CategoryPage.css'; // Add the new CSS file for CategoryPage
+import '../../styles/CustomerPages.css';
 import '../../App.css';
 import {
     Container,
@@ -15,9 +15,13 @@ import {
     Button,
     Spinner,
     Alert,
+    Badge
 } from 'react-bootstrap';
 import {
     FaReceipt,
+    FaDollarSign,
+    FaInfoCircle,
+    FaArrowLeft
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
@@ -85,7 +89,9 @@ const CategoryPage = ({ addToBasket }) => {
     );
 
     return (
-        <div className="category-page-container" style={{ position: 'relative', paddingBottom: '100px' }}>
+        <div className="page-container" dir={i18n.dir()}>
+            {/* Background overlay */}
+            <div className="background-overlay"></div>
             {/* Blurred Background Image */}
             {restaurantBackground && (
                 <div
@@ -95,13 +101,9 @@ const CategoryPage = ({ addToBasket }) => {
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         backgroundAttachment: 'fixed',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
                         width: '100%',
                         height: '100%',
-                        filter: 'blur(4px)',
-                        zIndex: -1,
+                        zIndex: -2,
                     }}
                     aria-label={t('categoryPage.aria.backgroundImage')}
                 />
@@ -116,17 +118,47 @@ const CategoryPage = ({ addToBasket }) => {
                             {menuItems.length > 0 ? (
                                 menuItems.map((item) => (
                                     <Col key={item.id} sm={6} md={4} lg={3} className="mb-4">
-                                        <Card className="h-100 shadow-sm" onClick={() => handleMenuItemClick(item.id)} style={{ cursor: 'pointer' }}>
-                                            {item.image && (
-                                                <Card.Img variant="top" src={item.image} alt={item.name} style={{ height: '150px', objectFit: 'cover' }} />
-                                            )}
-                                            <Card.Body className="d-flex flex-column">
-                                                <Card.Title>{item.name}</Card.Title>
-                                                <Card.Text className="mt-auto">
-                                                    <strong>{t('categoryPage.price')}: </strong>${Number(item.price).toFixed(2)}
-                                                </Card.Text>
-                                            </Card.Body>
-                                        </Card>
+                        <Card 
+                            className="h-100 custom-card menu-item-card fade-in" 
+                            onClick={() => handleMenuItemClick(item.id)}
+                        >
+                            <div className="position-relative">
+                                {item.image && (
+                                    <div className="card-img-container">
+                                        <Card.Img variant="top" src={item.image} alt={item.name} />
+                                        <div className="img-overlay"></div>
+                                    </div>
+                                )}
+                                <div className="price-tag">
+                                    <FaDollarSign className="me-1" />
+                                    {Number(item.price).toFixed(2)}
+                                </div>
+                            </div>
+                            <Card.Body className="d-flex flex-column">
+                                <div className="d-flex justify-content-between align-items-start mb-2">
+                                    <Card.Title className="mb-0">{item.name}</Card.Title>
+                                    <Badge bg="success" className="ms-2">
+                                        {t('categoryPage.available')}
+                                    </Badge>
+                                </div>
+                                {item.description && (
+                                    <Card.Text className="text-muted small mb-3">
+                                        {item.description}
+                                    </Card.Text>
+                                )}
+                                <Button 
+                                    variant="outline-primary" 
+                                    className="mt-auto custom-button"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleMenuItemClick(item.id);
+                                    }}
+                                >
+                                    <FaInfoCircle className="me-2" />
+                                    {t('categoryPage.viewDetails')}
+                                </Button>
+                            </Card.Body>
+                        </Card>
                                     </Col>
                                 ))
                             ) : (
@@ -138,9 +170,19 @@ const CategoryPage = ({ addToBasket }) => {
                                 </Col>
                             )}
                         </Row>
-                        <Button variant="secondary" onClick={() => navigate(-1)} className="mt-3">
-                            {t('categoryPage.backButton')}
-                        </Button>
+                        <div className="d-flex justify-content-between align-items-center mt-4">
+                            <Button 
+                                variant="outline-light" 
+                                onClick={() => navigate(-1)} 
+                                className="custom-button"
+                            >
+                                <FaArrowLeft className="me-2" />
+                                {t('categoryPage.backButton')}
+                            </Button>
+                            <Badge bg="primary" className="px-3 py-2">
+                                {t('categoryPage.itemCount', { count: menuItems.length })}
+                            </Badge>
+                        </div>
                     </Col>
                 </Row>
             </Container>

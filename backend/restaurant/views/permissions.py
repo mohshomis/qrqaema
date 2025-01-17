@@ -11,4 +11,7 @@ class IsOwnerOrStaff(BasePermission):
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        return obj.restaurant.owner == request.user or obj.restaurant.staff.filter(id=request.user.id).exists()
+        if hasattr(obj, 'restaurant'):
+            return obj.restaurant.owner == request.user or obj.restaurant.staff.filter(id=request.user.id).exists()
+        # If the object is a Restaurant itself
+        return obj.owner == request.user or obj.staff.filter(id=request.user.id).exists()

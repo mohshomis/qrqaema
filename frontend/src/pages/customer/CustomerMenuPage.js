@@ -5,13 +5,29 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getRestaurantPublicDetails, getCategories } from '../../services/api';
 import Footer from '../../components/Footer';
 import '../../styles/Footer.css';
-import '../../styles/CustomerMenuPage.css';
+import '../../styles/CustomerPages.css';
 import '../../App.css';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
-import { Container, Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
+import { 
+    Container, 
+    Row, 
+    Col, 
+    Card, 
+    Button, 
+    Spinner, 
+    Alert,
+    Badge 
+} from 'react-bootstrap';
+import {
+    FaUtensils,
+    FaList,
+    FaInfoCircle,
+    FaExclamationCircle,
+    FaArrowRight
+} from 'react-icons/fa';
 
 const CustomerMenuPage = ({ basketItems, addToBasket }) => {
-    const { t, i18n } = useTranslation(); // Initialize translation
+    const { t, i18n } = useTranslation();
     const { restaurantId, tableNumber } = useParams();
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
@@ -40,7 +56,6 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
         fetchRestaurantData();
     }, [restaurantId, t]);
 
-    // Handle category click and include tableNumber in the route
     const handleCategoryClick = (categoryId) => {
         navigate(`/restaurant/${restaurantId}/table/${tableNumber}/category/${categoryId}`);
     };
@@ -48,9 +63,7 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
     if (loading) {
         return (
             <Container className="my-5 text-center">
-                <Spinner animation="border" role="status" variant="primary">
-                    <span className="visually-hidden">{t('customerMenuPage.loading')}</span>
-                </Spinner>
+                <div className="custom-spinner" />
                 <p className="mt-3">{t('customerMenuPage.loading')}</p>
             </Container>
         );
@@ -60,6 +73,7 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
         return (
             <Container className="my-5">
                 <Alert variant="danger" className="d-flex align-items-center justify-content-center">
+                    <FaExclamationCircle className="me-2" />
                     {t('customerMenuPage.error')}
                 </Alert>
             </Container>
@@ -67,8 +81,8 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
     }
 
     return (
-        <div className="container customer-menu-page" dir={i18n.dir()} style={{ position: 'relative', paddingBottom: '100px' }}>
-            {/* Background Image */}
+        <div className="page-container" dir={i18n.dir()}>
+            <div className="background-overlay"></div>
             {restaurantBackground && (
                 <div
                     className="background-image"
@@ -76,57 +90,99 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
                         backgroundImage: `url(${restaurantBackground})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
+                        backgroundAttachment: 'fixed',
                         width: '100%',
                         height: '100%',
-                        zIndex: -1,
+                        zIndex: -2,
                     }}
                     aria-label={t('customerMenuPage.aria.backgroundImage', { restaurantName })}
                 />
             )}
 
-            {/* Content */}
-            <div className="content">
-                <h1 className="text-center my-4">
-                    {t('customerMenuPage.title', { tableNumber })}
-                </h1>
-                <Row className="g-4">
-                    {categories.length > 0 ? (
-                        categories.map(category => (
-                            <Col key={category.id} xs={6} md={4} lg={3}>
-                                <Card
-                                    className="h-100 border-0 shadow-sm category-card"
-                                    onClick={() => handleCategoryClick(category.id)}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    {category.image_url && (
-                                        <Card.Img
-                                            src={category.image_url}
-                                            alt={category.name}
-                                            className="card-img-top img-fluid rounded-top"
-                                            style={{ height: '150px', objectFit: 'cover' }}
-                                        />
-                                    )}
-                                    <Card.Body className="d-flex flex-column justify-content-between">
-                                        <Card.Title className="text-center">{category.name}</Card.Title>
-                                        <Card.Text className="text-center">
-                                            {category.description}
-                                        </Card.Text>
-                                    </Card.Body>
-                                </Card>
-                            </Col>
-                        ))
-                    ) : (
-                        <Col>
-                            <p className="text-center">{t('customerMenuPage.noCategories')}</p>
-                        </Col>
-                    )}
+            <Container className="my-5">
+                <Row className="justify-content-center">
+                    <Col lg={10} md={12}>
+                        <div className="text-center mb-5 fade-in">
+                            <h1 className="display-4 mb-3">
+                                <FaUtensils className="me-3" />
+                                {restaurantName}
+                            </h1>
+                            <Badge bg="primary" className="px-3 py-2">
+                                {t('customerMenuPage.table')}: {tableNumber}
+                            </Badge>
+                            <p className="text-light mt-3">
+                                {t('customerMenuPage.subtitle')}
+                            </p>
+                        </div>
+
+                        <Row className="g-4">
+                            {categories.length > 0 ? (
+                                categories.map(category => (
+                                    <Col key={category.id} xs={6} md={4} lg={3}>
+                                        <Card
+                                            className="h-100 custom-card category-card fade-in"
+                                            onClick={() => handleCategoryClick(category.id)}
+                                        >
+                                            <div className="position-relative">
+                                                {category.image_url && (
+                                                    <div className="card-img-container">
+                                                        <Card.Img
+                                                            src={category.image_url}
+                                                            alt={category.name}
+                                                            className="card-img-top"
+                                                        />
+                                                        <div className="img-overlay"></div>
+                                                    </div>
+                                                )}
+                                                <Badge 
+                                                    bg="primary" 
+                                                    className="position-absolute top-0 end-0 m-2"
+                                                >
+                                                    <FaList className="me-1" />
+                                                    {t('customerMenuPage.items')}
+                                                </Badge>
+                                            </div>
+                                            <Card.Body className="d-flex flex-column justify-content-between">
+                                                <div>
+                                                    <Card.Title className="text-center h5 mb-3">
+                                                        {category.name}
+                                                    </Card.Title>
+                                                    {category.description && (
+                                                        <Card.Text className="text-center text-muted small">
+                                                            {category.description}
+                                                        </Card.Text>
+                                                    )}
+                                                </div>
+                                                <Button 
+                                                    variant="outline-light" 
+                                                    className="custom-button mt-3"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleCategoryClick(category.id);
+                                                    }}
+                                                >
+                                                    <span className="d-flex align-items-center justify-content-center">
+                                                        {t('customerMenuPage.viewItems')}
+                                                        <FaArrowRight className="ms-2" />
+                                                    </span>
+                                                </Button>
+                                            </Card.Body>
+                                        </Card>
+                                    </Col>
+                                ))
+                            ) : (
+                                <Col>
+                                    <Alert variant="info" className="text-center">
+                                        <FaInfoCircle className="me-2" />
+                                        {t('customerMenuPage.noCategories')}
+                                    </Alert>
+                                </Col>
+                            )}
+                        </Row>
+                    </Col>
                 </Row>
-            </div>
-
-
+            </Container>
+            <Footer />
         </div>
     );
 };

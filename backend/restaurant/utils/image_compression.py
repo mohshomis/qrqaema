@@ -28,7 +28,7 @@ def compress_image(image, target_size_kb=40, max_width=1920, max_height=1080, fo
             img = img.convert("RGB")
         
         # Resize the image if it's larger than the max dimensions
-        img.thumbnail((max_width, max_height), Image.ANTIALIAS)
+        img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
         
         # Initialize parameters for compression
         quality = 85

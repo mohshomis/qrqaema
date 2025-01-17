@@ -34,5 +34,5 @@ if settings.DEBUG:
 
 # Catch-all route to serve the React app for non-API requests (including frontend routes)
 urlpatterns += [
-    re_path(r'^(?!api/).*$', index_view, name='index'),  # All paths not starting with 'api/'
+    re_path(r'^(?!(api/|admin/|analysis/)).*$', index_view, name='index'),  # All paths not starting with excluded prefixes
 ]
