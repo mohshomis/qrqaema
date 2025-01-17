@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    'authentication.middleware.PublicPathMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -195,10 +195,30 @@ LOGGING = {
 
 
 # JWT Authentication Settings
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),  # 1 hour
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # 7 days
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'authentication.permissions.IsAuthenticatedOrPublicPath',
+    ),
+    'PUBLIC_PATHS': [
+        r'^/api/token/',
+        r'^/api/token/refresh/',
+        r'^/api/register/',
+        r'^/api/validate-user/',
+        r'^/api/password-reset/',
+        r'^/api/username-recovery/',
+    ]
 }
 
 # settings.py
