@@ -27,21 +27,21 @@ class TableSerializer(serializers.ModelSerializer):
         if restaurant is None:
             raise serializers.ValidationError("Restaurant context is missing.")
 
-        validated_data.pop('restaurant', None)
         try:
             table = Table.objects.create(restaurant=restaurant, **validated_data)
             return table
         except Exception as e:
-            raise serializers.ValidationError("An error occurred while creating the table.")
+            raise serializers.ValidationError(str(e))
 
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     image_url = serializers.SerializerMethodField(read_only=True)
     menu = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), required=False, allow_null=True)
+    menu_items = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ['id', 'menu', 'name', 'description', 'image', 'image_url', 'order']
+        fields = ['id', 'menu', 'name', 'description', 'image', 'image_url', 'order', 'menu_items']
         extra_kwargs = {
             'image': {'required': False, 'allow_null': True},
             'order': {'required': False}
@@ -53,11 +53,27 @@ class CategorySerializer(serializers.ModelSerializer):
             return request.build_absolute_uri(obj.image.url)
         return None
 
+    def get_menu_items(self, obj):
+        from .menu_serializers import MenuItemSerializer
+        # Get menu items with prefetched options
+        menu_items = obj.menu_items.all().select_related('restaurant', 'menu', 'category').prefetch_related('options')
+        return MenuItemSerializer(menu_items, many=True, context=self.context).data
+
     def validate_image(self, value):
         return validate_image_file(value, max_size=10 * 1024 * 1024)
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
+
+    def to_representation(self, instance):
+        # Ensure we have all the related data loaded
+        if not hasattr(instance, '_prefetched_objects_cache'):
+            instance = Category.objects.select_related('menu', 'restaurant').prefetch_related(
+                'menu_items',
+                'menu_items__options',
+                'menu_items__options__choices'
+            ).get(pk=instance.pk)
+        return super().to_representation(instance)
 
 class RestaurantSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)

@@ -17,6 +17,7 @@ import axios from 'axios';
 import { API_URL } from '../../services/api';
 import { useTranslation } from 'react-i18next';
 import '../../styles/CustomerPages.css';
+import '../../styles/MenuManagementPage.css';
 
 const MenuManagementPage = () => {
     const { restaurantId } = useParams();
@@ -151,18 +152,17 @@ const MenuManagementPage = () => {
     return (
         <div className="page-container">
             <div className="background-overlay"></div>
-            <Container className="py-4">
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <h1 className="text-light">
+            <Container className="menu-management-container">
+                <div className="menu-management-header d-flex justify-content-between align-items-center">
+                    <h1 className="text-light mb-0">
                         <FaGlobe className="me-2" />
                         {t('menuManagement.title')}
                     </h1>
                     <Button
-                        variant="primary"
                         onClick={() => handleOpenDialog()}
-                        className="d-flex align-items-center custom-button"
+                        className="add-menu-button d-flex align-items-center gap-2"
                     >
-                        <FaPlus className="me-2" />
+                        <FaPlus />
                         {t('menuManagement.addMenu')}
                     </Button>
                 </div>
@@ -182,51 +182,43 @@ const MenuManagementPage = () => {
                     {menus.map((menu) => (
                         <Col key={menu.id} xs={12} sm={6} md={4} lg={3}>
                             <Card 
-                                className="h-100 custom-card menu-card fade-in"
+                                className="menu-card h-100"
                                 onClick={() => handleMenuClick(menu)}
                             >
                                 <Card.Body className="d-flex flex-column">
-                                    <div className="d-flex justify-content-between align-items-start mb-3">
-                                        <Card.Title className="mb-0">{menu.name}</Card.Title>
+                                    <div className="d-flex justify-content-between align-items-start">
+                                        <Card.Title>{menu.name}</Card.Title>
                                         {menu.is_default && (
-                                            <Badge bg="success">
+                                            <Badge className="default-badge">
                                                 {t('menuManagement.default')}
                                             </Badge>
                                         )}
                                     </div>
-                                    <Badge bg="info" className="mb-3 align-self-start">
+                                    <Badge className="menu-language-badge mb-3">
                                         {menu.language.toUpperCase()}
                                     </Badge>
-                                    <div className="mt-auto d-flex gap-2">
+                                    <div className="menu-actions">
                                         <Button
-                                            variant="outline-primary"
-                                            size="sm"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleOpenDialog(menu);
                                             }}
-                                            className="flex-grow-0"
+                                            className="menu-action-button edit"
                                         >
                                             <FaEdit /> {t('menuManagement.edit')}
                                         </Button>
                                         {!menu.is_default && (
                                             <Button
-                                                variant="outline-danger"
-                                                size="sm"
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     handleDeleteClick(menu);
                                                 }}
-                                                className="flex-grow-0"
+                                                className="menu-action-button delete"
                                             >
                                                 <FaTrash /> {t('menuManagement.delete')}
                                             </Button>
                                         )}
-                                        <Button
-                                            variant="outline-success"
-                                            size="sm"
-                                            className="ms-auto"
-                                        >
+                                        <Button className="menu-action-button view">
                                             <FaArrowRight />
                                         </Button>
                                     </div>
@@ -237,7 +229,7 @@ const MenuManagementPage = () => {
                 </Row>
 
                 {/* Create/Edit Menu Modal */}
-                <Modal show={openDialog} onHide={handleCloseDialog}>
+                <Modal show={openDialog} onHide={handleCloseDialog} className="menu-modal">
                     <Modal.Header closeButton>
                         <Modal.Title>
                             {editMenu ? t('menuManagement.editMenu') : t('menuManagement.createMenu')}
@@ -252,6 +244,7 @@ const MenuManagementPage = () => {
                                     value={formData.name}
                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     required
+                                    className="menu-form-control"
                                 />
                             </Form.Group>
                             <Form.Group className="mb-3">
@@ -262,6 +255,7 @@ const MenuManagementPage = () => {
                                     onChange={(e) => setFormData({ ...formData, language: e.target.value })}
                                     required
                                     placeholder="en, es, fr, etc."
+                                    className="menu-form-control"
                                 />
                                 <Form.Text className="text-muted">
                                     {t('menuManagement.form.languageHelp')}

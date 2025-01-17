@@ -29,9 +29,26 @@ restaurants_router.register(r'tables', TableViewSet, basename='restaurant-tables
 restaurants_router.register(r'menus', MenuViewSet, basename='restaurant-menus')
 
 urlpatterns = [
+    # Menu-specific endpoints (moved to top to take precedence)
+    path(
+        'restaurants/<uuid:restaurant_id>/menus/',
+        MenuViewSet.as_view({'get': 'menus_for_restaurant'}),
+        name='restaurant_menus'
+    ),
+    path(
+        'menus/<uuid:pk>/set-default/',
+        MenuViewSet.as_view({'post': 'set_default'}),
+        name='set_default_menu'
+    ),
+
+    # Add explicit path for add_table
+    path('restaurants/<uuid:restaurant_id>/add_table/',
+         TableViewSet.as_view({'post': 'create'}),
+         name='restaurant-add-table'),
+         
     # Include the main router URLs
     path('', include(router.urls)),
-    
+
     # Include the nested router URLs for tables and menus
     path('', include(restaurants_router.urls)),
     
@@ -41,25 +58,25 @@ urlpatterns = [
         MenuItemViewSet.as_view({'get': 'retrieve_item_for_restaurant'}),
         name='retrieve_item_for_restaurant'
     ),
-    
+
     # Registration-related endpoints
     path('register/', RegistrationView.as_view(), name='register'),
     path('validate-user/', validate_user_data, name='validate_user'),  # Validation endpoint
-    
+
     # Category-based menu items using UUIDs
     path(
         'categories/menu-items-by-category/<uuid:category_id>/',
         CategoryViewSet.as_view({'get': 'menu_items_by_category'}),
         name='menu_items_by_category'
     ),
-    
+
     # Public restaurant details endpoint (for unauthenticated users) using UUIDs
     path(
         'restaurants/<uuid:pk>/public-details/',
         RestaurantViewSet.as_view({'get': 'public_details'}),
         name='restaurant_public_details'
     ),
-    
+
     # Profile management endpoints using UUIDs
     path(
         'restaurants/<uuid:pk>/profile/',
@@ -71,7 +88,7 @@ urlpatterns = [
         RestaurantViewSet.as_view({'patch': 'update_profile'}),
         name='restaurant_update_profile'
     ),
-    
+
     # Staff management endpoints using UUIDs
     path(
         'restaurants/<uuid:pk>/add-staff/',
@@ -83,33 +100,22 @@ urlpatterns = [
         RestaurantViewSet.as_view({'delete': 'remove_staff'}),
         name='remove_staff'
     ),
-    
+
     # Order status endpoint
     path(
         'orders/status/',
         OrderViewSet.as_view({'get': 'get_order_status'}),
         name='order_status'
     ),
-    
+
     # Category retrieval for specific restaurant using UUIDs
     path(
         'restaurants/<uuid:restaurantId>/categories/',
         CategoryViewSet.as_view({'get': 'categories_for_restaurant'}),
         name='categories_for_restaurant'
     ),
-    
-    # Menu-specific endpoints
-    path(
-        'restaurants/<uuid:restaurant_id>/menus/',
-        MenuViewSet.as_view({'get': 'menus_for_restaurant'}),
-        name='restaurant_menus'
-    ),
-    path(
-        'menus/<uuid:pk>/set-default/',
-        MenuViewSet.as_view({'post': 'set_default'}),
-        name='set_default_menu'
-    ),
-    
+
+
     # Activation and Password Reset URLs
     path(
         'activate/<uidb64>/<token>/',

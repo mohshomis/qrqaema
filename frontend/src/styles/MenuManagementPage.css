@@ -1,0 +1,173 @@
+.menu-management-container {
+    padding: 2rem 0;
+}
+
+.menu-management-header {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.add-menu-button {
+    background: #2196f3;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.add-menu-button:hover {
+    background: #1976d2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.menu-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    overflow: hidden;
+    min-height: 200px;
+}
+
+.menu-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.menu-card .card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.menu-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.menu-language-badge {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 2px solid #bbdefb;
+    display: inline-block;
+}
+
+.default-badge {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 2px solid #c8e6c9;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.menu-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0,0,0,0.1);
+}
+
+.menu-action-button {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex: 0 1 auto;
+    min-width: auto;
+}
+
+.menu-action-button svg {
+    font-size: 0.85rem;
+}
+
+.menu-action-button.edit {
+    background-color: transparent;
+    border: 2px solid #2196f3;
+    color: #2196f3;
+}
+
+.menu-action-button.edit:hover {
+    background-color: #2196f3;
+    color: white;
+}
+
+.menu-action-button.delete {
+    background-color: transparent;
+    border: 2px solid #f44336;
+    color: #f44336;
+}
+
+.menu-action-button.delete:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+.menu-action-button.view {
+    background-color: transparent;
+    border: 2px solid #4caf50;
+    color: #4caf50;
+    margin-left: auto;
+    padding: 0.35rem;
+    min-width: 32px;
+    justify-content: center;
+}
+
+.menu-action-button.view:hover {
+    background-color: #4caf50;
+    color: white;
+}
+
+.menu-modal .modal-content {
+    border-radius: 12px;
+    border: none;
+}
+
+.menu-modal .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    border-radius: 12px 12px 0 0;
+}
+
+.menu-modal .modal-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    border-radius: 0 0 12px 12px;
+}
+
+.menu-form-control {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.menu-form-control:focus {
+    border-color: #2196f3;
+    box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+}

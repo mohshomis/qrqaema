@@ -8,7 +8,8 @@ from django.shortcuts import get_object_or_404
 
 from .models import (
     Restaurant, MenuItem, Order, OrderItem,
-    MenuItemOption, MenuItemBooleanOption, Category, Table, HelpRequest
+    MenuItemOption, MenuItemBooleanOption, Category, Table, HelpRequest,
+    Menu
 )
 from .serializers import (
     MenuItemSerializer, MenuItemOptionSerializer, MenuItemBooleanOptionSerializer,
@@ -16,13 +17,35 @@ from .serializers import (
     UsernameRecoverySerializer
 )
 
-# Register Restaurant model
+# Inline for MenuItems in Category
+class MenuItemInline(admin.StackedInline):
+    model = MenuItem
+    extra = 0
+    fields = ('name', 'description', 'price', 'image', 'is_available', 'order')
+    show_change_link = True
+
+# Inline for Categories in Menu
+class CategoryInline(admin.StackedInline):
+    model = Category
+    extra = 0
+    fields = ('name', 'description', 'image', 'order')
+    show_change_link = True
+
+# Inline for Menus in Restaurant
+class MenuInline(admin.StackedInline):
+    model = Menu
+    extra = 0
+    fields = ('name', 'language', 'is_default')
+    show_change_link = True
+
+# Register Restaurant model with Menu inline
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'owner', 'address', 'phone_number', 'display_tables', 'background_image_thumbnail')
     search_fields = ('name', 'owner__username', 'address')
     list_filter = ('owner',)
     readonly_fields = ('id',)
+    inlines = [MenuInline]
 
     def display_tables(self, obj):
         return ", ".join([f"Table {table.number}" for table in obj.tables.all()])
@@ -34,14 +57,12 @@ class RestaurantAdmin(admin.ModelAdmin):
         return "No Image"
     background_image_thumbnail.short_description = 'Background Image'
 
-
 # Inline for MenuItemBooleanOption (for each option like Extra Sauce, Spiciness Level)
 class MenuItemBooleanOptionInline(admin.TabularInline):
     model = MenuItemBooleanOption
     extra = 1
     fields = ('name', 'price_modifier')
     show_change_link = True
-
 
 # Custom form for MenuItemBooleanOption
 class MenuItemBooleanOptionForm(forms.ModelForm):
@@ -53,7 +74,6 @@ class MenuItemBooleanOptionForm(forms.ModelForm):
             'price_modifier': forms.NumberInput(attrs={'min': 0, 'step': 0.01}),
         }
 
-
 # Register MenuItemBooleanOption with custom form in the admin
 @admin.register(MenuItemBooleanOption)
 class MenuItemBooleanOptionAdmin(admin.ModelAdmin):
@@ -63,14 +83,12 @@ class MenuItemBooleanOptionAdmin(admin.ModelAdmin):
     list_filter = ('option_category',)
     readonly_fields = ('id',)
 
-
 # Inline for MenuItemOptions (e.g., Size, Spiciness)
 class MenuItemOptionInline(admin.TabularInline):
     model = MenuItemOption
     extra = 1
     fields = ('name',)
     show_change_link = True
-
 
 # Custom form for MenuItemOption to handle the choices field
 class MenuItemOptionForm(forms.ModelForm):
@@ -95,7 +113,6 @@ class MenuItemOptionForm(forms.ModelForm):
                 raise forms.ValidationError("Invalid JSON format.")
         return data
 
-
 # Register MenuItemOption model with custom form in admin
 @admin.register(MenuItemOption)
 class MenuItemOptionAdmin(admin.ModelAdmin):
@@ -106,16 +123,18 @@ class MenuItemOptionAdmin(admin.ModelAdmin):
     inlines = [MenuItemBooleanOptionInline]
     readonly_fields = ('id',)
 
-
 # Register MenuItem model with inlines for options
 @admin.register(MenuItem)
 class MenuItemAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'restaurant', 'price', 'category')
+    list_display = ('id', 'name', 'menu', 'restaurant', 'price', 'category')
     search_fields = ('name', 'restaurant__name', 'category__name')
-    list_filter = ('restaurant', 'category')
+    list_filter = ('restaurant', 'category', 'menu')
     inlines = [MenuItemOptionInline]
     readonly_fields = ('id',)
 
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('menu', 'restaurant', 'category')
 
 # Inline for OrderItems in the OrderAdmin
 class OrderItemInline(admin.TabularInline):
@@ -123,7 +142,6 @@ class OrderItemInline(admin.TabularInline):
     extra = 1
     fields = ('menu_item', 'quantity', 'special_request')
     show_change_link = True
-
 
 # Register Order model with inline OrderItem management
 @admin.register(Order)
@@ -143,7 +161,6 @@ class OrderAdmin(admin.ModelAdmin):
         return obj.table.number if obj.table else "N/A"
     get_table_number.short_description = 'Table Number'
 
-
 # Register OrderItem model
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
@@ -152,21 +169,25 @@ class OrderItemAdmin(admin.ModelAdmin):
     list_filter = ('order__restaurant', 'menu_item')
     readonly_fields = ('id',)
 
-
-# Register Category model with custom admin
+# Register Category model with MenuItem inline
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description', 'image_thumbnail')
-    search_fields = ('name',)
-    fields = ('id', 'name', 'description', 'image')
+    list_display = ('id', 'name', 'menu', 'restaurant', 'description', 'image_thumbnail')
+    search_fields = ('name', 'menu__name', 'restaurant__name')
+    list_filter = ('menu__restaurant', 'menu')
+    fields = ('id', 'menu', 'restaurant', 'name', 'description', 'image')
     readonly_fields = ('id',)
+    inlines = [MenuItemInline]
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related('menu', 'restaurant')
 
     def image_thumbnail(self, obj):
         if obj.image:
             return format_html('<img src="{}" style="width: 50px; height: 50px;" />', obj.image.url)
         return "No Image"
     image_thumbnail.short_description = 'Image'
-
 
 # Register Table model
 @admin.register(Table)
@@ -176,7 +197,16 @@ class TableAdmin(admin.ModelAdmin):
     list_filter = ('status', 'restaurant')
     readonly_fields = ('id',)
 
-# 
+# Register Menu model with Category inline
+@admin.register(Menu)
+class MenuAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'restaurant', 'language', 'is_default', 'created_at', 'updated_at')
+    search_fields = ('name', 'restaurant__name')
+    list_filter = ('restaurant', 'language', 'is_default')
+    readonly_fields = ('id', 'created_at', 'updated_at')
+    ordering = ('restaurant', '-is_default', 'name')
+    inlines = [CategoryInline]
+
 # Register HelpRequest model
 @admin.register(HelpRequest)
 class HelpRequestAdmin(admin.ModelAdmin):
@@ -188,5 +218,3 @@ class HelpRequestAdmin(admin.ModelAdmin):
     def get_table_number(self, obj):
         return obj.table.number if obj.table else "N/A"
     get_table_number.short_description = 'Table Number'
-
-

@@ -190,6 +190,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+        'restaurant': {  # Add logger for our restaurant app
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     },
 }
 

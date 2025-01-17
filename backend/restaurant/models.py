@@ -216,7 +216,7 @@ class Menu(models.Model):
         return f"{self.name} ({self.language}) - {self.restaurant.name}"
 
 class Category(models.Model):
-    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='categories', null=True, blank=True)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='categories')
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to=get_category_image_path, blank=True, null=True)

@@ -16,27 +16,27 @@ class TableViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy', 'download_qr_code']:
-            return [IsAuthenticated()]
+            return [IsAuthenticated(), IsOwnerOrStaff()]
         elif self.action in ['list', 'retrieve']:
             return [AllowAny()]
         return super().get_permissions()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        restaurant_pk = self.kwargs.get('restaurant_pk')
-        restaurant = get_object_or_404(Restaurant, pk=restaurant_pk)
+        restaurant_id = self.kwargs.get('restaurant_id')
+        restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
         context['restaurant'] = restaurant
         return context
 
     def get_queryset(self):
         user = self.request.user
-        restaurant_pk = self.kwargs.get('restaurant_pk')
+        restaurant_id = self.kwargs.get('restaurant_id')
         
         if user.is_superuser:
             queryset = Table.objects.all()
         elif user.is_authenticated:
             try:
-                restaurant = Restaurant.objects.get(pk=restaurant_pk)
+                restaurant = Restaurant.objects.get(pk=restaurant_id)
                 queryset = Table.objects.filter(
                     restaurant=restaurant
                 ).filter(
@@ -50,41 +50,33 @@ class TableViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        restaurant_id = self.kwargs.get('restaurant_pk')
-        table_number = request.data.get('number')
-        capacity = request.data.get('capacity', 4)  # Default capacity if not provided
-
-        # Ensure restaurant exists
-        restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
-
-        # Validation: Ensure Table Number is Unique in Restaurant
-        if Table.objects.filter(restaurant=restaurant, number=table_number).exists():
+        print(f"Request data: {request.data}")
+        print(f"Request content type: {request.content_type}")
+        print(f"URL kwargs: {self.kwargs}")
+        
+        # Extract data from request
+        data = {
+            'number': request.data.get('number'),
+            'capacity': request.data.get('capacity', 4)
+        }
+        
+        print(f"Processed data: {data}")
+        
+        if not data['number']:
             return Response(
-                {"error": "This table number already exists for this restaurant."},
+                {"error": "Table number is required."},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-        # Validation: Capacity Check
-        if not (1 <= capacity <= 100):
-            return Response(
-                {"error": "Capacity must be between 1 and 100."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
+            
+        serializer = self.get_serializer(data=data)
         try:
-            # Create the Table instance
-            table = Table.objects.create(
-                restaurant=restaurant,
-                number=table_number,
-                capacity=capacity
-            )
-            serializer = self.get_serializer(table)
+            serializer.is_valid(raise_exception=True)
+            table = serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         except Exception as e:
             return Response(
-                {"error": "Failed to create table due to an internal error."},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                {"error": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
     @action(detail=True, methods=['get'], url_path='download_qr_code', permission_classes=[IsAuthenticated])

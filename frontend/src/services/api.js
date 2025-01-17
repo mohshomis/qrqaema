@@ -95,6 +95,13 @@ axiosInstance.interceptors.response.use(
 
 // -------------------------------- Existing API Functions ---------------------------------
 
+// Get Menus for a Restaurant
+export const getRestaurantMenus = (restaurantId) => {
+    return axiosInstance.get(`restaurants/${restaurantId}/menus/`, {
+        headers: {} // Public endpoint
+    });
+};
+
 // Get Menu Items
 export const getMenuItems = (restaurantId) => {
     console.log(restaurantId);
@@ -275,10 +282,11 @@ export const updateRestaurantProfile = (restaurantId, data) => {
 };
 
 // Create Category
-export const createCategory = (restaurantId, name, imageFile) => {
+export const createCategory = (restaurantId, name, imageFile, menuId) => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('restaurant', restaurantId);
+    formData.append('menu', menuId);
     if (imageFile) {
         formData.append('image', imageFile);
     }
@@ -286,7 +294,13 @@ export const createCategory = (restaurantId, name, imageFile) => {
 };
 
 // Update Category with Image Upload
-export const updateCategory = (categoryId, formData) => {
+export const updateCategory = (categoryId, name, imageFile, menuId) => {
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('menu', menuId);
+    if (imageFile) {
+        formData.append('image', imageFile);
+    }
     return axiosInstance.patch(`categories/${categoryId}/`, formData);
 };
 
@@ -310,7 +324,8 @@ export const getStaffList = (restaurantId) => {
 };
 
 // Create Menu Item with Image Upload
-export const createMenuItem = (formData) => {
+export const createMenuItem = (formData, menuId) => {
+    formData.append('menu', menuId);
     for (let pair of formData.entries()) {
         console.log(`${pair[0]}: ${pair[1]}`);
     }

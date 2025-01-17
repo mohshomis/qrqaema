@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 const MenuItemCreatePage = () => {
     const { t } = useTranslation(); // Initialize translation
-    const { restaurantId } = useParams();
+    const { restaurantId, menuId } = useParams();
     const navigate = useNavigate();
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -28,7 +28,7 @@ const MenuItemCreatePage = () => {
         // Fetch categories for the restaurant
         const fetchCategories = async () => {
             try {
-                const response = await getCategories(restaurantId);
+                const response = await getCategories(restaurantId, menuId);
                 setCategories(response.data);
             } catch (error) {
                 console.error(t('errors.fetchCategories'), error);
@@ -158,9 +158,9 @@ const MenuItemCreatePage = () => {
         formData.append('boolean_options', JSON.stringify(booleanOptions));  // Convert to JSON string
 
         try {
-            await createMenuItem(formData);
+            await createMenuItem(formData, menuId);
             toast.success(t('success.menuItemCreated'));
-            navigate(`/restaurant/${restaurantId}/menu-items`);
+            navigate(`/restaurant/${restaurantId}/menus/${menuId}/menu-items`);
         } catch (error) {
             console.error(t('errors.createMenuItemFailed'), error);
             if (error.response && error.response.data) {

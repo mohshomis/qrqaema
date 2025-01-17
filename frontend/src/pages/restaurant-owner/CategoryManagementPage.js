@@ -15,6 +15,7 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import '../../styles/CustomerPages.css';
+import '../../styles/CategoryManagementPage.css';
 
 const CategoryManagementPage = () => {
     const { t } = useTranslation();
@@ -140,8 +141,8 @@ const CategoryManagementPage = () => {
     return (
         <div className="page-container">
             <div className="background-overlay"></div>
-            <Container className="py-4">
-                <div className="d-flex justify-content-between align-items-center mb-4">
+            <Container className="category-management-container">
+                <div className="category-management-header d-flex justify-content-between align-items-center">
                     <div>
                         <h1 className="text-light mb-2">
                             <FaUtensils className="me-2" />
@@ -152,9 +153,8 @@ const CategoryManagementPage = () => {
                         </Badge>
                     </div>
                     <Button
-                        variant="primary"
                         onClick={() => setShowEditModal(true)}
-                        className="d-flex align-items-center custom-button"
+                        className="add-category-button d-flex align-items-center gap-2"
                     >
                         <FaPlus className="me-2" />
                         {t('categoryManagement.addCategory')}
@@ -176,7 +176,7 @@ const CategoryManagementPage = () => {
                     {categories.map((category) => (
                         <Col key={category.id} xs={12} sm={6} md={4} lg={3}>
                             <Card 
-                                className="h-100 custom-card category-card fade-in"
+                                className="category-card h-100"
                                 onClick={() => handleCategoryClick(category)}
                             >
                                 {category.image_url && (
@@ -187,34 +187,26 @@ const CategoryManagementPage = () => {
                                 )}
                                 <Card.Body className="d-flex flex-column">
                                     <Card.Title>{category.name}</Card.Title>
-                                    <div className="mt-auto d-flex gap-2">
+                                    <div className="category-actions">
                                         <Button
-                                            variant="outline-primary"
-                                            size="sm"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleShowEditModal(category);
                                             }}
-                                            className="flex-grow-0"
+                                            className="category-action-button edit"
                                         >
                                             <FaEdit /> {t('categoryManagement.edit')}
                                         </Button>
                                         <Button
-                                            variant="outline-danger"
-                                            size="sm"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleDeleteClick(category);
                                             }}
-                                            className="flex-grow-0"
+                                            className="category-action-button delete"
                                         >
                                             <FaTrash /> {t('categoryManagement.delete')}
                                         </Button>
-                                        <Button
-                                            variant="outline-success"
-                                            size="sm"
-                                            className="ms-auto"
-                                        >
+                                        <Button className="category-action-button view">
                                             <FaArrowRight />
                                         </Button>
                                     </div>
@@ -225,7 +217,7 @@ const CategoryManagementPage = () => {
                 </Row>
 
                 {/* Create/Edit Category Modal */}
-                <Modal show={showEditModal} onHide={handleCloseEditModal}>
+                <Modal show={showEditModal} onHide={handleCloseEditModal} className="category-modal">
                     <Modal.Header closeButton>
                         <Modal.Title>
                             {currentCategory
@@ -246,6 +238,7 @@ const CategoryManagementPage = () => {
                                             : setNewCategoryName(e.target.value)
                                     }
                                     required
+                                    className="category-form-control"
                                 />
                             </Form.Group>
                             <Form.Group className="mb-3">
@@ -278,7 +271,7 @@ const CategoryManagementPage = () => {
                 </Modal>
 
                 {/* Delete Confirmation Modal */}
-                <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
+                <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} className="category-modal">
                     <Modal.Header closeButton>
                         <Modal.Title>{t('categoryManagement.deleteConfirm.title')}</Modal.Title>
                     </Modal.Header>
