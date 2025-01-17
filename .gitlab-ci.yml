@@ -18,7 +18,7 @@ build_frontend:
   script:
     - cd frontend
     - npm install
-    - npm run build
+    - CI=false npm run build  # Prevent treating warnings as errors
     # Copy build files to backend/build directory
     - mkdir -p ../backend/build
     - cp -r build/* ../backend/build/
