@@ -1,7 +1,7 @@
 // src/pages/PasswordResetRequestPage.js
 
 import React, { useState } from 'react';
-import { requestPasswordReset } from '../services/api'; // Import the API function
+import { requestPasswordReset } from '../../services/api'; // Import the API function
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { Link } from 'react-router-dom'; // Import Link for navigation
 

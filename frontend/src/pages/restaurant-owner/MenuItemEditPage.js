@@ -1,7 +1,7 @@
-// src/pages/MenuItemCreatePage.js
+// src/pages/MenuItemEditPage.js
 
 import React, { useState, useEffect } from 'react';
-import { createMenuItem, getCategories } from '../services/api'; // Ensure these functions exist and are correctly implemented
+import { getMenuItemById, updateMenuItem, getCategories } from '../../services/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,20 +9,22 @@ import imageCompression from 'browser-image-compression';
 import { FaUpload, FaPlus, FaTrash, FaEdit } from 'react-icons/fa'; // Consolidated icon imports
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
-const MenuItemCreatePage = () => {
-    const { t } = useTranslation(); // Initialize translation
-    const { restaurantId } = useParams();
+const MenuItemEditPage = () => {
+    const { t, i18n } = useTranslation(); // Initialize translation
+    const { restaurantId, menuItemId } = useParams();
     const navigate = useNavigate();
+    const [menuItem, setMenuItem] = useState(null);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [categoryId, setCategoryId] = useState('');
     const [categories, setCategories] = useState([]);
-    const [options, setOptions] = useState([{ name: '', choices: [''] }]);
-    const [booleanOptions, setBooleanOptions] = useState([{ name: '', price_modifier: '' }]);
+    const [options, setOptions] = useState([]);
+    const [booleanOptions, setBooleanOptions] = useState([]);
     const [error, setError] = useState(null);
     const [previewImage, setPreviewImage] = useState(null); // For image preview
+    const [existingImageUrl, setExistingImageUrl] = useState(null); // To display current image
 
     useEffect(() => {
         // Fetch categories for the restaurant
@@ -36,8 +38,28 @@ const MenuItemCreatePage = () => {
             }
         };
 
+        // Fetch menu item details
+        const fetchMenuItem = async () => {
+            try {
+                const response = await getMenuItemById(restaurantId, menuItemId);
+                setMenuItem(response.data);
+                setName(response.data.name);
+                setDescription(response.data.description);
+                setPrice(response.data.price);
+                setCategoryId(response.data.category);
+                setOptions(response.data.options || []);
+                setBooleanOptions(response.data.boolean_options || []);
+                setExistingImageUrl(response.data.image_url); // Set existing image URL
+            } catch (error) {
+                console.error(t('errors.fetchMenuItem'), error);
+                setError(t('errors.fetchMenuItem'));
+                toast.error(t('errors.fetchMenuItem'));
+            }
+        };
+
         fetchCategories();
-    }, [restaurantId, t]);
+        fetchMenuItem();
+    }, [restaurantId, menuItemId, t]);
 
     // Handle image selection and compression
     const handleImageChange = async (e) => {
@@ -63,6 +85,10 @@ const MenuItemCreatePage = () => {
                 console.error(t('errors.imageProcessingFailed'), error);
                 toast.error(t('errors.imageProcessingFailed'));
             }
+        } else {
+            console.log(t('noFileSelected'));
+            setImageFile(null);
+            setPreviewImage(null);
         }
     };
 
@@ -132,7 +158,7 @@ const MenuItemCreatePage = () => {
         setBooleanOptions(newBooleanOptions);
     };
 
-    const handleCreateMenuItem = async () => {
+    const handleUpdateMenuItem = async () => {
         // Basic validation
         if (name.trim() === '' || price === '' || categoryId === '') {
             setError(t('errors.fillRequiredFields'));
@@ -148,35 +174,67 @@ const MenuItemCreatePage = () => {
         formData.append('category', categoryId);
         formData.append('restaurant', restaurantId);
 
-        // If image file exists, append it
+        // If a new image file is selected, append it
         if (imageFile) {
-            formData.append('image', imageFile);
+            formData.append('image', imageFile, imageFile.name); // Include filename with extension
         }
 
-        // Convert options and booleanOptions to JSON and append
-        formData.append('options', JSON.stringify(options));  // Convert to JSON string
-        formData.append('boolean_options', JSON.stringify(booleanOptions));  // Convert to JSON string
+        // Serialize and append nested options and boolean_options
+        formData.append('options', JSON.stringify(options));
+        formData.append('boolean_options', JSON.stringify(booleanOptions));
 
         try {
-            await createMenuItem(formData);
-            toast.success(t('success.menuItemCreated'));
+            await updateMenuItem(menuItemId, formData);
+            toast.success(t('success.menuItemUpdated'));
             navigate(`/restaurant/${restaurantId}/menu-items`);
         } catch (error) {
-            console.error(t('errors.createMenuItemFailed'), error);
+            console.error(t('errors.updateMenuItemFailed'), error);
+            // Extract and display error messages from the backend
             if (error.response && error.response.data) {
-                const errorMessages = Object.values(error.response.data).flat().join(' ');
-                setError(errorMessages);
-                toast.error(errorMessages);
+                let errorMessages = '';
+                for (const key in error.response.data) {
+                    if (Array.isArray(error.response.data[key])) {
+                        errorMessages += `${key}: ${error.response.data[key].join(', ')}\n`;
+                    } else if (typeof error.response.data[key] === 'string') {
+                        errorMessages += `${key}: ${error.response.data[key]}\n`;
+                    } else if (typeof error.response.data[key] === 'object') {
+                        // Handle nested objects
+                        for (const subKey in error.response.data[key]) {
+                            if (Array.isArray(error.response.data[key][subKey])) {
+                                errorMessages += `${key}.${subKey}: ${error.response.data[key][subKey].join(', ')}\n`;
+                            } else if (typeof error.response.data[key][subKey] === 'string') {
+                                errorMessages += `${key}.${subKey}: ${error.response.data[key][subKey]}\n`;
+                            }
+                        }
+                    }
+                }
+                setError(errorMessages.trim());
+                toast.error(errorMessages.trim());
             } else {
-                setError(t('errors.createMenuItemFailed'));
-                toast.error(t('errors.createMenuItemFailed'));
+                setError(t('errors.updateMenuItemFailed'));
+                toast.error(t('errors.updateMenuItemFailed'));
             }
         }
     };
 
+    if (error && !menuItem) {
+        return <p className="text-danger">{error}</p>;
+    }
+
+    if (!menuItem) {
+        return (
+            <div className="d-flex justify-content-center align-items-center vh-100">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">{t('loading')}</span>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div className="container mt-5">
-            <h2>{t('addNewMenuItem')}</h2>
+        <div className="container mt-5" dir={i18n.dir()}>
+            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
+            <h2>{t('editMenuItem')}</h2>
             {/* Form Fields */}
             <div className="mb-3">
                 <label className="form-label">{t('itemName')} *</label>
@@ -218,6 +276,16 @@ const MenuItemCreatePage = () => {
                     onChange={handleImageChange}
                     accept="image/*"
                 />
+                {existingImageUrl && !previewImage && (
+                    <div className="mt-2">
+                        <p>{t('currentImage')}:</p>
+                        <img
+                            src={existingImageUrl}
+                            alt={t('currentMenuItemImage')}
+                            style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '5px' }}
+                        />
+                    </div>
+                )}
                 {previewImage && (
                     <div className="mt-2">
                         <p>{t('imagePreview')}:</p>
@@ -348,15 +416,15 @@ const MenuItemCreatePage = () => {
                 </button>
             </div>
 
-            <button className="btn btn-primary" onClick={handleCreateMenuItem}>
-                {t('createMenuItem')}
+            <button className="btn btn-primary" onClick={handleUpdateMenuItem}>
+                {t('updateMenuItem')}
             </button>
 
-            {error && <p className="text-danger mt-3">{error}</p>}
+            {error && <p className="text-danger mt-3 white-space-pre-wrap">{error}</p>}
             <ToastContainer />
         </div>
     );
 
 };
 
-export default MenuItemCreatePage;
+export default MenuItemEditPage;

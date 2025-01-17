@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next'; // Import the useTranslation hook
-import { recoverUsername } from '../services/api'; // Import the API function
+import { recoverUsername } from '../../services/api'; // Import the API function
 
 const UsernameRecoveryPage = () => {
     const { t } = useTranslation(); // Using useTranslation hook for localization

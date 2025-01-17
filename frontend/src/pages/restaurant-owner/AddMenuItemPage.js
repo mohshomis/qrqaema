@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMenuItems, placeOrder, getOrderStatus } from '../services/api';
+import { getMenuItems, placeOrder, getOrderStatus } from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../styles/CustomerMenuPage.css'; // New CSS file for this page
 

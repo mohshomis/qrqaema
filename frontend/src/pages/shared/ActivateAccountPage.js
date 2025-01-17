@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { activateAccount } from '../services/api'; // Import the API function
+import { activateAccount } from '../../services/api'; // Import the API function
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 const ActivateAccountPage = () => {

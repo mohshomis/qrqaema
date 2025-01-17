@@ -12,8 +12,8 @@ import {
     acceptHelpRequest, 
     declineHelpRequest, 
     deleteHelpRequest 
-} from '../services/api';
-import RestaurantManagementHeader from '../components/RestaurantManagementHeader';
+} from '../../services/api';
+import RestaurantManagementHeader from '../../components/RestaurantManagementHeader';
 import 'bootstrap/dist/css/bootstrap.min.css'; 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './DashboardPage.css'; 

@@ -1,7 +1,7 @@
 // src/pages/RestaurantProfilePage.js
 
 import React, { useState, useEffect } from 'react';
-import { getRestaurantProfile, updateRestaurantProfile } from '../services/api'; // Ensure these functions exist and are correctly implemented
+import { getRestaurantProfile, updateRestaurantProfile } from '../../services/api'; // Ensure these functions exist and are correctly implemented
 import { useParams } from 'react-router-dom'; // To get the restaurantId from the URL
 import {
     Container,

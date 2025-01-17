@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getMenuItemsByCategory, getRestaurantPublicDetails } from '../services/api';
-import Footer from '../components/Footer'; // Removed Header
-import '../styles/Footer.css';
-import '../styles/CategoryPage.css'; // Add the new CSS file for CategoryPage
-import '../App.css';
+import { getMenuItemsByCategory, getRestaurantPublicDetails } from '../../services/api';
+import Footer from '../../components/Footer'; // Removed Header
+import '../../styles/Footer.css';
+import '../../styles/CategoryPage.css'; // Add the new CSS file for CategoryPage
+import '../../App.css';
 import {
     Container,
     Row,

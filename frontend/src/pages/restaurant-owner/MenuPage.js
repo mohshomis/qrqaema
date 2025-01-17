@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getMenuItems, placeOrder } from '../services/api'; // API for fetching menu and placing order
+import { getMenuItems, placeOrder } from '../../services/api'; // API for fetching menu and placing order
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { Spinner, Alert, Button, Card, Container, Row, Col } from 'react-bootstrap'; // Optional: Using React Bootstrap for styling
 

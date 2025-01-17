@@ -6,30 +6,30 @@ import jwtDecode from 'jwt-decode'; // Corrected import statement
 import Header from './components/Header';
 import Layout from './components/Layout';
 import RestaurantManagementLayout from './components/RestaurantManagementLayout';
-import CustomerMenuPage from './pages/CustomerMenuPage';
-import CustomerMenuItemPage from './pages/CustomerMenuItemPage';
-import OrderBasketPage from './pages/OrderBasketPage';
-import CategoryPage from './pages/CategoryPage';
-import LoginPage from './pages/LoginPage';
-import LogoutPage from './pages/LogoutPage';
-import DashboardPage from './pages/DashboardPage';
-import OrderPage from './pages/OrderPage';
-import CategoryEditPage from './pages/CategoryEditPage';
-import OrderSuccessPage from './pages/OrderSuccessPage';
-import HomePage from './pages/HomePage';
-import RegisterPage from './pages/RegisterPage';
-import RestaurantProfilePage from './pages/RestaurantProfilePage';
+import CustomerMenuPage from './pages/customer/CustomerMenuPage';
+import CustomerMenuItemPage from './pages/customer/CustomerMenuItemPage';
+import OrderBasketPage from './pages/customer/OrderBasketPage';
+import CategoryPage from './pages/customer/CategoryPage';
+import LoginPage from './pages/shared/LoginPage';
+import LogoutPage from './pages/shared/LogoutPage';
+import DashboardPage from './pages/restaurant-owner/DashboardPage';
+import OrderPage from './pages/restaurant-owner/OrderPage';
+import CategoryEditPage from './pages/restaurant-owner/CategoryEditPage';
+import OrderSuccessPage from './pages/customer/OrderSuccessPage';
+import HomePage from './pages/shared/HomePage';
+import RegisterPage from './pages/shared/RegisterPage';
+import RestaurantProfilePage from './pages/restaurant-owner/RestaurantProfilePage';
 // Removed MenuManagementPage import
 // import MenuManagementPage from './pages/MenuManagementPage';
-import StaffManagementPage from './pages/StaffManagementPage';
-import CategoryManagementPage from './pages/CategoryManagementPage';
-import MenuItemManagementPage from './pages/MenuItemManagementPage';
-import MenuItemCreatePage from './pages/MenuItemCreatePage';
-import MenuItemEditPage from './pages/MenuItemEditPage';
-import PasswordResetRequestPage from './pages/PasswordResetRequestPage'; // New Import
-import PasswordResetConfirmPage from './pages/PasswordResetConfirmPage'; // New Import
-import ActivateAccountPage from './pages/ActivateAccountPage'; // New Import
-import UsernameRecoveryPage from './pages/UsernameRecoveryPage'; // New Import
+import StaffManagementPage from './pages/restaurant-owner/StaffManagementPage';
+import CategoryManagementPage from './pages/restaurant-owner/CategoryManagementPage';
+import MenuItemManagementPage from './pages/restaurant-owner/MenuItemManagementPage';
+import MenuItemCreatePage from './pages/restaurant-owner/MenuItemCreatePage';
+import MenuItemEditPage from './pages/restaurant-owner/MenuItemEditPage';
+import PasswordResetRequestPage from './pages/shared/PasswordResetRequestPage'; // New Import
+import PasswordResetConfirmPage from './pages/shared/PasswordResetConfirmPage'; // New Import
+import ActivateAccountPage from './pages/shared/ActivateAccountPage'; // New Import
+import UsernameRecoveryPage from './pages/shared/UsernameRecoveryPage'; // New Import
 import { AuthProvider } from './AuthContext'; // Import AuthProvider
 import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute
 

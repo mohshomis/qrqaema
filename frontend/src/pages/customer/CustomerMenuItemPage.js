@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getMenuItemDetails, getRestaurantPublicDetails } from '../services/api';
-import Footer from '../components/Footer';
+import { getMenuItemDetails, getRestaurantPublicDetails } from '../../services/api';
+import Footer from '../../components/Footer';
 import PropTypes from 'prop-types';
 import {
   Container,
@@ -28,8 +28,8 @@ import {
   FaDollarSign,
   FaListAlt
 } from 'react-icons/fa';
-import '../styles/Footer.css';
-import '../styles/CustomerMenuItemPage.css'; // Ensure this CSS handles RTL and other custom styles
+import '../../styles/Footer.css';
+import '../../styles/CustomerMenuItemPage.css'; // Ensure this CSS handles RTL and other custom styles
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 const CustomerMenuItemPage = ({ addToBasket, basketItems = [] }) => {

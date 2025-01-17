@@ -9,7 +9,7 @@ import {
     getMenuItemById, 
     updateMenuItem, 
     getCategories 
-} from '../services/api';
+} from '../../services/api';
 import {
     Container,
     Row,

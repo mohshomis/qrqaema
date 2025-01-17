@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate, Link, useLocation } from 'react-router-dom'; // useLocation added for redirecting back after login
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap for styling
 import './LoginPage.css'; // Add a custom CSS file for any additional styles
-import { AuthContext } from '../AuthContext'; // Import AuthContext
+import { AuthContext } from '../../AuthContext'; // Import AuthContext
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 const LoginPage = () => {

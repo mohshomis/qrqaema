@@ -2,13 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getOrderStatus } from '../services/api'; // API service to fetch order status
+import { getOrderStatus } from '../../services/api'; // API service to fetch order status
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRedo } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './OrderSuccessPage.css'; // Custom styles for this page
-import TicTacToe from '../components/TicTacToe'; // Import the TicTacToe component
-import StatusIcon from '../components/StatusIcon'; // Import the StatusIcon component
+import TicTacToe from '../../components/TicTacToe'; // Import the TicTacToe component
+import StatusIcon from '../../components/StatusIcon'; // Import the StatusIcon component
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { Container, Button, Alert, Spinner, Card, ListGroup } from 'react-bootstrap';
 

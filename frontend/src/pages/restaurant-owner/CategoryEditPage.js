@@ -1,7 +1,7 @@
 // src/pages/CategoryEditPage.js
 
 import React, { useState, useEffect } from 'react';
-import { getCategoryById, updateCategory } from '../services/api';
+import { getCategoryById, updateCategory } from '../../services/api';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 

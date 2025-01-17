@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { confirmPasswordReset } from '../services/api'; // Import the API function
+import { confirmPasswordReset } from '../../services/api'; // Import the API function
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 const PasswordResetConfirmPage = () => {

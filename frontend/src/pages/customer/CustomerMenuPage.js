@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRestaurantPublicDetails, getCategories } from '../services/api';
-import Footer from '../components/Footer';
-import '../styles/Footer.css';
-import '../styles/CustomerMenuPage.css';
-import '../App.css';
+import { getRestaurantPublicDetails, getCategories } from '../../services/api';
+import Footer from '../../components/Footer';
+import '../../styles/Footer.css';
+import '../../styles/CustomerMenuPage.css';
+import '../../App.css';
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 import { Container, Row, Col, Card, Spinner, Alert } from 'react-bootstrap';
 

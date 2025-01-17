@@ -2,12 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { placeOrder, getRestaurantPublicDetails } from '../services/api';
-import Footer from '../components/Footer';
+import { placeOrder, getRestaurantPublicDetails } from '../../services/api';
+import Footer from '../../components/Footer';
 import PropTypes from 'prop-types';
-import '../styles/Footer.css';
-import '../styles/OrderBasketPage.css';
-import '../App.css';
+import '../../styles/Footer.css';
+import '../../styles/OrderBasketPage.css';
+import '../../App.css';
 import {
   Container,
   Row,

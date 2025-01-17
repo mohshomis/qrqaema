@@ -7,8 +7,8 @@ import { Helmet } from 'react-helmet'; // Import Helmet
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap
 import 'bootstrap-icons/font/bootstrap-icons.css'; // Import Bootstrap Icons
 import './HomePage.css'; // Custom CSS
-import { AuthContext } from '../AuthContext'; // Import AuthContext
-import HomePageHeader from '../components/HomePageHeader'; // Import the new header component
+import { AuthContext } from '../../AuthContext'; // Import AuthContext
+import HomePageHeader from '../../components/HomePageHeader'; // Import the new header component
 import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 const HomePage = () => {

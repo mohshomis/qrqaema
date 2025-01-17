@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { getOrders, updateOrderStatus, deleteOrder, getRestaurantPublicDetails } from '../services/api'; // Ensure all necessary APIs are imported
+import { getOrders, updateOrderStatus, deleteOrder, getRestaurantPublicDetails } from '../../services/api'; // Ensure all necessary APIs are imported
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaTrashAlt, FaCheckCircle, FaHourglassHalf, FaArrowLeft } from 'react-icons/fa'; // Added FaArrowLeft for Back Button
 import './OrderPage.css';

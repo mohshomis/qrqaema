@@ -6,7 +6,7 @@ import {
     addStaff, 
     removeStaff, 
     createUser 
-} from '../services/api';  // Ensure correct path
+} from '../../services/api';  // Ensure correct path
 import { useParams } from 'react-router-dom';
 import { 
     Container, 

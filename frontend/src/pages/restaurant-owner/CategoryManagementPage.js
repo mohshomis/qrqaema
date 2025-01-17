@@ -1,7 +1,7 @@
 // src/pages/CategoryManagementPage.js
 
 import React, { useState, useEffect } from 'react';
-import { getCategories, createCategory, deleteCategory, updateCategory } from '../services/api'; // Ensure these functions exist and are correctly implemented
+import { getCategories, createCategory, deleteCategory, updateCategory } from '../../services/api'; // Ensure these functions exist and are correctly implemented
 import { useParams } from 'react-router-dom';
 import { FaUpload, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
 import {

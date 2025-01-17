@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerUserAndRestaurant } from '../services/api';
+import { registerUserAndRestaurant } from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RegisterPage.css';
 import { useTranslation } from 'react-i18next';
