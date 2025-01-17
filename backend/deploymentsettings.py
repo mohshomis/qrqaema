@@ -196,5 +196,10 @@ STATICFILES_DIRS = [
 ]
 
 
-ALLOWED_HOSTS = ['restaurant-order-system-a38af740ae3a.herokuapp.com','restaurant-order-system.herokuapp.com', 'localhost','127.0.0.1']
-
+ALLOWED_HOSTS = [
+    'restaurant-order-system-5047963048eb.herokuapp.com',
+    'restaurant-order-system-a38af740ae3a.herokuapp.com',
+    'restaurant-order-system.herokuapp.com',
+    'localhost',
+    '127.0.0.1'
+]
