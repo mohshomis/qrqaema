@@ -3,6 +3,19 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import Backend from 'i18next-http-backend';
 
+// Import translation files for development
+const loadDevTranslations = async (language, namespace) => {
+  if (process.env.NODE_ENV === 'development') {
+    try {
+      return await import(`./locales/${language}/${namespace}.json`);
+    } catch (err) {
+      console.error(`Failed to load translation: ${language}/${namespace}`, err);
+      return null;
+    }
+  }
+  return null;
+};
+
 // Helper function to set the direction (RTL or LTR)
 const setDirection = (lang) => {
   const rtlLanguages = ['ar']; // List of RTL languages
@@ -36,9 +49,22 @@ i18n
       escapeValue: false, // React already handles XSS protection
     },
     backend: {
-      loadPath: process.env.NODE_ENV === 'development' 
-        ? process.env.PUBLIC_URL + '/locales/{{lng}}/{{ns}}.json'  // Development path (public directory)
-        : '/static/locales/{{lng}}/{{ns}}.json',  // Production path
+      loadPath: '/static/locales/{{lng}}/{{ns}}.json',  // Production path
+      load: async (languages, namespaces) => {
+        if (process.env.NODE_ENV === 'development') {
+          const translations = {};
+          for (const lng of languages) {
+            translations[lng] = {};
+            for (const ns of namespaces) {
+              const data = await loadDevTranslations(lng, ns);
+              if (data) {
+                translations[lng][ns] = data.default;
+              }
+            }
+          }
+          return translations;
+        }
+      }
     },
     detection: {
       // Detection order (use localStorage first, then navigator)

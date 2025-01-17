@@ -14,6 +14,7 @@ import {
 import { FaGlobe, FaEdit, FaTrash, FaPlus, FaArrowRight } from 'react-icons/fa';
 import { AuthContext } from '../../AuthContext';
 import axios from 'axios';
+import { API_URL } from '../../services/api';
 import { useTranslation } from 'react-i18next';
 import '../../styles/CustomerPages.css';
 
@@ -37,7 +38,7 @@ const MenuManagementPage = () => {
 
     const fetchMenus = async () => {
         try {
-            const response = await axios.get(`/api/restaurants/${restaurantId}/menus/`, {
+            const response = await axios.get(`${API_URL}/restaurants/${restaurantId}/menus/`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setMenus(response.data);
@@ -84,7 +85,7 @@ const MenuManagementPage = () => {
         try {
             if (editMenu) {
                 await axios.put(
-                    `/api/restaurants/${restaurantId}/menus/${editMenu.id}/`,
+                    `${API_URL}/restaurants/${restaurantId}/menus/${editMenu.id}/`,
                     { ...formData, restaurant: restaurantId },
                     {
                         headers: { Authorization: `Bearer ${token}` },
@@ -93,7 +94,7 @@ const MenuManagementPage = () => {
                 setSuccess(t('menuManagement.success.updated'));
             } else {
                 await axios.post(
-                    `/api/restaurants/${restaurantId}/menus/`,
+                    `${API_URL}/restaurants/${restaurantId}/menus/`,
                     { ...formData, restaurant: restaurantId },
                     {
                         headers: { Authorization: `Bearer ${token}` },
@@ -115,7 +116,7 @@ const MenuManagementPage = () => {
 
     const handleDeleteConfirm = async () => {
         try {
-            await axios.delete(`/api/restaurants/${restaurantId}/menus/${menuToDelete.id}/`, {
+            await axios.delete(`${API_URL}/restaurants/${restaurantId}/menus/${menuToDelete.id}/`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setSuccess(t('menuManagement.success.deleted'));
@@ -130,7 +131,7 @@ const MenuManagementPage = () => {
     const handleSetDefault = async (menuId) => {
         try {
             await axios.post(
-                `/api/restaurants/${restaurantId}/menus/${menuId}/set-default/`,
+                `${API_URL}/restaurants/${restaurantId}/menus/${menuId}/set-default/`,
                 {},
                 {
                     headers: { Authorization: `Bearer ${token}` },

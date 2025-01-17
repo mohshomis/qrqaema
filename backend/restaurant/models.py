@@ -90,8 +90,8 @@ class Restaurant(models.Model):
     number_of_employees = models.IntegerField(default=1)
     facebook = models.URLField(blank=True, null=True)
     instagram = models.URLField(blank=True, null=True)
-    payment_methods = models.JSONField(default=list)  # e.g., ['Cash', 'Credit Card', 'Mobile Payments']
-    tags = models.JSONField(default=list)  # e.g., ['Halal', 'Vegan', 'Outdoor Seating']
+    payment_methods = models.JSONField(default=list,blank=True, null=True)  # e.g., ['Cash', 'Credit Card', 'Mobile Payments']
+    tags = models.JSONField(default=list,blank=True, null=True)  # e.g., ['Halal', 'Vegan', 'Outdoor Seating']
     business_license = models.CharField(max_length=100, blank=True, null=True)
     default_language = models.CharField(max_length=10, default='en')  # Default language for the restaurant
     

@@ -9,6 +9,9 @@ from ..models import Category, MenuItem, Restaurant, Menu
 from ..serializers import CategorySerializer, MenuItemSerializer
 from ..serializers.menu_serializers import MenuSerializer
 from .permissions import IsOwnerOrStaff
+import logging
+
+logger = logging.getLogger(__name__)
 
 class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
@@ -16,36 +19,68 @@ class MenuViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_permissions(self):
+        logger.info(f"Checking permissions for action: {self.action}")
         if self.action in ['list', 'retrieve', 'menus_for_restaurant']:
+            logger.info("Using AllowAny permission")
             return [AllowAny()]
+        logger.info("Using IsAuthenticated and IsOwnerOrStaff permissions")
         return [IsAuthenticated(), IsOwnerOrStaff()]
 
     def get_queryset(self):
+        logger.info(f"Getting queryset for action: {self.action}")
         if self.action in ['list', 'retrieve']:
             restaurant_id = self.request.query_params.get('restaurant')
             if restaurant_id:
+                logger.info(f"Filtering menus for restaurant: {restaurant_id}")
                 return Menu.objects.filter(restaurant__id=restaurant_id)
+            logger.info("No restaurant ID provided, returning empty queryset")
             return Menu.objects.none()
+        logger.info("Returning all menus")
         return Menu.objects.all()
 
     def perform_create(self, serializer):
         restaurant_id = self.request.data.get('restaurant')
+        logger.info(f"Creating menu with data: {self.request.data}")
+        
         if not restaurant_id:
+            logger.error("Restaurant ID missing in request data")
             raise serializers.ValidationError({'restaurant': 'Restaurant ID is required.'})
         
-        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-        if restaurant.owner != self.request.user and not restaurant.staff.filter(id=self.request.user.id).exists():
-            raise PermissionDenied('Only the owner or staff can add menus to this restaurant.')
+        try:
+            restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+            logger.info(f"Found restaurant: {restaurant.id} - {restaurant.name}")
+            
+            if restaurant.owner != self.request.user and not restaurant.staff.filter(id=self.request.user.id).exists():
+                logger.warning(f"Permission denied. User {self.request.user.id} is not owner or staff")
+                raise PermissionDenied('Only the owner or staff can add menus to this restaurant.')
 
-        serializer.save(restaurant=restaurant)
+            menu = serializer.save(restaurant=restaurant)
+            logger.info(f"Successfully created menu: {menu.id} - {menu.name}")
+            return menu
+        except Exception as e:
+            logger.error(f"Error creating menu: {str(e)}")
+            raise
 
     @action(detail=False, methods=['get'], url_path=r'restaurants/(?P<restaurant_id>[0-9a-f-]+)/menus')
     def menus_for_restaurant(self, request, restaurant_id=None):
         try:
+            logger.info(f"Fetching menus for restaurant: {restaurant_id}")
+            logger.info(f"User: {request.user}, is authenticated: {request.user.is_authenticated}")
+            
             menus = Menu.objects.filter(restaurant__id=restaurant_id)
+            logger.info(f"Found {menus.count()} menus")
+            
+            for menu in menus:
+                logger.info(f"Menu: {menu.id} - {menu.name} - {menu.language}")
+                logger.info(f"Menu restaurant: {menu.restaurant.id} - {menu.restaurant.name}")
+            
             serializer = self.get_serializer(menus, many=True)
-            return Response(serializer.data)
+            serialized_data = serializer.data
+            logger.info(f"Serialized data: {serialized_data}")
+            
+            return Response(serialized_data)
         except Exception as e:
+            logger.error(f"Error fetching menus: {str(e)}")
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=True, methods=['post'])
