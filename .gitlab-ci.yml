@@ -1,0 +1,41 @@
+image: node:latest
+
+stages:
+  - build
+  - deploy
+
+variables:
+
+  HEROKU_APP_NAME: "restaurant-order-system"
+
+cache:
+  paths:
+    - frontend/node_modules/
+    - backend/node_modules/
+
+build_frontend:
+  stage: build
+  script:
+    - cd frontend
+    - npm install
+    - npm run build
+    # Copy build files to backend/build directory
+    - mkdir -p ../backend/build
+    - cp -r build/* ../backend/build/
+  artifacts:
+    paths:
+      - backend/build/
+    expire_in: 1 hour
+
+deploy_production:
+  stage: deploy
+  image: ruby:latest
+  script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+    - gem install dpl-heroku
+    - cd backend
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
+  only:
+    - main
