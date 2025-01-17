@@ -36,7 +36,9 @@ i18n
       escapeValue: false, // React already handles XSS protection
     },
     backend: {
-      loadPath: '/static/locales/{{lng}}/{{ns}}.json',  // Change path to Django's static URL
+      loadPath: process.env.NODE_ENV === 'development' 
+        ? process.env.PUBLIC_URL + '/locales/{{lng}}/{{ns}}.json'  // Development path (public directory)
+        : '/static/locales/{{lng}}/{{ns}}.json',  // Production path
     },
     detection: {
       // Detection order (use localStorage first, then navigator)
