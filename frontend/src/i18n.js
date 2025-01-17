@@ -49,22 +49,9 @@ i18n
       escapeValue: false, // React already handles XSS protection
     },
     backend: {
-      loadPath: '/static/locales/{{lng}}/{{ns}}.json',  // Production path
-      load: async (languages, namespaces) => {
-        if (process.env.NODE_ENV === 'development') {
-          const translations = {};
-          for (const lng of languages) {
-            translations[lng] = {};
-            for (const ns of namespaces) {
-              const data = await loadDevTranslations(lng, ns);
-              if (data) {
-                translations[lng][ns] = data.default;
-              }
-            }
-          }
-          return translations;
-        }
-      }
+      loadPath: process.env.NODE_ENV === 'development' 
+        ? '/locales/{{lng}}/{{ns}}.json'  // Development path (relative to public folder)
+        : '/static/locales/{{lng}}/{{ns}}.json',  // Production path
     },
     detection: {
       // Detection order (use localStorage first, then navigator)
@@ -76,7 +63,6 @@ i18n
       // Specify custom lookup function for language detection from navigator if necessary
       lookupNavigator: true, // Use device/browser language as a fallback if no stored language
     },
-    fallbackLng: 'en', // Set a fallback language in case the detection fails
   });
 
 // Listen to language change and adjust the direction

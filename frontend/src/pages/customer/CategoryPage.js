@@ -2,12 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRestaurantPublicDetails } from '../../services/api';
+import { getRestaurantPublicDetails, getRestaurantMenus, getMenuItems } from '../../services/api';
 import Footer from '../../components/Footer';
 import '../../styles/Footer.css';
 import '../../styles/CustomerPages.css';
 import '../../App.css';
-import axios from 'axios';
 import {
     Container,
     Row,
@@ -40,15 +39,30 @@ const CategoryPage = ({ addToBasket }) => {
     useEffect(() => {
         const fetchMenus = async () => {
             try {
-                const response = await axios.get(`/api/restaurants/${restaurantId}/menus/`);
-                const menus = response.data;
+                const response = await getRestaurantMenus(restaurantId);
+                const { menus } = response.data;
                 
-                // Find menu matching current language or default menu
-                const matchingMenu = menus.find(menu => menu.language === i18n.language) ||
-                                   menus.find(menu => menu.is_default);
+                // Get saved selection or use default
+                const savedMenuId = localStorage.getItem(`restaurant_${restaurantId}_menu`);
+                const savedLanguage = localStorage.getItem(`restaurant_${restaurantId}_language`);
                 
-                if (matchingMenu) {
-                    setCurrentMenu(matchingMenu);
+                if (savedMenuId) {
+                    const matchingMenu = menus.find(menu => menu.id === savedMenuId);
+                    if (matchingMenu) {
+                        setCurrentMenu(matchingMenu);
+                        i18n.changeLanguage(savedLanguage || matchingMenu.language);
+                    }
+                } else {
+                    // Use default menu
+                    const defaultMenu = menus.find(menu => menu.is_default);
+                    if (defaultMenu) {
+                        setCurrentMenu(defaultMenu);
+                        i18n.changeLanguage(defaultMenu.language);
+                        
+                        // Store default selection
+                        localStorage.setItem(`restaurant_${restaurantId}_menu`, defaultMenu.id);
+                        localStorage.setItem(`restaurant_${restaurantId}_language`, defaultMenu.language);
+                    }
                 }
             } catch (err) {
                 console.error('Error fetching menus:', err);
@@ -57,7 +71,7 @@ const CategoryPage = ({ addToBasket }) => {
         };
 
         fetchMenus();
-    }, [restaurantId, i18n.language, t]);
+    }, [restaurantId, i18n, t]);
 
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -70,12 +84,7 @@ const CategoryPage = ({ addToBasket }) => {
 
                 if (currentMenu) {
                     // Fetch menu items for the category and current menu
-                    const menuResponse = await axios.get(`/api/menu-items/`, {
-                        params: {
-                            category: categoryId,
-                            menu: currentMenu.id
-                        }
-                    });
+                    const menuResponse = await getMenuItems(restaurantId, currentMenu.id, categoryId);
                     setMenuItems(menuResponse.data);
                 }
                 setLoading(false);

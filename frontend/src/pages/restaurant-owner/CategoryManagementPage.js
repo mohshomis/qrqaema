@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getCategories, createCategory, deleteCategory, updateCategory } from '../../services/api';
+import { getCategories, createCategory, deleteCategory, updateCategory, getRestaurantMenus } from '../../services/api';
 import { FaUtensils, FaPlus, FaTrash, FaEdit, FaArrowRight } from 'react-icons/fa';
 import {
     Container,
@@ -41,9 +41,9 @@ const CategoryManagementPage = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // Fetch menu details
-                const menuResponse = await fetch(`/api/menus/${menuId}/`);
-                const menuData = await menuResponse.json();
+                // Fetch menu details using api service
+                const menuResponse = await getRestaurantMenus(restaurantId);
+                const menuData = menuResponse.data.find(menu => menu.id === menuId);
                 setMenuName(menuData.name);
                 setMenuLanguage(menuData.language);
 
@@ -173,47 +173,55 @@ const CategoryManagementPage = () => {
                 )}
 
                 <Row className="g-4">
-                    {categories.map((category) => (
-                        <Col key={category.id} xs={12} sm={6} md={4} lg={3}>
-                            <Card 
-                                className="category-card h-100"
-                                onClick={() => handleCategoryClick(category)}
-                            >
-                                {category.image_url && (
-                                    <div className="card-img-container">
-                                        <Card.Img variant="top" src={category.image_url} alt={category.name} />
-                                        <div className="img-overlay"></div>
-                                    </div>
-                                )}
-                                <Card.Body className="d-flex flex-column">
-                                    <Card.Title>{category.name}</Card.Title>
-                                    <div className="category-actions">
-                                        <Button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleShowEditModal(category);
-                                            }}
-                                            className="category-action-button edit"
-                                        >
-                                            <FaEdit /> {t('categoryManagement.edit')}
-                                        </Button>
-                                        <Button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleDeleteClick(category);
-                                            }}
-                                            className="category-action-button delete"
-                                        >
-                                            <FaTrash /> {t('categoryManagement.delete')}
-                                        </Button>
-                                        <Button className="category-action-button view">
-                                            <FaArrowRight />
-                                        </Button>
-                                    </div>
-                                </Card.Body>
-                            </Card>
+                    {categories.length === 0 ? (
+                        <Col>
+                            <Alert variant="info">
+                                {t('categoryManagement.noCategories')}
+                            </Alert>
                         </Col>
-                    ))}
+                    ) : (
+                        categories.map((category) => (
+                            <Col key={category.id} xs={12} sm={6} md={4} lg={3}>
+                                <Card
+                                    className="category-card h-100"
+                                    onClick={() => handleCategoryClick(category)}
+                                >
+                                    {category.image_url && (
+                                        <div className="card-img-container">
+                                            <Card.Img variant="top" src={category.image_url} alt={category.name} />
+                                            <div className="img-overlay"></div>
+                                        </div>
+                                    )}
+                                    <Card.Body className="d-flex flex-column">
+                                        <Card.Title>{category.name}</Card.Title>
+                                        <div className="category-actions">
+                                            <Button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleShowEditModal(category);
+                                                }}
+                                                className="category-action-button edit"
+                                            >
+                                                <FaEdit /> {t('categoryManagement.edit')}
+                                            </Button>
+                                            <Button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteClick(category);
+                                                }}
+                                                className="category-action-button delete"
+                                            >
+                                                <FaTrash /> {t('categoryManagement.delete')}
+                                            </Button>
+                                            <Button className="category-action-button view">
+                                                <FaArrowRight />
+                                            </Button>
+                                        </div>
+                                    </Card.Body>
+                                </Card>
+                            </Col>
+                        ))
+                    )}
                 </Row>
 
                 {/* Create/Edit Category Modal */}

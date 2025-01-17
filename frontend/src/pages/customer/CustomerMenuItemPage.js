@@ -2,10 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRestaurantPublicDetails } from '../../services/api';
+import { getRestaurantPublicDetails, getRestaurantMenus, getMenuItemDetails } from '../../services/api';
 import Footer from '../../components/Footer';
 import PropTypes from 'prop-types';
-import axios from 'axios';
 import {
   Container,
   Row,
@@ -52,15 +51,30 @@ const CustomerMenuItemPage = ({ addToBasket, basketItems = [] }) => {
   useEffect(() => {
     const fetchMenus = async () => {
       try {
-        const response = await axios.get(`/api/restaurants/${restaurantId}/menus/`);
-        const menus = response.data;
+        const response = await getRestaurantMenus(restaurantId);
+        const { menus } = response.data;
         
-        // Find menu matching current language or default menu
-        const matchingMenu = menus.find(menu => menu.language === i18n.language) ||
-                           menus.find(menu => menu.is_default);
+        // Get saved selection or use default
+        const savedMenuId = localStorage.getItem(`restaurant_${restaurantId}_menu`);
+        const savedLanguage = localStorage.getItem(`restaurant_${restaurantId}_language`);
         
-        if (matchingMenu) {
-          setCurrentMenu(matchingMenu);
+        if (savedMenuId) {
+          const matchingMenu = menus.find(menu => menu.id === savedMenuId);
+          if (matchingMenu) {
+            setCurrentMenu(matchingMenu);
+            i18n.changeLanguage(savedLanguage || matchingMenu.language);
+          }
+        } else {
+          // Use default menu
+          const defaultMenu = menus.find(menu => menu.is_default);
+          if (defaultMenu) {
+            setCurrentMenu(defaultMenu);
+            i18n.changeLanguage(defaultMenu.language);
+            
+            // Store default selection
+            localStorage.setItem(`restaurant_${restaurantId}_menu`, defaultMenu.id);
+            localStorage.setItem(`restaurant_${restaurantId}_language`, defaultMenu.language);
+          }
         }
       } catch (err) {
         console.error('Error fetching menus:', err);
@@ -69,19 +83,15 @@ const CustomerMenuItemPage = ({ addToBasket, basketItems = [] }) => {
     };
 
     fetchMenus();
-  }, [restaurantId, i18n.language, t]);
+  }, [restaurantId, i18n, t]);
 
   useEffect(() => {
     const fetchMenuItem = async () => {
       try {
         if (!currentMenu) return;
 
-        // Fetch menu item with menu context
-        const menuItemResponse = await axios.get(`/api/menu-items/${itemId}/`, {
-          params: {
-            menu: currentMenu.id
-          }
-        });
+        // Fetch menu item details
+        const menuItemResponse = await getMenuItemDetails(restaurantId, itemId);
         const item = menuItemResponse.data;
         setMenuItem(item);
         setCalculatedPrice(Number(item.price));

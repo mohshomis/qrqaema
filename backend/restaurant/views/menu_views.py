@@ -65,7 +65,6 @@ class MenuViewSet(viewsets.ModelViewSet):
     def menus_for_restaurant(self, request, restaurant_id=None):
         try:
             logger.info(f"Fetching menus for restaurant: {restaurant_id}")
-            logger.info(f"User: {request.user}, is authenticated: {request.user.is_authenticated}")
             
             # Get the restaurant first
             restaurant = get_object_or_404(Restaurant, id=restaurant_id)
@@ -78,20 +77,9 @@ class MenuViewSet(viewsets.ModelViewSet):
             ).select_related('restaurant')
             logger.info(f"Found {menus.count()} menus")
             
-            # Log each menu's details
-            for menu in menus:
-                logger.info(f"Menu details:")
-                logger.info(f"- ID: {menu.id}")
-                logger.info(f"- Name: {menu.name}")
-                logger.info(f"- Language: {menu.language}")
-                logger.info(f"- Is Default: {menu.is_default}")
-                logger.info(f"- Categories count: {menu.categories.count()}")
-                logger.info(f"- Menu items count: {menu.menu_items.count()}")
-                
-                # Log categories
-                for category in menu.categories.all():
-                    logger.info(f"  Category: {category.name}")
-                    logger.info(f"  Items in category: {category.menu_items.count()}")
+            # Get available languages
+            available_languages = Menu.get_available_languages(restaurant)
+            logger.info(f"Available languages: {available_languages}")
             
             # Create serializer with request context
             serializer = self.get_serializer(
@@ -100,28 +88,32 @@ class MenuViewSet(viewsets.ModelViewSet):
                 context={'request': request}
             )
             serialized_data = serializer.data
-            logger.info(f"Serialized data: {serialized_data}")
             
+            # If no menus exist, create default menu
             if not serialized_data:
-                logger.warning("Serializer returned empty data")
-                # Check if there's a default menu, if not create one
-                if not menus.exists():
-                    logger.info("Creating default menu for restaurant")
-                    default_menu = Menu.objects.create(
-                        restaurant=restaurant,
-                        name="Default Menu",
-                        language=restaurant.default_language or 'en',
-                        is_default=True
-                    )
-                    serializer = self.get_serializer(
-                        [default_menu], 
-                        many=True,
-                        context={'request': request}
-                    )
-                    serialized_data = serializer.data
-                    logger.info(f"Created default menu: {serialized_data}")
+                logger.info("Creating default menu for restaurant")
+                default_menu = Menu.objects.create(
+                    restaurant=restaurant,
+                    name="Default Menu",
+                    language=restaurant.default_language or 'en',
+                    is_default=True
+                )
+                serializer = self.get_serializer(
+                    [default_menu], 
+                    many=True,
+                    context={'request': request}
+                )
+                serialized_data = serializer.data
+                available_languages = [default_menu.language]
             
-            return Response(serialized_data)
+            # Return both menus and available languages
+            response_data = {
+                'menus': serialized_data,
+                'available_languages': available_languages,
+                'default_language': restaurant.default_language
+            }
+            
+            return Response(response_data)
         except Exception as e:
             logger.error(f"Error fetching menus: {str(e)}")
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -228,18 +220,27 @@ class MenuItemViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Menu item not found for this restaurant'}, status=status.HTTP_404_NOT_FOUND)
 
     def get_queryset(self):
-        menu_id = self.request.query_params.get('menu')
-        if menu_id:
-            return MenuItem.objects.filter(menu__id=menu_id)
+        logger.info("MenuItemViewSet.get_queryset called")
+        logger.info(f"Query params: {self.request.query_params}")
+        
+        queryset = MenuItem.objects.all()
         
         restaurant_id = self.request.query_params.get('restaurant')
-        if restaurant_id:
-            queryset = MenuItem.objects.filter(restaurant__id=restaurant_id)
-            if menu_id:
-                queryset = queryset.filter(menu__id=menu_id)
-            return queryset
+        menu_id = self.request.query_params.get('menu')
+        category_id = self.request.query_params.get('category')
         
-        return MenuItem.objects.none()
+        logger.info(f"Filtering params - restaurant: {restaurant_id}, menu: {menu_id}, category: {category_id}")
+        
+        if restaurant_id:
+            queryset = queryset.filter(restaurant__id=restaurant_id)
+        if menu_id:
+            queryset = queryset.filter(menu__id=menu_id)
+        if category_id:
+            queryset = queryset.filter(category__id=category_id)
+            
+        result = queryset if (restaurant_id or menu_id or category_id) else MenuItem.objects.none()
+        logger.info(f"Returning {result.count()} menu items")
+        return result
 
     def perform_create(self, serializer):
         restaurant_id = self.request.data.get('restaurant')

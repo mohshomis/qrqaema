@@ -16,8 +16,10 @@ class TableSerializer(serializers.ModelSerializer):
     def validate_number(self, value):
         restaurant = self.context.get('restaurant')
         if restaurant is None:
-            raise serializers.ValidationError("Restaurant context is missing.")
-
+            restaurant = self.initial_data.get('restaurant')
+            if restaurant is None:
+                return value  # Skip validation if no restaurant is provided yet
+        
         if Table.objects.filter(restaurant=restaurant, number=value).exists():
             raise serializers.ValidationError("This table number already exists in the restaurant.")
         return value
@@ -25,8 +27,13 @@ class TableSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         restaurant = self.context.get('restaurant')
         if restaurant is None:
-            raise serializers.ValidationError("Restaurant context is missing.")
-
+            restaurant = validated_data.get('restaurant')
+            if restaurant is None:
+                raise serializers.ValidationError("Restaurant is required.")
+        
+        # Remove restaurant from validated_data if it exists to avoid duplicate key
+        validated_data.pop('restaurant', None)
+        
         try:
             table = Table.objects.create(restaurant=restaurant, **validated_data)
             return table

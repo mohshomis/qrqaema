@@ -102,8 +102,9 @@ class Restaurant(models.Model):
     def generate_qr_code(self, table_uuid):
         try:
             table = self.tables.get(id=table_uuid)
-            # Step 1: Generate the QR code URL using UUIDs
-            url = f"{settings.FRONTEND_URL}restaurant/{self.id}/table/{table.id}"
+            # Step 1: Generate the QR code URL using UUIDs (ensure proper URL format)
+            frontend_url = settings.FRONTEND_URL.rstrip('/')
+            url = f"{frontend_url}/restaurant/{self.id}/table/{table.id}"
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_H,
@@ -144,8 +145,11 @@ class Restaurant(models.Model):
             qr_image_content = ContentFile(qr_with_bg_io.getvalue())
             saved_path = default_storage.save(qr_image_path, qr_image_content)
         
-            # Step 8: Construct the CDN URL for downloading
-            qr_code_url = f"{settings.MEDIA_URL}{saved_path}"
+            # Step 8: Construct the full URL for downloading
+            # Use the backend URL (localhost:8000) for serving media files
+            backend_url = settings.FRONTEND_URL.replace('3000', '8000').rstrip('/')
+            media_url = settings.MEDIA_URL.strip('/')
+            qr_code_url = f"{backend_url}/{media_url}/{saved_path}"
         
             return qr_code_url  # Return the file path for downloading
 
@@ -206,14 +210,29 @@ class Menu(models.Model):
     class Meta:
         unique_together = ('restaurant', 'language')
 
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        # Check if another menu with same language exists for this restaurant
+        if Menu.objects.filter(restaurant=self.restaurant, language=self.language).exclude(id=self.id).exists():
+            raise ValidationError(f"A menu in {self.language} already exists for this restaurant.")
+
     def save(self, *args, **kwargs):
+        self.clean()
         # If this is marked as default, unmark other menus as default
         if self.is_default:
             Menu.objects.filter(restaurant=self.restaurant).exclude(id=self.id).update(is_default=False)
+        # If this is the first menu for the restaurant, mark it as default
+        if not Menu.objects.filter(restaurant=self.restaurant).exists():
+            self.is_default = True
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.name} ({self.language}) - {self.restaurant.name}"
+        return f"Menu ({self.language}) - {self.restaurant.name}"
+
+    @classmethod
+    def get_available_languages(cls, restaurant):
+        """Get list of languages that have menus for this restaurant."""
+        return list(cls.objects.filter(restaurant=restaurant).values_list('language', flat=True))
 
 class Category(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='categories')

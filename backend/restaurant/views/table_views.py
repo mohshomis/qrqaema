@@ -50,30 +50,29 @@ class TableViewSet(viewsets.ModelViewSet):
         return queryset
 
     def create(self, request, *args, **kwargs):
-        print(f"Request data: {request.data}")
-        print(f"Request content type: {request.content_type}")
-        print(f"URL kwargs: {self.kwargs}")
-        
-        # Extract data from request
-        data = {
-            'number': request.data.get('number'),
-            'capacity': request.data.get('capacity', 4)
-        }
-        
-        print(f"Processed data: {data}")
-        
-        if not data['number']:
-            return Response(
-                {"error": "Table number is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-            
-        serializer = self.get_serializer(data=data)
         try:
+            restaurant_id = self.kwargs.get('restaurant_id')
+            restaurant = get_object_or_404(Restaurant, pk=restaurant_id)
+            
+            # Get the highest table number for this restaurant
+            highest_table = Table.objects.filter(restaurant=restaurant).order_by('-number').first()
+            next_number = (highest_table.number + 1) if highest_table else 1
+            
+            # Prepare data with auto-generated number and restaurant
+            data = {
+                'number': next_number,
+                'capacity': request.data.get('capacity', 4),
+                'restaurant': restaurant.id
+            }
+            
+            serializer = self.get_serializer(data=data)
             serializer.is_valid(raise_exception=True)
             table = serializer.save()
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
         except Exception as e:
+            print(f"Error creating table: {str(e)}")  # Add logging
             return Response(
                 {"error": str(e)},
                 status=status.HTTP_400_BAD_REQUEST

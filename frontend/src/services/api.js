@@ -103,9 +103,15 @@ export const getRestaurantMenus = (restaurantId) => {
 };
 
 // Get Menu Items
-export const getMenuItems = (restaurantId) => {
-    console.log(restaurantId);
-    return axiosInstance.get(`menu-items/?restaurant=${restaurantId}`);
+export const getMenuItems = (restaurantId, menuId, categoryId) => {
+    const params = {
+        restaurant: restaurantId,
+        menu: menuId
+    };
+    if (categoryId) {
+        params.category = categoryId;
+    }
+    return axiosInstance.get('menu-items/', { params });
 };
 
 // Get a Menu Item by restaurantId and itemId
@@ -146,7 +152,9 @@ export const getQrCodes = (restaurantId) => {
 
 // Add a new table
 export const addTable = (restaurantId) => {
-    return axiosInstance.post(`restaurants/${restaurantId}/add_table/`, {});
+    return axiosInstance.post(`restaurants/${restaurantId}/add_table/`, {
+        capacity: 4  // Default capacity
+    });
 };
 
 // Remove a table
@@ -310,8 +318,10 @@ export const deleteCategory = (categoryId) => {
 };
 
 // Get Categories for a specific restaurant
-export const getCategories = (restaurantId) => {
-    return axiosInstance.get(`restaurants/${restaurantId}/categories/`);
+export const getCategories = (restaurantId, menuId) => {
+    return axiosInstance.get(`restaurants/${restaurantId}/categories/`, {
+        params: { menu: menuId }
+    });
 };
 
 export const getCategoryById = (categoryId) => {
@@ -324,12 +334,16 @@ export const getStaffList = (restaurantId) => {
 };
 
 // Create Menu Item with Image Upload
-export const createMenuItem = (formData, menuId) => {
-    formData.append('menu', menuId);
+export const createMenuItem = (formData) => {
+    // Log form data for debugging
     for (let pair of formData.entries()) {
         console.log(`${pair[0]}: ${pair[1]}`);
     }
-    return axiosInstance.post('menu-items/', formData);
+    return axiosInstance.post('menu-items/', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
 };
 
 // Update Menu Item Details

@@ -29,11 +29,16 @@ restaurants_router.register(r'tables', TableViewSet, basename='restaurant-tables
 restaurants_router.register(r'menus', MenuViewSet, basename='restaurant-menus')
 
 urlpatterns = [
-    # Menu-specific endpoints (moved to top to take precedence)
+# Menu-specific endpoints (moved to top to take precedence)
     path(
         'restaurants/<uuid:restaurant_id>/menus/',
         MenuViewSet.as_view({'get': 'menus_for_restaurant'}),
         name='restaurant_menus'
+    ),
+    path(
+        'menus/<uuid:pk>/',
+        MenuViewSet.as_view({'get': 'retrieve'}),
+        name='menu-detail'
     ),
     path(
         'menus/<uuid:pk>/set-default/',

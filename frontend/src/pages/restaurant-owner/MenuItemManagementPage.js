@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { getMenuItems, deleteMenuItem, createMenuItem, getMenuItemById, updateMenuItem, getCategories } from '../../services/api';
+import { getMenuItems, deleteMenuItem, createMenuItem, getMenuItemById, updateMenuItem, getCategories, getRestaurantMenus } from '../../services/api';
 import { FaUtensils, FaPlus, FaTrash, FaEdit, FaArrowLeft } from 'react-icons/fa';
 import {
     Container,
@@ -42,7 +42,6 @@ const MenuItemManagementPage = () => {
         description: '',
         price: '',
         image: null,
-        category: categoryId || '',
         options: []
     });
 
@@ -50,9 +49,9 @@ const MenuItemManagementPage = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // Fetch menu details
-                const menuResponse = await fetch(`/api/menus/${menuId}/`);
-                const menuData = await menuResponse.json();
+                // Fetch menu details using api service
+                const menuResponse = await getRestaurantMenus(restaurantId);
+                const menuData = menuResponse.data.find(menu => menu.id === menuId);
                 setMenuName(menuData.name);
                 setMenuLanguage(menuData.language);
 
@@ -86,14 +85,23 @@ const MenuItemManagementPage = () => {
         e.preventDefault();
         try {
             const formDataObj = new FormData();
-            Object.keys(formData).forEach(key => {
-                if (key === 'options') {
-                    formDataObj.append(key, JSON.stringify(formData[key]));
-                } else if (formData[key] !== null) {
-                    formDataObj.append(key, formData[key]);
-                }
-            });
+            // Required fields
+            formDataObj.append('name', formData.name);
+            formDataObj.append('price', formData.price);
+            formDataObj.append('restaurant', restaurantId);
             formDataObj.append('menu', menuId);
+            formDataObj.append('category', categoryId);
+
+            // Optional fields
+            if (formData.description) {
+                formDataObj.append('description', formData.description);
+            }
+            if (formData.image) {
+                formDataObj.append('image', formData.image);
+            }
+            if (formData.options && formData.options.length > 0) {
+                formDataObj.append('options', JSON.stringify(formData.options));
+            }
 
             await createMenuItem(formDataObj);
             setSuccess(t('menuItemManagement.success.created'));
@@ -105,7 +113,6 @@ const MenuItemManagementPage = () => {
                 description: '',
                 price: '',
                 image: null,
-                category: categoryId || '',
                 options: []
             });
         } catch (error) {
@@ -203,22 +210,24 @@ const MenuItemManagementPage = () => {
                                     <Badge bg="info" className="mb-3 align-self-start">
                                         ${Number(item.price).toFixed(2)}
                                     </Badge>
-                                    <div className="mt-auto d-flex gap-2">
+                                    <div className="mt-auto d-flex flex-wrap gap-2">
                                         <Button
                                             variant="outline-primary"
-                                            size="sm"
+                                            size="md"
                                             onClick={() => handleEditItem(item)}
-                                            className="flex-grow-0"
+                                            className="action-button"
+                                            style={{ padding: '8px 16px' }}
                                         >
-                                            <FaEdit /> {t('menuItemManagement.edit')}
+                                            <FaEdit className="me-2" /> {t('menuItemManagement.edit')}
                                         </Button>
                                         <Button
                                             variant="outline-danger"
-                                            size="sm"
+                                            size="md"
                                             onClick={() => handleDeleteClick(item)}
-                                            className="flex-grow-0"
+                                            className="action-button"
+                                            style={{ padding: '8px 16px' }}
                                         >
-                                            <FaTrash /> {t('menuItemManagement.delete')}
+                                            <FaTrash className="me-2" /> {t('menuItemManagement.delete')}
                                         </Button>
                                     </div>
                                 </Card.Body>
@@ -268,21 +277,6 @@ const MenuItemManagementPage = () => {
                                     accept="image/*"
                                     onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                                 />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Label>{t('menuItemManagement.form.category')}</Form.Label>
-                                <Form.Select
-                                    value={formData.category}
-                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                                    required
-                                >
-                                    <option value="">{t('menuItemManagement.form.selectCategory')}</option>
-                                    {categories.map((category) => (
-                                        <option key={category.id} value={category.id}>
-                                            {category.name}
-                                        </option>
-                                    ))}
-                                </Form.Select>
                             </Form.Group>
                         </Form>
                     </Modal.Body>

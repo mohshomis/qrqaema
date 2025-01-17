@@ -2,13 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRestaurantPublicDetails, getCategories } from '../../services/api';
+import { getRestaurantPublicDetails, getCategories, getRestaurantMenus } from '../../services/api';
 import Footer from '../../components/Footer';
 import '../../styles/Footer.css';
 import '../../styles/CustomerPages.css';
 import '../../App.css';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
 import { 
     Container, 
     Row, 
@@ -17,7 +16,8 @@ import {
     Button, 
     Spinner, 
     Alert,
-    Badge 
+    Badge,
+    Modal
 } from 'react-bootstrap';
 import {
     FaUtensils,
@@ -38,19 +38,62 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
     const [restaurantName, setRestaurantName] = useState('');
     const [currentMenu, setCurrentMenu] = useState(null);
     const [availableMenus, setAvailableMenus] = useState([]);
+    const [showLanguageModal, setShowLanguageModal] = useState(false);
+
+    // Check if it's the first visit or if menu selection is needed
+    useEffect(() => {
+        const savedMenuId = localStorage.getItem(`restaurant_${restaurantId}_menu`);
+        if (!savedMenuId) {
+            setShowLanguageModal(true);
+        }
+    }, [restaurantId]);
+
+    // Handle menu and language selection
+    const handleLanguageSelect = (menu) => {
+        const selectedData = {
+            menuId: menu.id,
+            menuLanguage: menu.language,
+            uiLanguage: menu.language // Initially set UI language same as menu language
+        };
+        
+        // Store selection
+        localStorage.setItem(`restaurant_${restaurantId}_menu`, selectedData.menuId);
+        localStorage.setItem(`restaurant_${restaurantId}_language`, selectedData.menuLanguage);
+        
+        // Set menu content and UI language
+        setCurrentMenu(menu);
+        i18n.changeLanguage(menu.language);
+        setShowLanguageModal(false);
+    };
 
     useEffect(() => {
         const fetchMenus = async () => {
             try {
-                const response = await axios.get(`/api/restaurants/${restaurantId}/menus/`);
-                setAvailableMenus(response.data);
+                const response = await getRestaurantMenus(restaurantId);
+                const { menus, available_languages, default_language } = response.data;
                 
-                // Find menu matching current language or default menu
-                const matchingMenu = response.data.find(menu => menu.language === i18n.language) ||
-                                   response.data.find(menu => menu.is_default);
+                setAvailableMenus(menus);
                 
-                if (matchingMenu) {
-                    setCurrentMenu(matchingMenu);
+                // Get saved selection or use default
+                const savedMenuId = localStorage.getItem(`restaurant_${restaurantId}_menu`);
+                const savedLanguage = localStorage.getItem(`restaurant_${restaurantId}_language`);
+                if (savedMenuId) {
+                    const matchingMenu = menus.find(menu => menu.id === savedMenuId);
+                    if (matchingMenu) {
+                        setCurrentMenu(matchingMenu);
+                        i18n.changeLanguage(savedLanguage || matchingMenu.language);
+                    }
+                } else {
+                    // Use default menu
+                    const defaultMenu = menus.find(menu => menu.is_default);
+                    if (defaultMenu) {
+                        setCurrentMenu(defaultMenu);
+                        i18n.changeLanguage(defaultMenu.language);
+                        
+                        // Store default selection
+                        localStorage.setItem(`restaurant_${restaurantId}_menu`, defaultMenu.id);
+                        localStorage.setItem(`restaurant_${restaurantId}_language`, defaultMenu.language);
+                    }
                 }
             } catch (err) {
                 console.error('Error fetching menus:', err);
@@ -58,7 +101,7 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
         };
 
         fetchMenus();
-    }, [restaurantId, i18n.language]);
+    }, [restaurantId, i18n]);
 
     useEffect(() => {
         const fetchRestaurantData = async () => {
@@ -68,7 +111,7 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
                 setRestaurantName(restaurantResponse.data.name);
 
                 if (currentMenu) {
-                    const categoriesResponse = await axios.get(`/api/categories/?menu=${currentMenu.id}`);
+                    const categoriesResponse = await getCategories(restaurantId, currentMenu.id);
                     setCategories(categoriesResponse.data);
                 }
                 setLoading(false);
@@ -81,15 +124,6 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
 
         fetchRestaurantData();
     }, [restaurantId, currentMenu, t]);
-
-    // Update menu when language changes
-    useEffect(() => {
-        const matchingMenu = availableMenus.find(menu => menu.language === i18n.language) ||
-                           availableMenus.find(menu => menu.is_default);
-        if (matchingMenu) {
-            setCurrentMenu(matchingMenu);
-        }
-    }, [i18n.language, availableMenus]);
 
     const handleCategoryClick = (categoryId) => {
         navigate(`/restaurant/${restaurantId}/table/${tableNumber}/category/${categoryId}`);
@@ -117,6 +151,66 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
 
     return (
         <div className="page-container" dir={i18n.dir()}>
+            {/* Language Selection Modal */}
+            <Modal
+                show={showLanguageModal}
+                onHide={() => {
+                    // If user closes without selecting, use default menu
+                    const defaultMenu = availableMenus.find(menu => menu.is_default);
+                    if (defaultMenu) {
+                        handleLanguageSelect(defaultMenu);
+                    }
+                }}
+                centered
+                backdrop="static"
+                keyboard={false}
+            >
+                <Modal.Header closeButton={false}>
+                    <Modal.Title className="text-center w-100">
+                        Select Menu Language
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div className="d-grid gap-2">
+                        {availableMenus.map(menu => {
+                            const languageNames = {
+                                en: 'English',
+                                ar: 'العربية',
+                                de: 'Deutsch',
+                                es: 'Español',
+                                fr: 'Français',
+                                tr: 'Türkçe',
+                                nl: 'Nederlands'
+                            };
+                            
+                            return (
+                                <Button
+                                    key={menu.language}
+                                    variant="outline-primary"
+                                    size="lg"
+                                    onClick={() => handleLanguageSelect(menu)}
+                                    className="text-start d-flex justify-content-between align-items-center"
+                                >
+                                    <div className="d-flex flex-column">
+                                        <span className="fs-5">
+                                            {languageNames[menu.language] || menu.language}
+                                        </span>
+                                        <small className="text-muted">
+                                            {menu.categories.length} {t('categories')}
+                                        </small>
+                                    </div>
+                                    <div>
+                                        {menu.is_default && (
+                                            <span className="badge bg-primary me-2">Default</span>
+                                        )}
+                                    </div>
+                                </Button>
+                            );
+                        })}
+                    </div>
+                </Modal.Body>
+            </Modal>
+
             <div className="background-overlay"></div>
             {restaurantBackground && (
                 <div
