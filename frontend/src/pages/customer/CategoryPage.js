@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getMenuItemsByCategory, getRestaurantPublicDetails } from '../../services/api';
-import Footer from '../../components/Footer'; // Removed Header
+import { getRestaurantPublicDetails } from '../../services/api';
+import Footer from '../../components/Footer';
 import '../../styles/Footer.css';
 import '../../styles/CustomerPages.css';
 import '../../App.css';
+import axios from 'axios';
 import {
     Container,
     Row,
@@ -23,17 +24,40 @@ import {
     FaInfoCircle,
     FaArrowLeft
 } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from 'react-i18next';
 
 const CategoryPage = ({ addToBasket }) => {
-    const { t, i18n } = useTranslation(); // Initialize translation
-    const { restaurantId, categoryId, tableNumber } = useParams(); // Include tableNumber from params
+    const { t, i18n } = useTranslation();
+    const { restaurantId, categoryId, tableNumber } = useParams();
     const navigate = useNavigate();
     const [menuItems, setMenuItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [restaurantBackground, setRestaurantBackground] = useState(null);
     const [restaurantName, setRestaurantName] = useState('');
+    const [currentMenu, setCurrentMenu] = useState(null);
+
+    useEffect(() => {
+        const fetchMenus = async () => {
+            try {
+                const response = await axios.get(`/api/restaurants/${restaurantId}/menus/`);
+                const menus = response.data;
+                
+                // Find menu matching current language or default menu
+                const matchingMenu = menus.find(menu => menu.language === i18n.language) ||
+                                   menus.find(menu => menu.is_default);
+                
+                if (matchingMenu) {
+                    setCurrentMenu(matchingMenu);
+                }
+            } catch (err) {
+                console.error('Error fetching menus:', err);
+                setError(t('categoryPage.errors.fetchFailed'));
+            }
+        };
+
+        fetchMenus();
+    }, [restaurantId, i18n.language, t]);
 
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -44,11 +68,16 @@ const CategoryPage = ({ addToBasket }) => {
                 setRestaurantBackground(restaurantData.background_image_url);
                 setRestaurantName(restaurantData.name);
 
-                // Fetch menu items for the category
-                console.log(categoryId);
-                const menuResponse = await getMenuItemsByCategory(categoryId);
-                console.log(categoryId);
-                setMenuItems(menuResponse.data);
+                if (currentMenu) {
+                    // Fetch menu items for the category and current menu
+                    const menuResponse = await axios.get(`/api/menu-items/`, {
+                        params: {
+                            category: categoryId,
+                            menu: currentMenu.id
+                        }
+                    });
+                    setMenuItems(menuResponse.data);
+                }
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching menu items or restaurant details:', err);
@@ -57,15 +86,11 @@ const CategoryPage = ({ addToBasket }) => {
             }
         };
 
-        if (restaurantId && categoryId) {
+        if (restaurantId && categoryId && currentMenu) {
             fetchCategoryData();
-        } else {
-            setError(t('categoryPage.errors.invalidIds'));
-            setLoading(false);
         }
-    }, [restaurantId, categoryId, t]);
+    }, [restaurantId, categoryId, currentMenu, t]);
 
-    // Include tableNumber in the URL when navigating to the menu item
     const handleMenuItemClick = (itemId) => {
         navigate(`/restaurant/${restaurantId}/table/${tableNumber}/menu-item/${itemId}`);
     };
@@ -90,9 +115,7 @@ const CategoryPage = ({ addToBasket }) => {
 
     return (
         <div className="page-container" dir={i18n.dir()}>
-            {/* Background overlay */}
             <div className="background-overlay"></div>
-            {/* Blurred Background Image */}
             {restaurantBackground && (
                 <div
                     className="background-image"
@@ -109,7 +132,6 @@ const CategoryPage = ({ addToBasket }) => {
                 />
             )}
 
-            {/* Foreground Content */}
             <Container className="my-5">
                 <Row className="justify-content-center">
                     <Col lg={10} md={12}>
@@ -118,47 +140,49 @@ const CategoryPage = ({ addToBasket }) => {
                             {menuItems.length > 0 ? (
                                 menuItems.map((item) => (
                                     <Col key={item.id} sm={6} md={4} lg={3} className="mb-4">
-                        <Card 
-                            className="h-100 custom-card menu-item-card fade-in" 
-                            onClick={() => handleMenuItemClick(item.id)}
-                        >
-                            <div className="position-relative">
-                                {item.image && (
-                                    <div className="card-img-container">
-                                        <Card.Img variant="top" src={item.image} alt={item.name} />
-                                        <div className="img-overlay"></div>
-                                    </div>
-                                )}
-                                <div className="price-tag">
-                                    <FaDollarSign className="me-1" />
-                                    {Number(item.price).toFixed(2)}
-                                </div>
-                            </div>
-                            <Card.Body className="d-flex flex-column">
-                                <div className="d-flex justify-content-between align-items-start mb-2">
-                                    <Card.Title className="mb-0">{item.name}</Card.Title>
-                                    <Badge bg="success" className="ms-2">
-                                        {t('categoryPage.available')}
-                                    </Badge>
-                                </div>
-                                {item.description && (
-                                    <Card.Text className="text-muted small mb-3">
-                                        {item.description}
-                                    </Card.Text>
-                                )}
-                                <Button 
-                                    variant="outline-primary" 
-                                    className="mt-auto custom-button"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleMenuItemClick(item.id);
-                                    }}
-                                >
-                                    <FaInfoCircle className="me-2" />
-                                    {t('categoryPage.viewDetails')}
-                                </Button>
-                            </Card.Body>
-                        </Card>
+                                        <Card 
+                                            className="h-100 custom-card menu-item-card fade-in" 
+                                            onClick={() => handleMenuItemClick(item.id)}
+                                        >
+                                            <div className="position-relative">
+                                                {item.image_url && (
+                                                    <div className="card-img-container">
+                                                        <Card.Img variant="top" src={item.image_url} alt={item.name} />
+                                                        <div className="img-overlay"></div>
+                                                    </div>
+                                                )}
+                                                <div className="price-tag">
+                                                    <FaDollarSign className="me-1" />
+                                                    {Number(item.price).toFixed(2)}
+                                                </div>
+                                            </div>
+                                            <Card.Body className="d-flex flex-column">
+                                                <div className="d-flex justify-content-between align-items-start mb-2">
+                                                    <Card.Title className="mb-0">{item.name}</Card.Title>
+                                                    {item.is_available && (
+                                                        <Badge bg="success" className="ms-2">
+                                                            {t('categoryPage.available')}
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                                {item.description && (
+                                                    <Card.Text className="text-muted small mb-3">
+                                                        {item.description}
+                                                    </Card.Text>
+                                                )}
+                                                <Button 
+                                                    variant="outline-primary" 
+                                                    className="mt-auto custom-button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleMenuItemClick(item.id);
+                                                    }}
+                                                >
+                                                    <FaInfoCircle className="me-2" />
+                                                    {t('categoryPage.viewDetails')}
+                                                </Button>
+                                            </Card.Body>
+                                        </Card>
                                     </Col>
                                 ))
                             ) : (
@@ -186,7 +210,6 @@ const CategoryPage = ({ addToBasket }) => {
                     </Col>
                 </Row>
             </Container>
-
         </div>
     );
 };

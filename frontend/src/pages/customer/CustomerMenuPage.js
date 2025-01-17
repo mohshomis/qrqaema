@@ -8,6 +8,7 @@ import '../../styles/Footer.css';
 import '../../styles/CustomerPages.css';
 import '../../App.css';
 import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import { 
     Container, 
     Row, 
@@ -35,6 +36,29 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
     const [error, setError] = useState(null);
     const [restaurantBackground, setRestaurantBackground] = useState(null);
     const [restaurantName, setRestaurantName] = useState('');
+    const [currentMenu, setCurrentMenu] = useState(null);
+    const [availableMenus, setAvailableMenus] = useState([]);
+
+    useEffect(() => {
+        const fetchMenus = async () => {
+            try {
+                const response = await axios.get(`/api/restaurants/${restaurantId}/menus/`);
+                setAvailableMenus(response.data);
+                
+                // Find menu matching current language or default menu
+                const matchingMenu = response.data.find(menu => menu.language === i18n.language) ||
+                                   response.data.find(menu => menu.is_default);
+                
+                if (matchingMenu) {
+                    setCurrentMenu(matchingMenu);
+                }
+            } catch (err) {
+                console.error('Error fetching menus:', err);
+            }
+        };
+
+        fetchMenus();
+    }, [restaurantId, i18n.language]);
 
     useEffect(() => {
         const fetchRestaurantData = async () => {
@@ -43,8 +67,10 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
                 setRestaurantBackground(restaurantResponse.data.background_image_url);
                 setRestaurantName(restaurantResponse.data.name);
 
-                const categoriesResponse = await getCategories(restaurantId);
-                setCategories(categoriesResponse.data);
+                if (currentMenu) {
+                    const categoriesResponse = await axios.get(`/api/categories/?menu=${currentMenu.id}`);
+                    setCategories(categoriesResponse.data);
+                }
                 setLoading(false);
             } catch (err) {
                 console.error('Error fetching categories or restaurant details:', err);
@@ -54,7 +80,16 @@ const CustomerMenuPage = ({ basketItems, addToBasket }) => {
         };
 
         fetchRestaurantData();
-    }, [restaurantId, t]);
+    }, [restaurantId, currentMenu, t]);
+
+    // Update menu when language changes
+    useEffect(() => {
+        const matchingMenu = availableMenus.find(menu => menu.language === i18n.language) ||
+                           availableMenus.find(menu => menu.is_default);
+        if (matchingMenu) {
+            setCurrentMenu(matchingMenu);
+        }
+    }, [i18n.language, availableMenus]);
 
     const handleCategoryClick = (categoryId) => {
         navigate(`/restaurant/${restaurantId}/table/${tableNumber}/category/${categoryId}`);

@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { FaUserCircle, FaUtensils, FaSignOutAlt, FaLanguage, FaEye } from 'react-icons/fa';
+import { FaUserCircle, FaUtensils, FaSignOutAlt, FaLanguage, FaEye, FaGlobe } from 'react-icons/fa';
 import { HiUserGroup } from 'react-icons/hi';
 import { MdCategory } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -111,39 +111,15 @@ const RestaurantManagementHeader = () => {
                     <FaEye className="me-2" /> {t('viewMenu')}
                   </Nav.Link>
 
-                  {/* Manage Menu Dropdown */}
-                  <NavDropdown
-                    title={
-                      <span className="text-white align-items-center">
-                        <FaUtensils className="me-2" /> {t('manageMenu')}
-                      </span>
-                    }
-                    id="menu-dropdown"
-                    className="text-white"
-                    menuVariant="dark"
-                    style={{ zIndex: 1050, position: 'relative' }}
+                  {/* Manage Menu Button */}
+                  <Nav.Link
+                    as={Link}
+                    to={`/restaurant/${restaurant_id}/menus`}
+                    className="text-white d-flex align-items-center"
                     data-tour="header-manage-menu"
                   >
-                    {/* Manage Categories */}
-                    <NavDropdown.Item
-                      as={Link}
-                      to={`/restaurant/${restaurant_id}/categories`}
-                      className="d-flex align-items-center"
-                      data-tour="header-manage-categories"
-                    >
-                      <MdCategory className="me-2" /> {t('categories')}
-                    </NavDropdown.Item>
-
-                    {/* Manage Menu Items */}
-                    <NavDropdown.Item
-                      as={Link}
-                      to={`/restaurant/${restaurant_id}/menu-items`}
-                      className="d-flex align-items-center"
-                      data-tour="header-manage-menu-items"
-                    >
-                      <FaUtensils className="me-2" /> {t('menuItems')}
-                    </NavDropdown.Item>
-                  </NavDropdown>
+                    <FaUtensils className="me-2" /> {t('manageMenu')}
+                  </Nav.Link>
 
                   {/* Staff Management */}
                   <Nav.Link

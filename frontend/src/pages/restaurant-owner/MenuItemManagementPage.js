@@ -1,949 +1,323 @@
-// src/pages/MenuItemManagementPage.js
-
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { 
-    getMenuItems, 
-    deleteMenuItem, 
-    createMenuItem, 
-    getMenuItemById, 
-    updateMenuItem, 
-    getCategories 
-} from '../../services/api';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { getMenuItems, deleteMenuItem, createMenuItem, getMenuItemById, updateMenuItem, getCategories } from '../../services/api';
+import { FaUtensils, FaPlus, FaTrash, FaEdit, FaArrowLeft } from 'react-icons/fa';
 import {
     Container,
     Row,
     Col,
     Form,
     Button,
-    Spinner,
-    Image,
     Card,
     Alert,
     Modal,
+    Badge,
+    Image
 } from 'react-bootstrap';
-import { ToastContainer, toast } from 'react-toastify';
-import { FaPlus, FaTrash, FaEdit, FaUpload } from 'react-icons/fa';
-import imageCompression from 'browser-image-compression';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from 'react-i18next';
+import '../../styles/CustomerPages.css';
 
 const MenuItemManagementPage = () => {
-    const { t, i18n } = useTranslation(); // Initialize translation
-    const { restaurantId } = useParams();
+    const { t } = useTranslation();
+    const { restaurantId, menuId } = useParams();
+    const [searchParams] = useSearchParams();
+    const categoryId = searchParams.get('category');
+    const navigate = useNavigate();
+
     const [menuItems, setMenuItems] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [menuName, setMenuName] = useState('');
+    const [menuLanguage, setMenuLanguage] = useState('');
+    const [categoryName, setCategoryName] = useState('');
     const [loading, setLoading] = useState(true);
-    const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState(null);
-
-    // States for Create Menu Item Modal
+    const [success, setSuccess] = useState(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [newMenuItem, setNewMenuItem] = useState({
-        name: '',
-        description: '',
-        price: '',
-        imageFile: null,
-        categoryId: '',
-        options: [],
-    });
-    const [newPreviewImage, setNewPreviewImage] = useState(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState(null);
 
-    // States for Edit Menu Item Modal
-    const [showEditModal, setShowEditModal] = useState(false);
-    const [currentMenuItem, setCurrentMenuItem] = useState(null);
-    const [editMenuItem, setEditMenuItem] = useState({
+    // Form states
+    const [formData, setFormData] = useState({
         name: '',
         description: '',
         price: '',
-        imageFile: null,
-        categoryId: '',
-        options: [],
+        image: null,
+        category: categoryId || '',
+        options: []
     });
-    const [editPreviewImage, setEditPreviewImage] = useState(null);
-    const [existingImageUrl, setExistingImageUrl] = useState(null);
 
     useEffect(() => {
-        fetchMenuItems();
-        fetchCategories();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [restaurantId]);
-
-    const fetchMenuItems = async () => {
-        try {
-            setLoading(true);
-            const response = await getMenuItems(restaurantId);
-            setMenuItems(response.data);
-            setError(null);
-        } catch (error) {
-            console.error(t('errors.fetchMenuItems'), error);
-            setError(t('errors.fetchMenuItems'));
-            toast.error(t('errors.fetchMenuItems'));
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const fetchCategories = async () => {
-        try {
-            const response = await getCategories(restaurantId);
-            setCategories(response.data);
-        } catch (error) {
-            console.error(t('errors.fetchCategories'), error);
-            toast.error(t('errors.fetchCategories'));
-        }
-    };
-
-    // Handle Delete Menu Item
-    const handleDeleteMenuItem = async (menuItemId) => {
-        if (window.confirm(t('confirm.deleteMenuItem'))) {
+        const fetchData = async () => {
             try {
-                setSubmitting(true);
-                await deleteMenuItem(menuItemId);
-                fetchMenuItems();
+                setLoading(true);
+                // Fetch menu details
+                const menuResponse = await fetch(`/api/menus/${menuId}/`);
+                const menuData = await menuResponse.json();
+                setMenuName(menuData.name);
+                setMenuLanguage(menuData.language);
+
+                // Fetch categories
+                const categoriesResponse = await getCategories(restaurantId, menuId);
+                setCategories(categoriesResponse.data);
+
+                if (categoryId) {
+                    const category = categoriesResponse.data.find(c => c.id.toString() === categoryId);
+                    if (category) {
+                        setCategoryName(category.name);
+                    }
+                }
+
+                // Fetch menu items
+                const itemsResponse = await getMenuItems(restaurantId, menuId, categoryId);
+                setMenuItems(itemsResponse.data);
                 setError(null);
-                toast.success(t('success.menuItemDeleted'));
             } catch (error) {
-                console.error(t('errors.deleteMenuItem'), error);
-                setError(t('errors.deleteMenuItem'));
-                toast.error(t('errors.deleteMenuItem'));
+                console.error('Error fetching data:', error);
+                setError(t('menuItemManagement.errors.fetchFailed'));
             } finally {
-                setSubmitting(false);
+                setLoading(false);
             }
-        }
-    };
+        };
 
-    // Handle Open Create Modal
-    const handleShowCreateModal = () => {
-        setShowCreateModal(true);
-    };
+        fetchData();
+    }, [restaurantId, menuId, categoryId, t]);
 
-    // Handle Close Create Modal
-    const handleCloseCreateModal = () => {
-        setShowCreateModal(false);
-        setNewMenuItem({
-            name: '',
-            description: '',
-            price: '',
-            imageFile: null,
-            categoryId: '',
-            options: [],
-        });
-        setNewPreviewImage(null);
-        setError(null);
-    };
-
-    // Handle Open Edit Modal
-    const handleShowEditModal = async (menuItemId) => {
+    const handleCreateItem = async (e) => {
+        e.preventDefault();
         try {
-            const response = await getMenuItemById(restaurantId, menuItemId);
-            const data = response.data;
-            setCurrentMenuItem(data);
-            setEditMenuItem({
-                name: data.name,
-                description: data.description,
-                price: data.price,
-                imageFile: null,
-                categoryId: data.category,
-                options: data.options || [],
+            const formDataObj = new FormData();
+            Object.keys(formData).forEach(key => {
+                if (key === 'options') {
+                    formDataObj.append(key, JSON.stringify(formData[key]));
+                } else if (formData[key] !== null) {
+                    formDataObj.append(key, formData[key]);
+                }
             });
-            setExistingImageUrl(data.image_url);
-            setEditPreviewImage(null);
-            setShowEditModal(true);
+            formDataObj.append('menu', menuId);
+
+            await createMenuItem(formDataObj);
+            setSuccess(t('menuItemManagement.success.created'));
+            setShowCreateModal(false);
+            const response = await getMenuItems(restaurantId, menuId, categoryId);
+            setMenuItems(response.data);
+            setFormData({
+                name: '',
+                description: '',
+                price: '',
+                image: null,
+                category: categoryId || '',
+                options: []
+            });
         } catch (error) {
-            console.error(t('errors.fetchMenuItem'), error);
-            setError(t('errors.fetchMenuItem'));
-            toast.error(t('errors.fetchMenuItem'));
+            setError(t('menuItemManagement.errors.createFailed'));
         }
     };
 
-    // Handle Close Edit Modal
-    const handleCloseEditModal = () => {
-        setShowEditModal(false);
-        setCurrentMenuItem(null);
-        setEditMenuItem({
-            name: '',
-            description: '',
-            price: '',
-            imageFile: null,
-            categoryId: '',
-            options: [],
-        });
-        setEditPreviewImage(null);
-        setExistingImageUrl(null);
-        setError(null);
+    const handleDeleteClick = (item) => {
+        setItemToDelete(item);
+        setShowDeleteConfirm(true);
     };
 
-    // Handle Image Selection and Compression for Create
-    const handleCreateImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            try {
-                const options = {
-                    maxSizeMB: 1,
-                    maxWidthOrHeight: 800,
-                    useWebWorker: true,
-                };
-                const compressedFile = await imageCompression(file, options);
-
-                // Get the original file extension
-                const extension = file.name.split('.').pop();
-                // Set the name of the compressed file
-                compressedFile.name = `compressed_image.${extension}`;
-
-                setNewMenuItem((prev) => ({ ...prev, imageFile: compressedFile }));
-
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setNewPreviewImage(reader.result);
-                };
-                reader.readAsDataURL(compressedFile);
-            } catch (error) {
-                console.error(t('errors.imageProcessingFailed'), error);
-                toast.error(t('errors.imageProcessingFailed'));
-            }
-        }
-    };
-
-    // Handle Image Selection and Compression for Edit
-    const handleEditImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            try {
-                const options = {
-                    maxSizeMB: 1,
-                    maxWidthOrHeight: 800,
-                    useWebWorker: true,
-                };
-                const compressedFile = await imageCompression(file, options);
-
-                // Get the original file extension
-                const extension = file.name.split('.').pop();
-                // Set the name of the compressed file
-                compressedFile.name = `compressed_image.${extension}`;
-
-                setEditMenuItem((prev) => ({ ...prev, imageFile: compressedFile }));
-
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                    setEditPreviewImage(reader.result);
-                };
-                reader.readAsDataURL(compressedFile);
-            } catch (error) {
-                console.error(t('errors.imageProcessingFailed'), error);
-                toast.error(t('errors.imageProcessingFailed'));
-            }
-        } else {
-            console.log(t('noFileSelected'));
-            setEditMenuItem((prev) => ({ ...prev, imageFile: null }));
-            setEditPreviewImage(null);
-        }
-    };
-
-    const handleCreateMenuItem = async (e) => {
-        e.preventDefault();
-        // Basic validation
-        if (
-            newMenuItem.name.trim() === '' ||
-            newMenuItem.price === '' ||
-            newMenuItem.categoryId === ''
-        ) {
-            setError(t('errors.fillRequiredFields'));
-            toast.error(t('errors.fillRequiredFields'));
-            return;
-        }
-
-        // Price validation
-        if (parseFloat(newMenuItem.price) > 9999.99) {
-            setError(t('errors.priceExceedsLimit'));
-            toast.error(t('errors.priceExceedsLimit'));
-            return;
-        }
-
-        // Validate that each option has a name and at least one choice
-        for (let option of newMenuItem.options) {
-            if (option.name.trim() === '') {
-                setError(t('errors.optionNameRequired'));
-                toast.error(t('errors.optionNameRequired'));
-                return;
-            }
-            if (!option.choices || option.choices.length === 0) {
-                setError(t('errors.atLeastOneChoice'));
-                toast.error(t('errors.atLeastOneChoice'));
-                return;
-            }
-            for (let choice of option.choices) {
-                if (choice.name.trim() === '' || choice.price_modifier === '') {
-                    setError(t('errors.choiceFieldsRequired'));
-                    toast.error(t('errors.choiceFieldsRequired'));
-                    return;
-                }
-            }
-        }
-
-        // Construct FormData
-        const formData = new FormData();
-        formData.append('name', newMenuItem.name);
-        formData.append('description', newMenuItem.description);
-        formData.append('price', newMenuItem.price);
-        formData.append('category', newMenuItem.categoryId);
-        formData.append('restaurant', restaurantId);
-
-        if (newMenuItem.imageFile) {
-            formData.append('image', newMenuItem.imageFile, newMenuItem.imageFile.name);
-        }
-
-        // Stringify the options array before appending it to FormData
-        formData.append('options', JSON.stringify(newMenuItem.options));
-
+    const handleDeleteConfirm = async () => {
         try {
-            setSubmitting(true);
-            await createMenuItem(formData);
-            toast.success(t('success.menuItemCreated'));
-            handleCloseCreateModal();
-            fetchMenuItems();
+            await deleteMenuItem(itemToDelete.id);
+            setSuccess(t('menuItemManagement.success.deleted'));
+            const response = await getMenuItems(restaurantId, menuId, categoryId);
+            setMenuItems(response.data);
         } catch (error) {
-            console.error(t('errors.createMenuItemFailed'), error);
-            if (error.response && error.response.data) {
-                const errorMessages = Object.values(error.response.data).flat().join(' ');
-                setError(errorMessages);
-                toast.error(errorMessages);
-            } else {
-                setError(t('errors.createMenuItemFailed'));
-                toast.error(t('errors.createMenuItemFailed'));
-            }
-        } finally {
-            setSubmitting(false);
+            setError(t('menuItemManagement.errors.deleteFailed'));
         }
+        setShowDeleteConfirm(false);
+        setItemToDelete(null);
     };
 
-    // Handle Update Menu Item
-    const handleUpdateMenuItem = async (e) => {
-        e.preventDefault();
-        // Basic validation
-        if (
-            editMenuItem.name.trim() === '' ||
-            editMenuItem.price === '' ||
-            editMenuItem.categoryId === ''
-        ) {
-            setError(t('errors.fillRequiredFields'));
-            toast.error(t('errors.fillRequiredFields'));
-            return;
-        }
-
-        // Price validation
-        if (parseFloat(editMenuItem.price) > 9999.99) {
-            setError(t('errors.priceExceedsLimit'));
-            toast.error(t('errors.priceExceedsLimit'));
-            return;
-        }
-
-        // Validate that each option has a name and at least one choice
-        for (let option of editMenuItem.options) {
-            if (option.name.trim() === '') {
-                setError(t('errors.optionNameRequired'));
-                toast.error(t('errors.optionNameRequired'));
-                return;
-            }
-            if (!option.choices || option.choices.length === 0) {
-                setError(t('errors.atLeastOneChoice'));
-                toast.error(t('errors.atLeastOneChoice'));
-                return;
-            }
-            for (let choice of option.choices) {
-                if (choice.name.trim() === '' || choice.price_modifier === '') {
-                    setError(t('errors.choiceFieldsRequired'));
-                    toast.error(t('errors.choiceFieldsRequired'));
-                    return;
-                }
-            }
-        }
-
-        // Construct FormData
-        const formData = new FormData();
-        formData.append('name', editMenuItem.name);
-        formData.append('description', editMenuItem.description);
-        formData.append('price', editMenuItem.price);
-        formData.append('category', editMenuItem.categoryId);
-        formData.append('restaurant', restaurantId);
-
-        if (editMenuItem.imageFile) {
-            formData.append('image', editMenuItem.imageFile, editMenuItem.imageFile.name);
-        }
-
-        // Stringify the options array before appending it to FormData
-        formData.append('options', JSON.stringify(editMenuItem.options));
-
-        try {
-            setSubmitting(true);
-            await updateMenuItem(currentMenuItem.id, formData);
-            toast.success(t('success.menuItemUpdated'));
-            handleCloseEditModal();
-            fetchMenuItems();
-        } catch (error) {
-            console.error(t('errors.updateMenuItemFailed'), error);
-            if (error.response && error.response.data) {
-                const errorMessages = Object.values(error.response.data).flat().join(' ');
-                setError(errorMessages);
-                toast.error(errorMessages);
-            } else {
-                setError(t('errors.updateMenuItemFailed'));
-                toast.error(t('errors.updateMenuItemFailed'));
-            }
-        } finally {
-            setSubmitting(false);
-        }
+    const handleEditItem = (item) => {
+        navigate(`/restaurant/${restaurantId}/menus/${menuId}/menu-items/${item.id}/edit`);
     };
 
-    // Handle Input Changes for Create
-    const handleCreateInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewMenuItem((prev) => ({ ...prev, [name]: value }));
-    };
-
-    // Handle Input Changes for Edit
-    const handleEditInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditMenuItem((prev) => ({ ...prev, [name]: value }));
-    };
-
-    // Handle Adding/Removing Option Categories and Choices for Create
-    const handleCreateAddOptionCategory = () => {
-        setNewMenuItem((prev) => ({
-            ...prev,
-            options: [...prev.options, { name: '', choices: [{ name: '', price_modifier: '' }] }],
-        }));
-    };
-
-    const handleCreateRemoveOptionCategory = (index) => {
-        const updatedOptions = [...newMenuItem.options];
-        updatedOptions.splice(index, 1);
-        setNewMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    const handleCreateOptionCategoryNameChange = (index, value) => {
-        const updatedOptions = [...newMenuItem.options];
-        updatedOptions[index].name = value;
-        setNewMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    const handleCreateAddChoice = (optionIndex) => {
-        const updatedOptions = [...newMenuItem.options];
-        updatedOptions[optionIndex].choices.push({ name: '', price_modifier: '' });
-        setNewMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    const handleCreateRemoveChoice = (optionIndex, choiceIndex) => {
-        const updatedOptions = [...newMenuItem.options];
-        updatedOptions[optionIndex].choices.splice(choiceIndex, 1);
-        setNewMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    const handleCreateChoiceChange = (optionIndex, choiceIndex, field, value) => {
-        const updatedOptions = [...newMenuItem.options];
-        updatedOptions[optionIndex].choices[choiceIndex][field] = value;
-        setNewMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    // Handle Adding/Removing Option Categories and Choices for Edit
-    const handleEditAddOptionCategory = () => {
-        setEditMenuItem((prev) => ({
-            ...prev,
-            options: [...prev.options, { name: '', choices: [{ name: '', price_modifier: '' }] }],
-        }));
-    };
-
-    const handleEditRemoveOptionCategory = (index) => {
-        const updatedOptions = [...editMenuItem.options];
-        updatedOptions.splice(index, 1);
-        setEditMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    const handleEditOptionCategoryNameChange = (index, value) => {
-        const updatedOptions = [...editMenuItem.options];
-        updatedOptions[index].name = value;
-        setEditMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    const handleEditAddChoice = (optionIndex) => {
-        const updatedOptions = [...editMenuItem.options];
-        updatedOptions[optionIndex].choices.push({ name: '', price_modifier: '' });
-        setEditMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    const handleEditRemoveChoice = (optionIndex, choiceIndex) => {
-        const updatedOptions = [...editMenuItem.options];
-        updatedOptions[optionIndex].choices.splice(choiceIndex, 1);
-        setEditMenuItem((prev) => ({ ...prev, options: updatedOptions }));
-    };
-
-    const handleEditChoiceChange = (optionIndex, choiceIndex, field, value) => {
-        const updatedOptions = [...editMenuItem.options];
-        updatedOptions[optionIndex].choices[choiceIndex][field] = value;
-        setEditMenuItem((prev) => ({ ...prev, options: updatedOptions }));
+    const handleBackToCategories = () => {
+        navigate(`/restaurant/${restaurantId}/menus/${menuId}/categories`);
     };
 
     return (
-        <Container className="mt-5" dir={i18n.dir()}>
-            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
-            <Row className="justify-content-center">
-                <Col lg={10}>
-                    <Card className="mb-4">
-                        <Card.Header as="h5">{t('menuItemManagement')}</Card.Header>
-                        <Card.Body>
-                            {error && <Alert variant="danger">{error}</Alert>}
-                            <Button variant="success" onClick={handleShowCreateModal} className="mb-3">
-                                <FaPlus /> {t('addNewMenuItem')}
-                            </Button>
+        <div className="page-container">
+            <div className="background-overlay"></div>
+            <Container className="py-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 className="text-light mb-2">
+                            <FaUtensils className="me-2" />
+                            {menuName}
+                            {categoryName && ` - ${categoryName}`}
+                        </h1>
+                        <Badge bg="info" className="me-2">
+                            {menuLanguage.toUpperCase()}
+                        </Badge>
+                    </div>
+                    <div>
+                        <Button
+                            variant="outline-light"
+                            onClick={handleBackToCategories}
+                            className="me-2 custom-button"
+                        >
+                            <FaArrowLeft className="me-2" />
+                            {t('menuItemManagement.backToCategories')}
+                        </Button>
+                        <Button
+                            variant="primary"
+                            onClick={() => setShowCreateModal(true)}
+                            className="custom-button"
+                        >
+                            <FaPlus className="me-2" />
+                            {t('menuItemManagement.addItem')}
+                        </Button>
+                    </div>
+                </div>
 
-                            {loading ? (
-                                <div className="text-center">
-                                    <Spinner animation="border" role="status">
-                                        <span className="visually-hidden">{t('loading')}</span>
-                                    </Spinner>
-                                    <p className="mt-3">{t('loadingMenuItems')}</p>
-                                </div>
-                            ) : menuItems.length === 0 ? (
-                                <p className="text-center">{t('noMenuItemsAvailable')}</p>
-                            ) : (
-                                <ul className="list-group">
-                                    {menuItems.map((item) => (
-                                        <li key={item.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                            <div className="d-flex align-items-center">
-                                                {item.image_url && (
-                                                    <Image
-                                                        src={item.image_url}
-                                                        alt={item.name}
-                                                        rounded
-                                                        style={{ width: '60px', height: '60px', objectFit: 'cover', marginRight: '15px' }}
-                                                    />
-                                                )}
-                                                <span>{item.name}</span>
-                                            </div>
-                                            <div>
-                                                <Button
-                                                    variant="warning"
-                                                    size="sm"
-                                                    className="me-2"
-                                                    onClick={() => handleShowEditModal(item.id)}
-                                                >
-                                                    <FaEdit /> {t('edit')}
-                                                </Button>
-                                                <Button
-                                                    variant="danger"
-                                                    size="sm"
-                                                    onClick={() => handleDeleteMenuItem(item.id)}
-                                                    disabled={submitting}
-                                                >
-                                                    <FaTrash /> {t('delete')}
-                                                </Button>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
+                {error && (
+                    <Alert variant="danger" className="mb-4" onClose={() => setError('')} dismissible>
+                        {error}
+                    </Alert>
+                )}
+                {success && (
+                    <Alert variant="success" className="mb-4" onClose={() => setSuccess('')} dismissible>
+                        {success}
+                    </Alert>
+                )}
 
-            {/* Create Menu Item Modal */}
-            <Modal show={showCreateModal} onHide={handleCloseCreateModal} size="lg" centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>{t('addNewMenuItem')}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form onSubmit={handleCreateMenuItem} encType="multipart/form-data">
-                        <Row className="mb-3">
-                            <Form.Label column sm={3}>
-                                {t('itemName')} *
-                            </Form.Label>
-                            <Col sm={9}>
+                <Row className="g-4">
+                    {menuItems.map((item) => (
+                        <Col key={item.id} xs={12} sm={6} md={4} lg={3}>
+                            <Card className="h-100 custom-card menu-item-card fade-in">
+                                {item.image_url && (
+                                    <div className="card-img-container">
+                                        <Card.Img variant="top" src={item.image_url} alt={item.name} />
+                                        <div className="img-overlay"></div>
+                                    </div>
+                                )}
+                                <Card.Body className="d-flex flex-column">
+                                    <Card.Title>{item.name}</Card.Title>
+                                    <Card.Text className="text-muted small mb-2">
+                                        {item.description}
+                                    </Card.Text>
+                                    <Badge bg="info" className="mb-3 align-self-start">
+                                        ${Number(item.price).toFixed(2)}
+                                    </Badge>
+                                    <div className="mt-auto d-flex gap-2">
+                                        <Button
+                                            variant="outline-primary"
+                                            size="sm"
+                                            onClick={() => handleEditItem(item)}
+                                            className="flex-grow-0"
+                                        >
+                                            <FaEdit /> {t('menuItemManagement.edit')}
+                                        </Button>
+                                        <Button
+                                            variant="outline-danger"
+                                            size="sm"
+                                            onClick={() => handleDeleteClick(item)}
+                                            className="flex-grow-0"
+                                        >
+                                            <FaTrash /> {t('menuItemManagement.delete')}
+                                        </Button>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
+
+                {/* Create Menu Item Modal */}
+                <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{t('menuItemManagement.createItem')}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form onSubmit={handleCreateItem}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{t('menuItemManagement.form.name')}</Form.Label>
                                 <Form.Control
                                     type="text"
-                                    name="name"
-                                    value={newMenuItem.name}
-                                    onChange={handleCreateInputChange}
-                                    placeholder={t('enterMenuItemName')}
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                     required
                                 />
-                            </Col>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Label column sm={3}>
-                                {t('description')}
-                            </Form.Label>
-                            <Col sm={9}>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{t('menuItemManagement.form.description')}</Form.Label>
                                 <Form.Control
                                     as="textarea"
-                                    name="description"
-                                    value={newMenuItem.description}
-                                    onChange={handleCreateInputChange}
-                                    placeholder={t('enterDescription')}
-                                    rows={3}
+                                    value={formData.description}
+                                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                 />
-                            </Col>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Label column sm={3}>
-                                {t('price')} ({t('currency')}) *
-                            </Form.Label>
-                            <Col sm={9}>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{t('menuItemManagement.form.price')}</Form.Label>
                                 <Form.Control
                                     type="number"
-                                    name="price"
-                                    value={newMenuItem.price}
-                                    onChange={handleCreateInputChange}
-                                    placeholder={t('enterPrice')}
-                                    min="0"
-                                    max="9999.99"
                                     step="0.01"
+                                    value={formData.price}
+                                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                                     required
                                 />
-                            </Col>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Label column sm={3}>
-                                {t('image')}
-                            </Form.Label>
-                            <Col sm={9}>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{t('menuItemManagement.form.image')}</Form.Label>
                                 <Form.Control
                                     type="file"
                                     accept="image/*"
-                                    onChange={handleCreateImageChange}
+                                    onChange={(e) => setFormData({ ...formData, image: e.target.files[0] })}
                                 />
-                                {newPreviewImage && (
-                                    <div className="mt-3 text-center">
-                                        <Image
-                                            src={newPreviewImage}
-                                            alt={t('imagePreview')}
-                                            rounded
-                                            fluid
-                                            style={{ maxHeight: '150px' }}
-                                        />
-                                        <p className="mt-2">{t('imagePreview')}</p>
-                                    </div>
-                                )}
-                            </Col>
-                        </Row>
-                        <Row className="mb-3">
-                            <Form.Label column sm={3}>
-                                {t('category')} *
-                            </Form.Label>
-                            <Col sm={9}>
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{t('menuItemManagement.form.category')}</Form.Label>
                                 <Form.Select
-                                    name="categoryId"
-                                    value={newMenuItem.categoryId}
-                                    onChange={handleCreateInputChange}
+                                    value={formData.category}
+                                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                                     required
                                 >
-                                    <option value="">{t('selectCategory')}</option>
-                                    {categories.map((cat) => (
-                                        <option key={cat.id} value={cat.id}>
-                                            {cat.name}
+                                    <option value="">{t('menuItemManagement.form.selectCategory')}</option>
+                                    {categories.map((category) => (
+                                        <option key={category.id} value={category.id}>
+                                            {category.name}
                                         </option>
                                     ))}
                                 </Form.Select>
-                            </Col>
-                        </Row>
-
-                        {/* Options (Option Categories and Choices) */}
-                        <div className="mb-4">
-                            <h5>{t('options')}</h5>
-                            {newMenuItem.options.map((option, optionIndex) => (
-                                <Card key={optionIndex} className="mb-3">
-                                    <Card.Body>
-                                        <Row className="mb-3">
-                                            <Form.Label column sm={3}>
-                                                {t('optionName')} *
-                                            </Form.Label>
-                                            <Col sm={7}>
-                                                <Form.Control
-                                                    type="text"
-                                                    value={option.name}
-                                                    onChange={(e) => handleCreateOptionCategoryNameChange(optionIndex, e.target.value)}
-                                                    placeholder={t('enterOptionName')}
-                                                    required
-                                                />
-                                            </Col>
-                                            <Col sm={2}>
-                                                <Button variant="danger" size="sm" onClick={() => handleCreateRemoveOptionCategory(optionIndex)}>
-                                                    {t('delete')}
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                        <h6>{t('choices')}:</h6>
-                                        {option.choices.map((choice, choiceIndex) => (
-                                            <Row className="mb-3" key={choiceIndex}>
-                                                <Form.Label column sm={3}>
-                                                    {t('choice')} *
-                                                </Form.Label>
-                                                <Col sm={4}>
-                                                    <Form.Control
-                                                        type="text"
-                                                        value={choice.name}
-                                                        onChange={(e) => handleCreateChoiceChange(optionIndex, choiceIndex, 'name', e.target.value)}
-                                                        placeholder={t('enterChoiceName')}
-                                                        required
-                                                    />
-                                                </Col>
-                                                <Col sm={3}>
-                                                    <Form.Control
-                                                        type="number"
-                                                        value={choice.price_modifier}
-                                                        onChange={(e) => handleCreateChoiceChange(optionIndex, choiceIndex, 'price_modifier', e.target.value)}
-                                                        placeholder={t('enterPriceModifier')}
-                                                        min="0"
-                                                        step="0.01"
-                                                        required
-                                                    />
-                                                </Col>
-                                                <Col sm={2}>
-                                                    <Button variant="danger" size="sm" onClick={() => handleCreateRemoveChoice(optionIndex, choiceIndex)}>
-                                                        {t('delete')}
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                        ))}
-                                        <Button variant="secondary" onClick={() => handleCreateAddChoice(optionIndex)}>
-                                            {t('addAnotherChoice')}
-                                        </Button>
-                                    </Card.Body>
-                                </Card>
-                            ))}
-                            <Button variant="secondary" onClick={handleCreateAddOptionCategory}>
-                                <FaPlus /> {t('addOptionCategory')}
-                            </Button>
-                        </div>
-
-                        <Button variant="primary" type="submit" disabled={submitting}>
-                            {submitting ? (
-                                <>
-                                    <Spinner
-                                        as="span"
-                                        animation="border"
-                                        size="sm"
-                                        role="status"
-                                        aria-hidden="true"
-                                    />{' '}
-                                    {t('addingMenuItem')}
-                                </>
-                            ) : (
-                                <>
-                                    <FaUpload /> {t('createMenuItem')}
-                                </>
-                            )}
-                        </Button>
-                    </Form>
-                </Modal.Body>
-            </Modal>
-
-            {/* Edit Menu Item Modal */}
-            <Modal show={showEditModal} onHide={handleCloseEditModal} size="lg" centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>{t('editMenuItem')}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {currentMenuItem && (
-                        <Form onSubmit={handleUpdateMenuItem} encType="multipart/form-data">
-                            <Row className="mb-3">
-                                <Form.Label column sm={3}>
-                                    {t('itemName')} *
-                                </Form.Label>
-                                <Col sm={9}>
-                                    <Form.Control
-                                        type="text"
-                                        name="name"
-                                        value={editMenuItem.name}
-                                        onChange={handleEditInputChange}
-                                        placeholder={t('enterMenuItemName')}
-                                        required
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="mb-3">
-                                <Form.Label column sm={3}>
-                                    {t('description')}
-                                </Form.Label>
-                                <Col sm={9}>
-                                    <Form.Control
-                                        as="textarea"
-                                        name="description"
-                                        value={editMenuItem.description}
-                                        onChange={handleEditInputChange}
-                                        placeholder={t('enterDescription')}
-                                        rows={3}
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="mb-3">
-                                <Form.Label column sm={3}>
-                                    {t('price')} ({t('currency')}) *
-                                </Form.Label>
-                                <Col sm={9}>
-                                    <Form.Control
-                                        type="number"
-                                        name="price"
-                                        value={editMenuItem.price}
-                                        onChange={handleEditInputChange}
-                                        placeholder={t('enterPrice')}
-                                        min="0"
-                                        max="9999.99"
-                                        step="0.01"
-                                        required
-                                    />
-                                </Col>
-                            </Row>
-                            <Row className="mb-3">
-                                <Form.Label column sm={3}>
-                                    {t('image')}
-                                </Form.Label>
-                                <Col sm={9}>
-                                    <Form.Control
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleEditImageChange}
-                                    />
-                                    {existingImageUrl && !editPreviewImage && (
-                                        <div className="mt-3 text-center">
-                                            <p>{t('currentImage')}:</p>
-                                            <Image
-                                                src={existingImageUrl}
-                                                alt={t('currentMenuItemImage')}
-                                                rounded
-                                                fluid
-                                                style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '5px' }}
-                                            />
-                                        </div>
-                                    )}
-                                    {editPreviewImage && (
-                                        <div className="mt-3 text-center">
-                                            <p>{t('imagePreview')}:</p>
-                                            <Image
-                                                src={editPreviewImage}
-                                                alt={t('menuItemImagePreview')}
-                                                rounded
-                                                fluid
-                                                style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '5px' }}
-                                            />
-                                        </div>
-                                    )}
-                                </Col>
-                            </Row>
-                            <Row className="mb-3">
-                                <Form.Label column sm={3}>
-                                    {t('category')} *
-                                </Form.Label>
-                                <Col sm={9}>
-                                    <Form.Select
-                                        name="categoryId"
-                                        value={editMenuItem.categoryId}
-                                        onChange={handleEditInputChange}
-                                        required
-                                    >
-                                        <option value="">{t('selectCategory')}</option>
-                                        {categories.map((cat) => (
-                                            <option key={cat.id} value={cat.id}>
-                                                {cat.name}
-                                            </option>
-                                        ))}
-                                    </Form.Select>
-                                </Col>
-                            </Row>
-
-                            {/* Options (Option Categories and Choices) */}
-                            <div className="mb-4">
-                                <h5>{t('options')}</h5>
-                                {editMenuItem.options.map((option, optionIndex) => (
-                                    <Card key={optionIndex} className="mb-3">
-                                        <Card.Body>
-                                            <Row className="mb-3">
-                                                <Form.Label column sm={3}>
-                                                    {t('optionName')} *
-                                                </Form.Label>
-                                                <Col sm={7}>
-                                                    <Form.Control
-                                                        type="text"
-                                                        value={option.name}
-                                                        onChange={(e) => handleEditOptionCategoryNameChange(optionIndex, e.target.value)}
-                                                        placeholder={t('enterOptionName')}
-                                                        required
-                                                    />
-                                                </Col>
-                                                <Col sm={2}>
-                                                    <Button variant="danger" size="sm" onClick={() => handleEditRemoveOptionCategory(optionIndex)}>
-                                                        {t('delete')}
-                                                    </Button>
-                                                </Col>
-                                            </Row>
-                                            <h6>{t('choices')}:</h6>
-                                            {option.choices.map((choice, choiceIndex) => (
-                                                <Row className="mb-3" key={choiceIndex}>
-                                                    <Form.Label column sm={3}>
-                                                        {t('choice')} *
-                                                    </Form.Label>
-                                                    <Col sm={4}>
-                                                        <Form.Control
-                                                            type="text"
-                                                            value={choice.name}
-                                                            onChange={(e) => handleEditChoiceChange(optionIndex, choiceIndex, 'name', e.target.value)}
-                                                            placeholder={t('enterChoiceName')}
-                                                            required
-                                                        />
-                                                    </Col>
-                                                    <Col sm={3}>
-                                                        <Form.Control
-                                                            type="number"
-                                                            value={choice.price_modifier}
-                                                            onChange={(e) => handleEditChoiceChange(optionIndex, choiceIndex, 'price_modifier', e.target.value)}
-                                                            placeholder={t('enterPriceModifier')}
-                                                            min="0"
-                                                            step="0.01"
-                                                            required
-                                                        />
-                                                    </Col>
-                                                    <Col sm={2}>
-                                                        <Button variant="danger" size="sm" onClick={() => handleEditRemoveChoice(optionIndex, choiceIndex)}>
-                                                            {t('delete')}
-                                                        </Button>
-                                                    </Col>
-                                                </Row>
-                                            ))}
-                                            <Button variant="secondary" onClick={() => handleEditAddChoice(optionIndex)}>
-                                                {t('addAnotherChoice')}
-                                            </Button>
-                                        </Card.Body>
-                                    </Card>
-                                ))}
-                                <Button variant="secondary" onClick={handleEditAddOptionCategory}>
-                                    <FaPlus /> {t('addOptionCategory')}
-                                </Button>
-                            </div>
-
-                            <Button variant="primary" type="submit" disabled={submitting}>
-                                {submitting ? (
-                                    <>
-                                        <Spinner
-                                            as="span"
-                                            animation="border"
-                                            size="sm"
-                                            role="status"
-                                            aria-hidden="true"
-                                        />{' '}
-                                        {t('updatingMenuItem')}
-                                    </>
-                                ) : (
-                                    <>
-                                        <FaUpload /> {t('updateMenuItem')}
-                                    </>
-                                )}
-                            </Button>
+                            </Form.Group>
                         </Form>
-                    )}
-                </Modal.Body>
-            </Modal>
-        </Container>
-    );
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowCreateModal(false)}>
+                            {t('menuItemManagement.cancel')}
+                        </Button>
+                        <Button variant="primary" onClick={handleCreateItem}>
+                            {t('menuItemManagement.create')}
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
 
+                {/* Delete Confirmation Modal */}
+                <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{t('menuItemManagement.deleteConfirm.title')}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {t('menuItemManagement.deleteConfirm.message', {
+                            name: itemToDelete?.name,
+                        })}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
+                            {t('menuItemManagement.cancel')}
+                        </Button>
+                        <Button variant="danger" onClick={handleDeleteConfirm}>
+                            {t('menuItemManagement.delete')}
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Container>
+        </div>
+    );
 };
 
 export default MenuItemManagementPage;

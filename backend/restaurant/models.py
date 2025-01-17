@@ -18,8 +18,6 @@ from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 
 # Utility Functions
-
-
 from .utils.filename_utils import generate_short_filename  # Import the utility
 
 def get_restaurant_logo_path(instance, filename):
@@ -95,6 +93,7 @@ class Restaurant(models.Model):
     payment_methods = models.JSONField(default=list)  # e.g., ['Cash', 'Credit Card', 'Mobile Payments']
     tags = models.JSONField(default=list)  # e.g., ['Halal', 'Vegan', 'Outdoor Seating']
     business_license = models.CharField(max_length=100, blank=True, null=True)
+    default_language = models.CharField(max_length=10, default='en')  # Default language for the restaurant
     
     @property
     def table_count(self):
@@ -190,47 +189,81 @@ class Restaurant(models.Model):
     def __str__(self):
         return self.name
 
-class Category(models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to=get_category_image_path, blank=True, null=True)  # Dynamic Path
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='categories')
+class Menu(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+        unique=True
+    )
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menus')
+    name = models.CharField(max_length=255)  # e.g., "Lunch Menu", "Dinner Menu"
+    language = models.CharField(max_length=10)  # e.g., "en", "es", "fr"
+    is_default = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('restaurant', 'language')
 
     def save(self, *args, **kwargs):
-        # Compress category image if it exists
+        # If this is marked as default, unmark other menus as default
+        if self.is_default:
+            Menu.objects.filter(restaurant=self.restaurant).exclude(id=self.id).update(is_default=False)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.name} ({self.language}) - {self.restaurant.name}"
+
+class Category(models.Model):
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='categories', null=True, blank=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to=get_category_image_path, blank=True, null=True)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    order = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'name']
+        verbose_name_plural = 'categories'
+
+    def save(self, *args, **kwargs):
         if self.image:
             self.image.save(
                 self.image.name,
                 compress_image(self.image),
                 save=False
             )
-        super(Category, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.menu.language})"
 
 class MenuItem(models.Model):
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='menu_items', null=True, blank=True)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='menu_items', null=True, blank=True)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True, related_name='menu_items')  # Changed to CASCADE
     name = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
-    image = models.ImageField(upload_to=get_menu_image_path, blank=True, null=True)  # Dynamic Path
-    is_available = models.BooleanField(default=True)  # Indicates availability of the menu item
+    image = models.ImageField(upload_to=get_menu_image_path, blank=True, null=True)
+    is_available = models.BooleanField(default=True)
+    order = models.IntegerField(default=0)
 
+    class Meta:
+        ordering = ['order', 'name']
 
     def save(self, *args, **kwargs):
-        # Compress menu item image if it exists
         if self.image:
             self.image.save(
                 self.image.name,
                 compress_image(self.image),
                 save=False
             )
-        super(MenuItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.menu.language})"
 
 class MenuItemOption(models.Model):
     menu_item = models.ForeignKey(MenuItem, related_name='options', on_delete=models.CASCADE)
@@ -284,18 +317,18 @@ class Table(models.Model):
             print(f"Deleted QR code image for Table {self.id}: {qr_code_path}")
         super().delete(*args, **kwargs)
 
-
 class Order(models.Model):
     STATUS_CHOICES = [
         ('Pending', 'Pending'),
         ('In Progress', 'In Progress'),
         ('Completed', 'Completed'),
     ]
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='orders' )
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='orders')
     table = models.ForeignKey(Table, on_delete=models.CASCADE)
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='orders', null=True, blank=True)  # Track which menu was used
     additional_info = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='Pending')
-    created_at = models.DateTimeField(auto_now_add=True)  # New field
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"Order for table {self.table.number} - {self.status}"
@@ -305,16 +338,13 @@ class OrderItem(models.Model):
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     special_request = models.TextField(blank=True, null=True)
-    selected_options = models.ManyToManyField(MenuItemBooleanOption, blank=True)  # Now stores selected boolean options as a ManyToMany field
+    selected_options = models.ManyToManyField(MenuItemBooleanOption, blank=True)
 
     @property
     def total_price(self):
         base_price = self.menu_item.price
-        
-        # Adjust for selected boolean options
         for boolean_option in self.selected_options.all():
             base_price += boolean_option.price_modifier
-        
         return base_price * self.quantity
 
     def __str__(self):
@@ -329,145 +359,99 @@ class HelpRequest(models.Model):
     ]
 
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='help_requests')
-    table = models.ForeignKey(Table, on_delete=models.CASCADE)  # Changed to ForeignKey with UUID
+    table = models.ForeignKey(Table, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
-    response = models.TextField(blank=True, null=True)  # Optional response from staff
+    response = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)  # Track updates
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"HelpRequest at {self.restaurant.name}, Table {self.table.number} - {self.status}"
+
+class MenuAccess(models.Model):
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menu_accesses')
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='accesses', null=True, blank=True)
+    accessed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Menu access for {self.restaurant.name} ({self.menu.language}) at {self.accessed_at}"
 
 # Signal Handlers
 
 @receiver(post_delete, sender=Restaurant)
 def delete_restaurant_images(sender, instance, **kwargs):
-    """
-    Deletes the logo and background images when a Restaurant is deleted.
-    Also deletes all related images in categories and menu items.
-    """
-    if instance.logo:
-        if default_storage.exists(instance.logo.name):
-            default_storage.delete(instance.logo.name)
-            print(f"Deleted logo image: {instance.logo.name}")
-    if instance.background_image:
-        if default_storage.exists(instance.background_image.name):
-            default_storage.delete(instance.background_image.name)
-            print(f"Deleted background image: {instance.background_image.name}")
+    if instance.logo and default_storage.exists(instance.logo.name):
+        default_storage.delete(instance.logo.name)
+        print(f"Deleted logo image: {instance.logo.name}")
+    if instance.background_image and default_storage.exists(instance.background_image.name):
+        default_storage.delete(instance.background_image.name)
+        print(f"Deleted background image: {instance.background_image.name}")
 
 @receiver(post_delete, sender=Category)
 def delete_category_image(sender, instance, **kwargs):
-    """
-    Deletes the image of the Category when it is deleted.
-    """
-    if instance.image:
-        if default_storage.exists(instance.image.name):
-            default_storage.delete(instance.image.name)
-            print(f"Deleted category image: {instance.image.name}")
+    if instance.image and default_storage.exists(instance.image.name):
+        default_storage.delete(instance.image.name)
+        print(f"Deleted category image: {instance.image.name}")
 
 @receiver(post_delete, sender=MenuItem)
 def delete_menuitem_image(sender, instance, **kwargs):
-    """
-    Deletes the image of the MenuItem when it is deleted.
-    """
-    if instance.image:
-        if default_storage.exists(instance.image.name):
-            default_storage.delete(instance.image.name)
-            print(f"Deleted menu item image: {instance.image.name}")
+    if instance.image and default_storage.exists(instance.image.name):
+        default_storage.delete(instance.image.name)
+        print(f"Deleted menu item image: {instance.image.name}")
 
 @receiver(pre_save, sender=Restaurant)
 def auto_delete_restaurant_old_images_on_change(sender, instance, **kwargs):
-    """
-    Deletes old logo and background images from the storage when updating a Restaurant.
-    """
     if not instance.pk:
         return False
 
     try:
         old_instance = Restaurant.objects.get(pk=instance.pk)
+        if old_instance.logo and instance.logo != old_instance.logo and default_storage.exists(old_instance.logo.name):
+            default_storage.delete(old_instance.logo.name)
+            print(f"Deleted old logo image: {old_instance.logo.name}")
+        if old_instance.background_image and instance.background_image != old_instance.background_image and default_storage.exists(old_instance.background_image.name):
+            default_storage.delete(old_instance.background_image.name)
+            print(f"Deleted old background image: {old_instance.background_image.name}")
     except Restaurant.DoesNotExist:
         return False
 
-    # Check if logo has changed
-    if old_instance.logo and instance.logo != old_instance.logo:
-        if default_storage.exists(old_instance.logo.name):
-            default_storage.delete(old_instance.logo.name)
-            print(f"Deleted old logo image: {old_instance.logo.name}")
-
-    # Check if background_image has changed
-    if old_instance.background_image and instance.background_image != old_instance.background_image:
-        if default_storage.exists(old_instance.background_image.name):
-            default_storage.delete(old_instance.background_image.name)
-            print(f"Deleted old background image: {old_instance.background_image.name}")
-
 @receiver(pre_save, sender=Category)
 def auto_delete_category_old_image_on_change(sender, instance, **kwargs):
-    """
-    Deletes old image from the storage when updating a Category.
-    """
     if not instance.pk:
         return False
 
     try:
         old_instance = Category.objects.get(pk=instance.pk)
+        if old_instance.image and instance.image != old_instance.image and default_storage.exists(old_instance.image.name):
+            default_storage.delete(old_instance.image.name)
+            print(f"Deleted old category image: {old_instance.image.name}")
     except Category.DoesNotExist:
         return False
 
-    if old_instance.image and instance.image != old_instance.image:
-        if default_storage.exists(old_instance.image.name):
-            default_storage.delete(old_instance.image.name)
-            print(f"Deleted old category image: {old_instance.image.name}")
-
 @receiver(pre_save, sender=MenuItem)
 def auto_delete_menuitem_old_image_on_change(sender, instance, **kwargs):
-    """
-    Deletes old image from the storage when updating a MenuItem.
-    """
     if not instance.pk:
         return False
 
     try:
         old_instance = MenuItem.objects.get(pk=instance.pk)
+        if old_instance.image and instance.image != old_instance.image and default_storage.exists(old_instance.image.name):
+            default_storage.delete(old_instance.image.name)
+            print(f"Deleted old menu item image: {old_instance.image.name}")
     except MenuItem.DoesNotExist:
         return False
 
-    if old_instance.image and instance.image != old_instance.image:
-        if default_storage.exists(old_instance.image.name):
-            default_storage.delete(old_instance.image.name)
-            print(f"Deleted old menu item image: {old_instance.image.name}")
-
 @receiver(post_delete, sender=Restaurant)
 def delete_restaurant_folder(sender, instance, **kwargs):
-    """
-    Deletes the entire restaurant folder from storage when a Restaurant is deleted.
-    Note: Digital Ocean Spaces (or S3) use a flat namespace, so directories are virtual.
-    To delete all files under a prefix, iterate and delete each file.
-    """
     base_path = f"restaurants/{instance.id}/"
     print(f"Attempting to delete all files under {base_path}")
 
-    # Assuming default_storage is configured to use a backend that supports bucket objects (like S3)
-    # If not, this needs to be adjusted accordingly.
     if hasattr(default_storage, 'bucket') and hasattr(default_storage.bucket, 'objects'):
         for obj in default_storage.bucket.objects.filter(Prefix=base_path):
             default_storage.delete(obj.key)
             print(f"Deleted file: {obj.key}")
-    
         print(f"Deleted all files under {base_path}")
     else:
         print("Default storage does not support bucket objects. Manual deletion may be required.")
-
-# Note:
-# Ensure that you have set up the default_storage to use Digital Ocean Spaces correctly.
-# This typically involves using django-storages with the appropriate backend settings.
-
-
-
-class MenuAccess(models.Model):
-    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menu_accesses')
-    accessed_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"Menu access for {self.restaurant.name} at {self.accessed_at}"

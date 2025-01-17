@@ -1,121 +1,104 @@
-// src/pages/CategoryManagementPage.js
-
 import React, { useState, useEffect } from 'react';
-import { getCategories, createCategory, deleteCategory, updateCategory } from '../../services/api'; // Ensure these functions exist and are correctly implemented
-import { useParams } from 'react-router-dom';
-import { FaUpload, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
+import { useParams, useNavigate } from 'react-router-dom';
+import { getCategories, createCategory, deleteCategory, updateCategory } from '../../services/api';
+import { FaUtensils, FaPlus, FaTrash, FaEdit, FaArrowRight } from 'react-icons/fa';
 import {
     Container,
     Row,
     Col,
     Form,
     Button,
-    Spinner,
-    Image,
     Card,
     Alert,
     Modal,
+    Badge
 } from 'react-bootstrap';
-import { ToastContainer, toast } from 'react-toastify';
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import { useTranslation } from 'react-i18next';
+import '../../styles/CustomerPages.css';
 
 const CategoryManagementPage = () => {
-    const { t } = useTranslation(); // Initialize translation
-    const { restaurantId } = useParams();
+    const { t } = useTranslation();
+    const { restaurantId, menuId } = useParams();
+    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
+    const [menuName, setMenuName] = useState('');
+    const [menuLanguage, setMenuLanguage] = useState('');
     const [newCategoryName, setNewCategoryName] = useState('');
     const [newCategoryImage, setNewCategoryImage] = useState(null);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [submitting, setSubmitting] = useState(false);
-
-    // States for Edit Modal
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentCategory, setCurrentCategory] = useState(null);
     const [editCategoryName, setEditCategoryName] = useState('');
     const [editCategoryImage, setEditCategoryImage] = useState(null);
     const [editImagePreview, setEditImagePreview] = useState('');
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
 
     useEffect(() => {
-        fetchCategories();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [restaurantId]);
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                // Fetch menu details
+                const menuResponse = await fetch(`/api/menus/${menuId}/`);
+                const menuData = await menuResponse.json();
+                setMenuName(menuData.name);
+                setMenuLanguage(menuData.language);
 
-    const fetchCategories = async () => {
-        try {
-            setLoading(true);
-            const response = await getCategories(restaurantId);
-            setCategories(response.data);
-            setError(null);
-        } catch (error) {
-            console.error(t('errors.fetchCategories'), error);
-            setError(t('errors.fetchCategories'));
-            toast.error(t('errors.fetchCategories'));
-        } finally {
-            setLoading(false);
-        }
-    };
+                // Fetch categories for this menu
+                const categoriesResponse = await getCategories(restaurantId, menuId);
+                setCategories(categoriesResponse.data);
+                setError(null);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                setError(t('categoryManagement.errors.fetchFailed'));
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    // Handle category creation
+        fetchData();
+    }, [restaurantId, menuId, t]);
+
     const handleCreateCategory = async (e) => {
         e.preventDefault();
         if (newCategoryName.trim() === '') {
-            setError(t('errors.enterCategoryName'));
-            toast.error(t('errors.enterCategoryName'));
+            setError(t('categoryManagement.errors.nameRequired'));
             return;
         }
         try {
-            setSubmitting(true);
-            await createCategory(restaurantId, newCategoryName, newCategoryImage);
+            await createCategory(restaurantId, newCategoryName, newCategoryImage, menuId);
             setNewCategoryName('');
             setNewCategoryImage(null);
-            fetchCategories();
-            setError(null);
-            toast.success(t('success.categoryAdded'));
+            setSuccess(t('categoryManagement.success.created'));
+            const response = await getCategories(restaurantId, menuId);
+            setCategories(response.data);
         } catch (error) {
-            console.error(t('errors.addCategory'), error);
-            if (error.response && error.response.data) {
-                // Concatenate all error messages
-                const errorMessages = Object.values(error.response.data).flat().join(' ');
-                setError(errorMessages);
-                toast.error(errorMessages);
-            } else {
-                setError(t('errors.addCategory'));
-                toast.error(t('errors.addCategory'));
-            }
-        } finally {
-            setSubmitting(false);
+            console.error('Error creating category:', error);
+            setError(t('categoryManagement.errors.createFailed'));
         }
     };
 
-    // Handle category deletion
-    const handleDeleteCategory = async (categoryId) => {
-        if (window.confirm(t('confirm.deleteCategory'))) {
-            try {
-                setSubmitting(true);
-                await deleteCategory(categoryId);
-                fetchCategories();
-                setError(null);
-                toast.success(t('success.categoryDeleted'));
-            } catch (error) {
-                console.error(t('errors.deleteCategory'), error);
-                setError(t('errors.deleteCategory'));
-                toast.error(t('errors.deleteCategory'));
-            } finally {
-                setSubmitting(false);
-            }
-        }
+    const handleDeleteClick = (category) => {
+        setCategoryToDelete(category);
+        setShowDeleteConfirm(true);
     };
 
-    // Handle Image Change with Preview for New Category
-    const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setNewCategoryImage(file);
+    const handleDeleteConfirm = async () => {
+        try {
+            await deleteCategory(categoryToDelete.id);
+            setSuccess(t('categoryManagement.success.deleted'));
+            const response = await getCategories(restaurantId, menuId);
+            setCategories(response.data);
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            setError(t('categoryManagement.errors.deleteFailed'));
         }
+        setShowDeleteConfirm(false);
+        setCategoryToDelete(null);
     };
 
-    // Handle Edit Modal Show
     const handleShowEditModal = (category) => {
         setCurrentCategory(category);
         setEditCategoryName(category.name);
@@ -124,7 +107,6 @@ const CategoryManagementPage = () => {
         setShowEditModal(true);
     };
 
-    // Handle Edit Modal Close
     const handleCloseEditModal = () => {
         setShowEditModal(false);
         setCurrentCategory(null);
@@ -133,264 +115,189 @@ const CategoryManagementPage = () => {
         setEditImagePreview('');
     };
 
-    // Handle Image Change with Preview for Edit
-    const handleEditImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setEditCategoryImage(file);
-            const previewURL = URL.createObjectURL(file);
-            setEditImagePreview(previewURL);
-        }
-    };
-
-    // Handle Category Update
     const handleUpdateCategory = async (e) => {
         e.preventDefault();
         if (editCategoryName.trim() === '') {
-            setError(t('errors.enterCategoryName'));
-            toast.error(t('errors.enterCategoryName'));
+            setError(t('categoryManagement.errors.nameRequired'));
             return;
         }
         try {
-            setSubmitting(true);
-            await updateCategory(currentCategory.id, editCategoryName, editCategoryImage);
-            fetchCategories();
-            setError(null);
-            toast.success(t('success.categoryUpdated'));
+            await updateCategory(currentCategory.id, editCategoryName, editCategoryImage, menuId);
+            setSuccess(t('categoryManagement.success.updated'));
+            const response = await getCategories(restaurantId, menuId);
+            setCategories(response.data);
             handleCloseEditModal();
         } catch (error) {
-            console.error(t('errors.updateCategory'), error);
-            if (error.response && error.response.data) {
-                const errorMessages = Object.values(error.response.data).flat().join(' ');
-                setError(errorMessages);
-                toast.error(errorMessages);
-            } else {
-                setError(t('errors.updateCategory'));
-                toast.error(t('errors.updateCategory'));
-            }
-        } finally {
-            setSubmitting(false);
+            console.error('Error updating category:', error);
+            setError(t('categoryManagement.errors.updateFailed'));
         }
     };
 
+    const handleCategoryClick = (category) => {
+        navigate(`/restaurant/${restaurantId}/menus/${menuId}/menu-items?category=${category.id}`);
+    };
+
     return (
-        <Container className="mt-5">
-            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} />
-            <Row className="justify-content-center">
-                <Col lg={8}>
-                    <Card className="mb-4">
-                        <Card.Header as="h5">{t('manageCategories')}</Card.Header>
-                        <Card.Body>
-                            {error && <Alert variant="danger">{error}</Alert>}
-                            <Form onSubmit={handleCreateCategory} encType="multipart/form-data">
-                                <Form.Group as={Row} className="mb-3" controlId="newCategoryName">
-                                    <Form.Label column sm={3}>
-                                        {t('categoryName')} <span className="text-danger">*</span>
-                                    </Form.Label>
-                                    <Col sm={9}>
-                                        <Form.Control
-                                            type="text"
-                                            value={newCategoryName}
-                                            onChange={(e) => setNewCategoryName(e.target.value)}
-                                            placeholder={t('enterCategoryNamePlaceholder')}
-                                            required
-                                        />
-                                    </Col>
-                                </Form.Group>
+        <div className="page-container">
+            <div className="background-overlay"></div>
+            <Container className="py-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h1 className="text-light mb-2">
+                            <FaUtensils className="me-2" />
+                            {menuName}
+                        </h1>
+                        <Badge bg="info" className="me-2">
+                            {menuLanguage.toUpperCase()}
+                        </Badge>
+                    </div>
+                    <Button
+                        variant="primary"
+                        onClick={() => setShowEditModal(true)}
+                        className="d-flex align-items-center custom-button"
+                    >
+                        <FaPlus className="me-2" />
+                        {t('categoryManagement.addCategory')}
+                    </Button>
+                </div>
 
-                                <Form.Group as={Row} className="mb-3" controlId="newCategoryImage">
-                                    <Form.Label column sm={3}>
-                                        {t('categoryImage')}
-                                    </Form.Label>
-                                    <Col sm={9}>
-                                        <Form.Control
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                        />
-                                    </Col>
-                                </Form.Group>
+                {error && (
+                    <Alert variant="danger" className="mb-4" onClose={() => setError('')} dismissible>
+                        {error}
+                    </Alert>
+                )}
+                {success && (
+                    <Alert variant="success" className="mb-4" onClose={() => setSuccess('')} dismissible>
+                        {success}
+                    </Alert>
+                )}
 
-                                <Form.Group as={Row} className="mb-3" controlId="newCategoryImagePreview">
-                                    <Form.Label column sm={3}></Form.Label>
-                                    <Col sm={9}>
-                                        {newCategoryImage && (
-                                            <div className="mt-3 text-center">
-                                                <Image
-                                                    src={URL.createObjectURL(newCategoryImage)}
-                                                    alt={t('newCategoryImagePreview')}
-                                                    rounded
-                                                    fluid
-                                                    style={{ maxHeight: '150px' }}
-                                                />
-                                                <p className="mt-2">{t('newCategoryImagePreview')}</p>
-                                            </div>
-                                        )}
-                                    </Col>
-                                </Form.Group>
-
-                                <Row>
-                                    <Col sm={{ span: 9, offset: 3 }}>
-                                        <Button variant="success" type="submit" disabled={submitting}>
-                                            {submitting ? (
-                                                <>
-                                                    <Spinner
-                                                        as="span"
-                                                        animation="border"
-                                                        size="sm"
-                                                        role="status"
-                                                        aria-hidden="true"
-                                                    />{' '}
-                                                    {t('addingCategory')}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <FaPlus /> {t('addCategory')}
-                                                </>
-                                            )}
+                <Row className="g-4">
+                    {categories.map((category) => (
+                        <Col key={category.id} xs={12} sm={6} md={4} lg={3}>
+                            <Card 
+                                className="h-100 custom-card category-card fade-in"
+                                onClick={() => handleCategoryClick(category)}
+                            >
+                                {category.image_url && (
+                                    <div className="card-img-container">
+                                        <Card.Img variant="top" src={category.image_url} alt={category.name} />
+                                        <div className="img-overlay"></div>
+                                    </div>
+                                )}
+                                <Card.Body className="d-flex flex-column">
+                                    <Card.Title>{category.name}</Card.Title>
+                                    <div className="mt-auto d-flex gap-2">
+                                        <Button
+                                            variant="outline-primary"
+                                            size="sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleShowEditModal(category);
+                                            }}
+                                            className="flex-grow-0"
+                                        >
+                                            <FaEdit /> {t('categoryManagement.edit')}
                                         </Button>
-                                    </Col>
-                                </Row>
-                            </Form>
-                        </Card.Body>
-                    </Card>
+                                        <Button
+                                            variant="outline-danger"
+                                            size="sm"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteClick(category);
+                                            }}
+                                            className="flex-grow-0"
+                                        >
+                                            <FaTrash /> {t('categoryManagement.delete')}
+                                        </Button>
+                                        <Button
+                                            variant="outline-success"
+                                            size="sm"
+                                            className="ms-auto"
+                                        >
+                                            <FaArrowRight />
+                                        </Button>
+                                    </div>
+                                </Card.Body>
+                            </Card>
+                        </Col>
+                    ))}
+                </Row>
 
-                    {/* Categories List */}
-                    <Card>
-                        <Card.Header as="h5">{t('categoriesList')}</Card.Header>
-                        <Card.Body>
-                            {loading ? (
-                                <div className="text-center">
-                                    <Spinner animation="border" role="status">
-                                        <span className="visually-hidden">{t('loading')}</span>
-                                    </Spinner>
-                                    <p className="mt-3">{t('loadingCategories')}</p>
-                                </div>
-                            ) : categories.length > 0 ? (
-                                <ul className="list-group">
-                                    {categories.map((category) => (
-                                        <li key={category.id} className="list-group-item d-flex justify-content-between align-items-center">
-                                            <div className="d-flex align-items-center">
-                                                {category.image_url && (
-                                                    <Image
-                                                        src={category.image_url}
-                                                        alt={category.name}
-                                                        rounded
-                                                        style={{ width: '60px', height: '60px', objectFit: 'cover', marginRight: '15px' }}
-                                                    />
-                                                )}
-                                                <span>{category.name}</span>
-                                            </div>
-                                            <div>
-                                                <Button
-                                                    variant="warning"
-                                                    size="sm"
-                                                    className="me-2"
-                                                    onClick={() => handleShowEditModal(category)}
-                                                >
-                                                    <FaEdit /> {t('edit')}
-                                                </Button>
-                                                <Button
-                                                    variant="danger"
-                                                    size="sm"
-                                                    onClick={() => handleDeleteCategory(category.id)}
-                                                    disabled={submitting}
-                                                >
-                                                    <FaTrash /> {t('delete')}
-                                                </Button>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-center">{t('noCategoriesAvailable')}</p>
-                            )}
-                        </Card.Body>
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Edit Category Modal */}
-            <Modal show={showEditModal} onHide={handleCloseEditModal} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>{t('editCategory')}</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    {currentCategory && (
-                        <Form onSubmit={handleUpdateCategory} encType="multipart/form-data">
-                            <Form.Group as={Row} className="mb-3" controlId="editCategoryName">
-                                <Form.Label column sm={4}>
-                                    {t('categoryName')} <span className="text-danger">*</span>
-                                </Form.Label>
-                                <Col sm={8}>
-                                    <Form.Control
-                                        type="text"
-                                        value={editCategoryName}
-                                        onChange={(e) => setEditCategoryName(e.target.value)}
-                                        placeholder={t('enterCategoryNamePlaceholder')}
-                                        required
-                                    />
-                                </Col>
+                {/* Create/Edit Category Modal */}
+                <Modal show={showEditModal} onHide={handleCloseEditModal}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>
+                            {currentCategory
+                                ? t('categoryManagement.editCategory')
+                                : t('categoryManagement.createCategory')}
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form onSubmit={currentCategory ? handleUpdateCategory : handleCreateCategory}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{t('categoryManagement.form.name')}</Form.Label>
+                                <Form.Control
+                                    type="text"
+                                    value={currentCategory ? editCategoryName : newCategoryName}
+                                    onChange={(e) =>
+                                        currentCategory
+                                            ? setEditCategoryName(e.target.value)
+                                            : setNewCategoryName(e.target.value)
+                                    }
+                                    required
+                                />
                             </Form.Group>
-
-                            <Form.Group as={Row} className="mb-3" controlId="editCategoryImage">
-                                <Form.Label column sm={4}>
-                                    {t('categoryImage')}
-                                </Form.Label>
-                                <Col sm={8}>
-                                    <Form.Control
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleEditImageChange}
-                                    />
-                                </Col>
+                            <Form.Group className="mb-3">
+                                <Form.Label>{t('categoryManagement.form.image')}</Form.Label>
+                                <Form.Control
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        currentCategory
+                                            ? setEditCategoryImage(e.target.files[0])
+                                            : setNewCategoryImage(e.target.files[0])
+                                    }
+                                />
                             </Form.Group>
-
-                            <Form.Group as={Row} className="mb-3" controlId="editCategoryImagePreview">
-                                <Form.Label column sm={4}></Form.Label>
-                                <Col sm={8}>
-                                    {editImagePreview && (
-                                        <div className="mt-3 text-center">
-                                            <Image
-                                                src={editImagePreview}
-                                                alt={t('editCategoryImagePreview')}
-                                                rounded
-                                                fluid
-                                                style={{ maxHeight: '150px' }}
-                                            />
-                                            <p className="mt-2">{t('editCategoryImagePreview')}</p>
-                                        </div>
-                                    )}
-                                </Col>
-                            </Form.Group>
-
-                            <Row>
-                                <Col sm={{ span: 8, offset: 4 }}>
-                                    <Button variant="primary" type="submit" disabled={submitting}>
-                                        {submitting ? (
-                                            <>
-                                                <Spinner
-                                                    as="span"
-                                                    animation="border"
-                                                    size="sm"
-                                                    role="status"
-                                                    aria-hidden="true"
-                                                />{' '}
-                                                {t('updatingCategory')}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <FaUpload /> {t('updateCategory')}
-                                            </>
-                                        )}
-                                    </Button>
-                                </Col>
-                            </Row>
                         </Form>
-                    )}
-                </Modal.Body>
-            </Modal>
-        </Container>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={handleCloseEditModal}>
+                            {t('categoryManagement.cancel')}
+                        </Button>
+                        <Button
+                            variant="primary"
+                            onClick={currentCategory ? handleUpdateCategory : handleCreateCategory}
+                        >
+                            {currentCategory
+                                ? t('categoryManagement.update')
+                                : t('categoryManagement.create')}
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+
+                {/* Delete Confirmation Modal */}
+                <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{t('categoryManagement.deleteConfirm.title')}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        {t('categoryManagement.deleteConfirm.message', {
+                            name: categoryToDelete?.name,
+                        })}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
+                            {t('categoryManagement.cancel')}
+                        </Button>
+                        <Button variant="danger" onClick={handleDeleteConfirm}>
+                            {t('categoryManagement.delete')}
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </Container>
+        </div>
     );
 };
 

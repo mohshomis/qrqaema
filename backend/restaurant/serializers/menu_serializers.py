@@ -1,6 +1,6 @@
 from rest_framework import serializers
 import json
-from ..models import MenuItem, MenuItemOption, MenuItemBooleanOption, Restaurant, Category
+from ..models import MenuItem, MenuItemOption, MenuItemBooleanOption, Restaurant, Category, Menu
 from ..utils.validators import validate_image_file
 
 class MenuItemBooleanOptionSerializer(serializers.ModelSerializer):
@@ -43,6 +43,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     restaurant = serializers.PrimaryKeyRelatedField(queryset=Restaurant.objects.all())
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all(), allow_null=True, required=False)
+    menu = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), required=False)
     options = MenuItemOptionSerializer(many=True, required=False)
     image_url = serializers.SerializerMethodField()
     is_available = serializers.BooleanField(required=False, default=True)
@@ -52,6 +53,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'restaurant',
+            'menu',
             'category',
             'name',
             'description',
@@ -60,6 +62,7 @@ class MenuItemSerializer(serializers.ModelSerializer):
             'image_url',
             'options',
             'is_available',
+            'order',
         ]
         read_only_fields = ['id', 'image_url']
     
@@ -121,3 +124,42 @@ class MenuItemSerializer(serializers.ModelSerializer):
                     MenuItemBooleanOption.objects.create(option_category=option_category, **choice_data)
 
         return instance
+
+class MenuSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(read_only=True)
+    categories = serializers.SerializerMethodField()
+    menu_items = MenuItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Menu
+        fields = [
+            'id',
+            'restaurant',
+            'name',
+            'language',
+            'is_default',
+            'categories',
+            'menu_items',
+            'created_at',
+            'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+    def get_categories(self, obj):
+        from .restaurant_serializers import CategorySerializer
+        categories = obj.categories.all().order_by('order', 'name')
+        return CategorySerializer(categories, many=True, context=self.context).data
+
+    def validate(self, data):
+        # If setting this menu as default, ensure it's the only default menu for this restaurant
+        if data.get('is_default', False):
+            existing_default = Menu.objects.filter(
+                restaurant=data['restaurant'],
+                is_default=True
+            ).exclude(id=self.instance.id if self.instance else None).first()
+            
+            if existing_default:
+                existing_default.is_default = False
+                existing_default.save()
+
+        return data

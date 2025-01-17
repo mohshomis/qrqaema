@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from ..models import Restaurant, Category, Table
+from ..models import Restaurant, Category, Table, Menu
 from ..utils.validators import validate_image_file
+from .menu_serializers import MenuSerializer
 
 class TableSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
@@ -36,12 +37,14 @@ class TableSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     image_url = serializers.SerializerMethodField(read_only=True)
+    menu = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'image', 'image_url']
+        fields = ['id', 'menu', 'name', 'description', 'image', 'image_url', 'order']
         extra_kwargs = {
             'image': {'required': False, 'allow_null': True},
+            'order': {'required': False}
         }
 
     def get_image_url(self, obj):
@@ -62,6 +65,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
     background_image_url = serializers.SerializerMethodField()
     staff = serializers.SerializerMethodField()
     tables = TableSerializer(many=True, read_only=True)
+    menus = MenuSerializer(many=True, read_only=True)
     
     class Meta:
         model = Restaurant
@@ -87,6 +91,8 @@ class RestaurantSerializer(serializers.ModelSerializer):
             'tags',
             'business_license',
             'tables',
+            'menus',
+            'default_language',
         ]
         extra_kwargs = {
             'owner': {'read_only': True},
@@ -104,6 +110,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
             'payment_methods': {'required': False},
             'tags': {'required': False},
             'business_license': {'required': False},
+            'default_language': {'required': False},
         }
 
     def __init__(self, *args, **kwargs):
@@ -142,7 +149,19 @@ class RestaurantSerializer(serializers.ModelSerializer):
             validated_data.setdefault('payment_methods', [])
             validated_data.setdefault('tags', [])
             print("Restaurant data after defaults:", validated_data)
-        return super().create(validated_data)
+
+        # Create the restaurant
+        restaurant = super().create(validated_data)
+
+        # Create a default menu in the restaurant's default language
+        Menu.objects.create(
+            restaurant=restaurant,
+            name="Default Menu",
+            language=restaurant.default_language,
+            is_default=True
+        )
+
+        return restaurant
 
     def get_logo_url(self, obj):
         request = self.context.get('request')

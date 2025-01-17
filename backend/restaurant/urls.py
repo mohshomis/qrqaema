@@ -9,11 +9,13 @@ from .views import (
     PasswordResetView, PasswordResetConfirmView, HelpRequestViewSet,
     TableViewSet
 )
+from .views.menu_views import MenuViewSet
 from rest_framework_simplejwt.views import TokenRefreshView
 
 # Create the main router and register viewsets
 router = DefaultRouter()
 router.register(r'restaurants', RestaurantViewSet, basename='restaurants')
+router.register(r'menus', MenuViewSet, basename='menus')
 router.register(r'menu-items', MenuItemViewSet, basename='menu-items')
 router.register(r'orders', OrderViewSet, basename='orders')
 router.register(r'categories', CategoryViewSet, basename='categories')
@@ -23,11 +25,14 @@ router.register(r'help-requests', HelpRequestViewSet, basename='help-requests')
 restaurants_router = NestedDefaultRouter(router, r'restaurants', lookup='restaurant')
 restaurants_router.register(r'tables', TableViewSet, basename='restaurant-tables')
 
+# Create a nested router for menus under restaurants
+restaurants_router.register(r'menus', MenuViewSet, basename='restaurant-menus')
+
 urlpatterns = [
     # Include the main router URLs
     path('', include(router.urls)),
     
-    # Include the nested router URLs for tables
+    # Include the nested router URLs for tables and menus
     path('', include(restaurants_router.urls)),
     
     # Custom path for menu item details with restaurantId and itemId using UUIDs
@@ -91,6 +96,18 @@ urlpatterns = [
         'restaurants/<uuid:restaurantId>/categories/',
         CategoryViewSet.as_view({'get': 'categories_for_restaurant'}),
         name='categories_for_restaurant'
+    ),
+    
+    # Menu-specific endpoints
+    path(
+        'restaurants/<uuid:restaurant_id>/menus/',
+        MenuViewSet.as_view({'get': 'menus_for_restaurant'}),
+        name='restaurant_menus'
+    ),
+    path(
+        'menus/<uuid:pk>/set-default/',
+        MenuViewSet.as_view({'post': 'set_default'}),
+        name='set_default_menu'
     ),
     
     # Activation and Password Reset URLs

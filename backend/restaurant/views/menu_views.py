@@ -5,9 +5,62 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
-from ..models import Category, MenuItem, Restaurant
+from ..models import Category, MenuItem, Restaurant, Menu
 from ..serializers import CategorySerializer, MenuItemSerializer
+from ..serializers.menu_serializers import MenuSerializer
 from .permissions import IsOwnerOrStaff
+
+class MenuViewSet(viewsets.ModelViewSet):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve', 'menus_for_restaurant']:
+            return [AllowAny()]
+        return [IsAuthenticated(), IsOwnerOrStaff()]
+
+    def get_queryset(self):
+        if self.action in ['list', 'retrieve']:
+            restaurant_id = self.request.query_params.get('restaurant')
+            if restaurant_id:
+                return Menu.objects.filter(restaurant__id=restaurant_id)
+            return Menu.objects.none()
+        return Menu.objects.all()
+
+    def perform_create(self, serializer):
+        restaurant_id = self.request.data.get('restaurant')
+        if not restaurant_id:
+            raise serializers.ValidationError({'restaurant': 'Restaurant ID is required.'})
+        
+        restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        if restaurant.owner != self.request.user and not restaurant.staff.filter(id=self.request.user.id).exists():
+            raise PermissionDenied('Only the owner or staff can add menus to this restaurant.')
+
+        serializer.save(restaurant=restaurant)
+
+    @action(detail=False, methods=['get'], url_path=r'restaurants/(?P<restaurant_id>[0-9a-f-]+)/menus')
+    def menus_for_restaurant(self, request, restaurant_id=None):
+        try:
+            menus = Menu.objects.filter(restaurant__id=restaurant_id)
+            serializer = self.get_serializer(menus, many=True)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    @action(detail=True, methods=['post'])
+    def set_default(self, request, pk=None):
+        menu = self.get_object()
+        if menu.restaurant.owner != request.user and not menu.restaurant.staff.filter(id=request.user.id).exists():
+            raise PermissionDenied('Only the owner or staff can set the default menu.')
+        
+        # Set all other menus as non-default
+        Menu.objects.filter(restaurant=menu.restaurant).update(is_default=False)
+        menu.is_default = True
+        menu.save()
+        
+        serializer = self.get_serializer(menu)
+        return Response(serializer.data)
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
@@ -23,19 +76,25 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         restaurant_id = self.request.data.get('restaurant')
+        menu_id = self.request.data.get('menu')
+        
         if not restaurant_id:
             raise serializers.ValidationError({'restaurant': 'Restaurant ID is required.'})
+        if not menu_id:
+            raise serializers.ValidationError({'menu': 'Menu ID is required.'})
         
         restaurant = get_object_or_404(Restaurant, id=restaurant_id)
-        if restaurant.owner != self.request.user:
-            raise PermissionDenied('Only the owner can add categories to this restaurant.')
+        menu = get_object_or_404(Menu, id=menu_id, restaurant=restaurant)
+        
+        if restaurant.owner != self.request.user and not restaurant.staff.filter(id=self.request.user.id).exists():
+            raise PermissionDenied('Only the owner or staff can add categories to this restaurant.')
 
-        serializer.save(restaurant=restaurant)
+        serializer.save(restaurant=restaurant, menu=menu)
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated:
-            return Category.objects.filter(restaurant__owner=user)
+        menu_id = self.request.query_params.get('menu')
+        if menu_id:
+            return Category.objects.filter(menu__id=menu_id)
         return Category.objects.none()
 
     @action(detail=False, methods=['get'], url_path=r'menu-items-by-category/(?P<category_id>[0-9a-f-]+)', permission_classes=[AllowAny])
@@ -48,7 +107,10 @@ class CategoryViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'], url_path=r'restaurants/(?P<restaurantId>[0-9a-f-]+)/categories', permission_classes=[AllowAny])
     def categories_for_restaurant(self, request, restaurantId=None):
         try:
+            menu_id = request.query_params.get('menu')
             categories = Category.objects.filter(restaurant__id=restaurantId)
+            if menu_id:
+                categories = categories.filter(menu__id=menu_id)
             serializer = self.get_serializer(categories, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except Restaurant.DoesNotExist:
@@ -88,25 +150,32 @@ class MenuItemViewSet(viewsets.ModelViewSet):
             return Response({'error': 'Menu item not found for this restaurant'}, status=status.HTTP_404_NOT_FOUND)
 
     def get_queryset(self):
-        if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
-            return MenuItem.objects.all()
-
+        menu_id = self.request.query_params.get('menu')
+        if menu_id:
+            return MenuItem.objects.filter(menu__id=menu_id)
+        
         restaurant_id = self.request.query_params.get('restaurant')
         if restaurant_id:
-            if self.request.user.is_authenticated:
-                if (self.request.user.groups.filter(name='restaurant_owners').exists() or 
-                    self.request.user.groups.filter(name='restaurant_staff').exists()):
-                    return MenuItem.objects.filter(restaurant__id=restaurant_id)
-            return MenuItem.objects.filter(restaurant__id=restaurant_id)
+            queryset = MenuItem.objects.filter(restaurant__id=restaurant_id)
+            if menu_id:
+                queryset = queryset.filter(menu__id=menu_id)
+            return queryset
+        
         return MenuItem.objects.none()
 
     def perform_create(self, serializer):
         restaurant_id = self.request.data.get('restaurant')
+        menu_id = self.request.data.get('menu')
+        
         if not restaurant_id:
             raise serializers.ValidationError({"restaurant": "This field is required."})
+        if not menu_id:
+            raise serializers.ValidationError({"menu": "This field is required."})
 
         restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+        menu = get_object_or_404(Menu, id=menu_id, restaurant=restaurant)
+        
         if restaurant.owner != self.request.user and not restaurant.staff.filter(id=self.request.user.id).exists():
             raise PermissionDenied("You don't have permission to add items to this restaurant.")
 
-        menu_item = serializer.save(restaurant=restaurant)
+        serializer.save(restaurant=restaurant, menu=menu)

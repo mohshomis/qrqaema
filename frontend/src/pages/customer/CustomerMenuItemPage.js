@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getMenuItemDetails, getRestaurantPublicDetails } from '../../services/api';
+import { getRestaurantPublicDetails } from '../../services/api';
 import Footer from '../../components/Footer';
 import PropTypes from 'prop-types';
+import axios from 'axios';
 import {
   Container,
   Row,
@@ -44,12 +45,43 @@ const CustomerMenuItemPage = ({ addToBasket, basketItems = [] }) => {
   const [error, setError] = useState(null);
   const [animateBasket, setAnimateBasket] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentMenu, setCurrentMenu] = useState(null);
   const navigate = useNavigate();
+
+  // Fetch available menus and set current menu based on language
+  useEffect(() => {
+    const fetchMenus = async () => {
+      try {
+        const response = await axios.get(`/api/restaurants/${restaurantId}/menus/`);
+        const menus = response.data;
+        
+        // Find menu matching current language or default menu
+        const matchingMenu = menus.find(menu => menu.language === i18n.language) ||
+                           menus.find(menu => menu.is_default);
+        
+        if (matchingMenu) {
+          setCurrentMenu(matchingMenu);
+        }
+      } catch (err) {
+        console.error('Error fetching menus:', err);
+        setError(t('customerMenuItemPage.errors.fetchFailed'));
+      }
+    };
+
+    fetchMenus();
+  }, [restaurantId, i18n.language, t]);
 
   useEffect(() => {
     const fetchMenuItem = async () => {
       try {
-        const menuItemResponse = await getMenuItemDetails(restaurantId, itemId);
+        if (!currentMenu) return;
+
+        // Fetch menu item with menu context
+        const menuItemResponse = await axios.get(`/api/menu-items/${itemId}/`, {
+          params: {
+            menu: currentMenu.id
+          }
+        });
         const item = menuItemResponse.data;
         setMenuItem(item);
         setCalculatedPrice(Number(item.price));
@@ -63,8 +95,11 @@ const CustomerMenuItemPage = ({ addToBasket, basketItems = [] }) => {
         setLoading(false);
       }
     };
-    fetchMenuItem();
-  }, [restaurantId, itemId, t]);
+
+    if (currentMenu) {
+      fetchMenuItem();
+    }
+  }, [restaurantId, itemId, currentMenu, t]);
 
   const calculatePrice = () => {
     if (!menuItem) return;
@@ -103,6 +138,7 @@ const CustomerMenuItemPage = ({ addToBasket, basketItems = [] }) => {
         selectedOptions: {},
         price: calculatedPrice,
         image: menuItem.image_url,
+        menu: currentMenu.id // Include menu ID in basket item
       };
 
       Object.keys(selectedOptions).forEach(optionId => {
@@ -344,6 +380,7 @@ CustomerMenuItemPage.propTypes = {
       selectedOptions: PropTypes.object.isRequired,
       price: PropTypes.number.isRequired,
       image: PropTypes.string,
+      menu: PropTypes.number.isRequired,
     })
   ),
 };

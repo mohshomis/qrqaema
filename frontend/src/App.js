@@ -19,8 +19,7 @@ import OrderSuccessPage from './pages/customer/OrderSuccessPage';
 import HomePage from './pages/shared/HomePage';
 import RegisterPage from './pages/shared/RegisterPage';
 import RestaurantProfilePage from './pages/restaurant-owner/RestaurantProfilePage';
-// Removed MenuManagementPage import
-// import MenuManagementPage from './pages/MenuManagementPage';
+import MenuManagementPage from './pages/restaurant-owner/MenuManagementPage';
 import StaffManagementPage from './pages/restaurant-owner/StaffManagementPage';
 import CategoryManagementPage from './pages/restaurant-owner/CategoryManagementPage';
 import MenuItemManagementPage from './pages/restaurant-owner/MenuItemManagementPage';
@@ -161,8 +160,13 @@ const App = () => {
                         }
                     >
                         <Route path="profile" element={<RestaurantProfilePage />} />
-                        {/* Removed MenuManagementPage route */}
-                        {/* <Route path="menu" element={<MenuManagementPage />} /> */}
+        {/* Menu Management Routes */}
+        <Route path="menus" element={<MenuManagementPage />} />
+        <Route path="menus/:menuId/categories" element={<CategoryManagementPage />} />
+        <Route path="menus/:menuId/categories/:categoryId/edit" element={<CategoryEditPage />} />
+        <Route path="menus/:menuId/menu-items" element={<MenuItemManagementPage />} />
+        <Route path="menus/:menuId/menu-items/create" element={<MenuItemCreatePage />} />
+        <Route path="menus/:menuId/menu-items/:menuItemId/edit" element={<MenuItemEditPage />} />
                         <Route path="staff" element={<StaffManagementPage />} />
                         <Route path="categories" element={<CategoryManagementPage />} />
                         <Route path="categories/:categoryId/edit" element={<CategoryEditPage />} />
