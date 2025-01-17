@@ -1,0 +1,702 @@
+{
+  "manageEmployees": "Manage Employees",
+  "manageMenu": "Manage Menu",
+  "profile": "Profile",
+  "logout": "Logout",
+  "restaurantManagement": "Restaurant Management",
+  "categories": "Categories",
+  "menuItems": "Menu Items",
+  "orderBasket": "Order Basket",
+  "orderSuccess": "Order Success",
+  "welcome": "Welcome",
+  "orders": {
+    "completed": "Completed Orders",
+    "inProgress": "Orders In Progress",
+    "pending": "Pending Orders"
+  },
+  "tables": "Tables",
+  "addTable": "Add Table",
+  "removeTable": "Remove Table",
+  "table": "Table",
+  "qrCodeFor": "QR code for",
+  "downloadQr": "Download QR Code",
+  "noTablesAvailable": "No tables available",
+  "recentOrders": "Recent Orders",
+  "tableNumber": "Table Number",
+  "customerName": "Customer Name",
+  "status": "Status",
+  "time": "Time",
+  "noOrdersCurrently": "No orders currently",
+  "tableStatus": "Table Status",
+  "errors": {
+    "loadDataFailed": "Failed to load table data or QR codes",
+    "fetchOrdersError": "Error fetching orders:",
+    "addTableError": "Failed to add table.",
+    "removeTableError": "Failed to remove table.",
+    "fetchCategories": "Failed to fetch categories.",
+    "addCategory": "Failed to add category.",
+    "deleteCategory": "Failed to delete category.",
+    "updateCategory": "Failed to update category.",
+    "fillRequiredFields": "Please fill in all required fields.",
+    "imageProcessingFailed": "Failed to process the selected image.",
+    "priceExceedsLimit": "Price cannot exceed 9999.99.",
+    "optionNameRequired": "Please fill in the option name.",
+    "atLeastOneChoice": "Please add at least one choice for each option.",
+    "choiceFieldsRequired": "Please fill in all fields for choices.",
+    "fetchMenuItem": "Failed to fetch menu item data.",
+    "createMenuItemFailed": "Failed to create menu item.",
+    "updateMenuItemFailed": "Failed to update menu item.",
+    "loadRestaurantProfile": "Failed to load restaurant profile.",
+    "updateProfileFailed": "Failed to update profile.",
+    "fetchStaff": "Failed to fetch staff.",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "addStaffFailed": "Failed to add staff.",
+    "removeStaffFailed": "Failed to remove staff.",
+    "activationFailed": "Account activation failed. Please try again.",
+    "invalidToken": "The activation token is invalid.",
+    "userAlreadyActive": "This account is already active.",
+    "fetchFailed": "Failed to load menu items or restaurant details.",
+    "invalidIds": "Invalid restaurant or category ID."
+  },
+  "success": {
+    "categoryAdded": "Category added successfully.",
+    "categoryDeleted": "Category deleted successfully.",
+    "categoryUpdated": "Category updated successfully.",
+    "menuItemCreated": "Menu item created successfully!",
+    "menuItemDeleted": "Menu item deleted successfully.",
+    "menuItemUpdated": "Menu item updated successfully.",
+    "profileUpdated": "Profile updated successfully.",
+    "staffAdded": "Staff added successfully.",
+    "staffRemoved": "Staff removed successfully.",
+    "accountActivated": "Your account has been activated successfully!"
+  },
+  "loading": "Loading...",
+  "manageCategories": "Manage Categories",
+  "categoryName": "Category Name",
+  "enterCategoryNamePlaceholder": "Enter category name",
+  "categoryImage": "Category Image",
+  "newCategoryImagePreview": "New Category Image Preview",
+  "editCategoryImagePreview": "Edit Category Image Preview",
+  "addCategory": "Add Category",
+  "addingCategory": "Adding...",
+  "categoriesList": "Categories List",
+  "loadingCategories": "Loading categories...",
+  "noCategoriesAvailable": "No categories available.",
+  "edit": "Edit",
+  "delete": "Delete",
+  "confirm": {
+    "deleteCategory": "Are you sure you want to delete this category?",
+    "deleteMenuItem": "Are you sure you want to delete this menu item?",
+    "removeStaff": "Are you sure you want to remove this staff member?"
+  },
+  "editCategory": "Edit Category",
+  "updateCategory": "Update Category",
+  "menuItemImagePreview": "Menu Item Image Preview",
+  "addNewMenuItem": "Add New Menu Item",
+  "editMenuItem": "Edit Menu Item",
+  "itemName": "Item Name",
+  "enterMenuItemName": "Enter menu item name",
+  "description": "Description",
+  "enterDescription": "Enter description",
+  "price": "Price",
+  "currency": "$",
+  "enterPrice": "Enter price",
+  "image": "Image",
+  "imagePreview": "Image Preview",
+  "currentImage": "Current Image",
+  "currentMenuItemImage": "Current Menu Item Image",
+  "selectCategory": "Select Category",
+  "options": "Options",
+  "option": "Option",
+  "optionName": "Option Name",
+  "enterOptionName": "Enter option name",
+  "choices": "Choices",
+  "commaSeparated": "comma-separated",
+  "enterChoiceName": "Enter choice name",
+  "enterPriceModifier": "Enter price modifier",
+  "addAnotherChoice": "Add Another Choice",
+  "addOptionCategory": "Add Option Category",
+  "addOption": "Add Option",
+  "booleanOptions": "Boolean Options",
+  "booleanOption": "Boolean Option",
+  "priceModifier": "Price Modifier",
+  "addBooleanOption": "Add Boolean Option",
+  "createMenuItem": "Create Menu Item",
+  "updatingMenuItem": "Updating...",
+  "menuItemManagement": "Menu Item Management",
+  "loadingMenuItems": "Loading menu items...",
+  "noMenuItemsAvailable": "No menu items available. Please add a new menu item.",
+  "backgroundImage": "Background Image",
+  "backgroundImageAlt": "Background Image",
+  "backgroundImagePreview": "Background Image Preview",
+  "logo": "Logo",
+  "logoAlt": "Logo",
+  "logoPreview": "Logo Preview",
+  "updateRestaurantProfile": "Update Restaurant Profile",
+  "loadingRestaurantProfile": "Loading restaurant profile...",
+  "staffManagement": "Staff Management",
+  "addNewStaff": "Add New Staff",
+  "addStaff": "Add Staff",
+  "remove": "Remove",
+  "addAnotherStaff": "Add Another Staff",
+  "passwordRequirements": "Password must be at least 8 characters.",
+  "username": "Username",
+  "enterUsername": "Enter username",
+  "actions": "Actions",
+  "loadingStaff": "Loading staff...",
+  "noStaff": "No staff members.",
+  "close": "Close",
+  "updatingStaff": "Updating...",
+  "password": "Password",
+  "enterPassword": "Enter password",
+  "activateAccount": "Activate Account",
+  "passwordResetConfirm": {
+    "title": "Reset Password",
+    "labels": {
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password"
+    },
+    "placeholders": {
+      "newPassword": "Enter your new password",
+      "confirmPassword": "Re-enter your new password"
+    },
+    "buttons": {
+      "resetPassword": "Reset Password",
+      "resetting": "Resetting..."
+    },
+    "errors": {
+      "requiredFields": "All fields are required.",
+      "passwordMismatch": "Passwords do not match.",
+      "invalidToken": "The reset link is invalid or has expired.",
+      "userAlreadyActive": "The user account is already active.",
+      "unexpectedError": "An error occurred while resetting your password. Please try again."
+    },
+    "success": {
+      "passwordReset": "Your password has been reset successfully."
+    }
+  },
+  "passwordResetRequest": {
+    "title": "Reset Password",
+    "labels": {
+      "email": "Email Address"
+    },
+    "placeholders": {
+      "enterEmail": "Enter your email address"
+    },
+    "buttons": {
+      "sendResetLink": "Send Reset Link",
+      "sending": "Sending..."
+    },
+    "messages": {
+      "success": "A password reset link has been sent to your email."
+    },
+    "errors": {
+      "requiredEmail": "Email address is required.",
+      "invalidEmail": "Invalid email address.",
+      "emailNotFound": "No user is associated with this email.",
+      "unexpectedError": "An unexpected error occurred while sending the reset link."
+    }
+  },
+  "register": {
+    "title": "Create a New Account",
+    "userForm": {
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "placeholders": {
+        "username": "Enter your username",
+        "email": "Enter your email address",
+        "password": "Enter your password",
+        "confirmPassword": "Re-enter your password",
+        "postalCodeNote": "If you don't have a postcode, please enter 0000."
+      }
+    },
+    "restaurantForm": {
+      "name": "Restaurant Name",
+      "address": "Address",
+      "phoneNumber": "Phone Number",
+      "tables": "Number of Tables",
+      "country": "Country",
+      "city": "City",
+      "postalCode": "Postal Code",
+      "currency": "Currency",
+      "numberOfEmployees": "Number of Employees",
+      "logo": "Restaurant Logo",
+      "logoAlt": "Restaurant Logo",
+      "logoPreview": "Current Logo",
+      "backgroundImage": "Background Image",
+      "backgroundImageAlt": "Background Image",
+      "backgroundImagePreview": "Current Background Image",
+      "placeholders": {
+        "name": "Enter your restaurant name",
+        "address": "Enter your address",
+        "phoneNumber": "Enter your phone number",
+        "city": "Enter your city",
+        "postalCode": "Enter your postal code",
+        "currency": "Select your currency",
+        "country": "Select your country",
+        "numberOfEmployees": "Enter number of employees"
+      }
+    },
+    "buttons": {
+      "next": "Next",
+      "previous": "Previous",
+      "finish": "Finish"
+    },
+    "success": {
+      "message": "Account and restaurant created successfully! Please check your email to activate your account.",
+      "redirect": "You will be redirected to the login page shortly..."
+    },
+    "errors": {
+
+      "usernameRequired": "Username is required.",
+      "usernameTooShort": "Username must be at least 3 characters long.",
+      "usernameInvalid": "Username can only contain letters, numbers, and underscores.",
+      "emailRequired": "Email is required.",
+      "emailInvalid": "Please enter a valid email address.",
+      "passwordRequired": "Password is required.",
+      "passwordTooShort": "Password must be at least 6 characters long.",
+      "passwordWeak": "Password must include both letters and numbers.",
+      "confirmPasswordRequired": "Please confirm your password.",
+      "passwordsDoNotMatch": "Passwords do not match.",
+      "restaurantNameRequired": "Restaurant name is required.",
+      "addressRequired": "Address is required.",
+      "phoneNumberRequired": "Phone number is required.",
+      "phoneNumberInvalid": "Please enter a valid phone number.",
+      "tablesRequired": "Number of tables is required.",
+      "tablesInvalid": "Number of tables must be at least 1.",
+      "countryRequired": "Country is required.",
+      "cityRequired": "City is required.",
+      "postalCodeInvalid": "Please enter a valid postal code.",
+      "currencyRequired": "Currency is required.",
+      "numberOfEmployeesRequired": "Number of employees is required.",
+      "numberOfEmployeesInvalid": "Number of employees must be at least 1.",
+      "selectCountryAndCurrency": "Please select both country and currency.",
+      "unexpectedError": "An unexpected error occurred. Please try again."
+    },
+    "links": {
+      "returnToLogin": "Return to Login"
+    },
+    "steps": {
+      "step1": "Step 1",
+      "step2": "Step 2",
+      "step3": "Step 3"
+    }
+  },
+  "usernameRecovery": {
+    "title": "Recover Username",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "Enter your email",
+    "emailRequired": "Email is required.",
+    "sending": "Sending...",
+    "sendButton": "Send Username",
+    "errorSending": "An error occurred while sending the username."
+  },
+  "navbar": {
+    "brand": "Menu Management System",
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "testimonials": "Testimonials",
+    "dashboard": "Go to Dashboard",
+    "login": "Login",
+    "register": "Register",
+    "language": "Language"
+  },
+  "categoryPage": {
+    "title": "Menu for {{restaurantName}}",
+    "loading": "Loading...",
+    "price": "Price",
+    "noItems": "No items available in this category.",
+    "backButton": "Back",
+    "aria": {
+      "backgroundImage": "Restaurant background image"
+    },
+    "errors": {
+      "fetchFailed": "Failed to load menu items or restaurant details.",
+      "invalidIds": "Invalid restaurant or category ID."
+    }
+  },
+  "customerMenuItemPage": {
+    "loading": "Loading...",
+    "errors": {
+      "fetchFailed": "Failed to load product details."
+    },
+    "aria": {
+      "backgroundImage": "{{itemName}} background image"
+    },
+    "idBadge": "ID: {{id}}",
+    "details": "Details",
+    "pricing": "Pricing",
+    "basePrice": "Base Price",
+    "totalPrice": "Total Price",
+    "chooseOptions": "Choose Additions",
+    "optionChoice": "{{choiceName}} (+${{priceModifier}})",
+    "noAdditions": "No additions available.",
+    "quantity": "Quantity",
+    "decreaseQuantity": "Decrease quantity",
+    "increaseQuantity": "Increase quantity",
+    "addToBasket": "Add to Basket",
+    "alerts": {
+      "minQuantity": "Please select at least one item."
+    }
+  },
+  "menuItemCreatePage": {
+    "addNewMenuItem": "Add New Menu Item",
+    "itemName": "Item Name",
+    "enterMenuItemName": "Enter menu item name",
+    "description": "Description",
+    "enterDescription": "Enter description",
+    "price": "Price",
+    "currency": "USD",
+    "enterPrice": "Enter price",
+    "image": "Image",
+    "imagePreview": "Image Preview",
+    "menuItemImagePreview": "Menu item image preview",
+    "category": "Category",
+    "selectCategory": "Select a category",
+    "options": "Options",
+    "option": "Option",
+    "remove": "Remove",
+    "optionName": "Option Name",
+    "enterOptionName": "Enter option name",
+    "choices": "Choices",
+    "commaSeparated": "comma separated",
+    "enterChoices": "Enter choices, separated by commas",
+    "addAnotherChoice": "Add Another Choice",
+    "addOption": "Add Option",
+    "booleanOptions": "Boolean Options",
+    "booleanOption": "Boolean Option",
+    "priceModifier": "Price Modifier",
+    "enterPriceModifier": "Enter price modifier",
+    "addBooleanOption": "Add Boolean Option",
+    "createMenuItem": "Create Menu Item",
+    "noAdditions": "No additions available.",
+    "loading": "Loading...",
+    "errors": {
+      "fetchCategories": "Failed to fetch categories.",
+      "imageProcessingFailed": "Image processing failed.",
+      "fillRequiredFields": "Please fill in all required fields.",
+      "createMenuItemFailed": "Failed to create menu item."
+    },
+    "success": {
+      "menuItemCreated": "Menu item created successfully!"
+    }
+  },
+  "menuPage": {
+    "title": "Menu",
+    "loading": "Loading...",
+    "errorLoading": "Failed to load menu items.",
+    "noItems": "No menu items available.",
+    "price": "Price: ${{price}}",
+    "addToOrder": "Add to Order",
+    "added": "Added",
+    "placeOrder": "Place Order",
+    "selectedItems": "Selected Items",
+    "success": {
+      "orderPlaced": "Order placed successfully!"
+    },
+    "errors": {
+      "fetchMenuItems": "Failed to fetch menu items.",
+      "placeOrderFailed": "Failed to place order.",
+      "noItemsSelected": "Please select at least one item to place an order."
+    }
+  },
+  "orderBasketPage": {
+    "title": "Your Order Basket",
+    "loading": "Loading...",
+    "emptyBasket": "Your basket is empty. Add some items!",
+    "basePrice": "Base Price",
+    "quantity": "Quantity",
+    "selectedOptions": "Selected Options",
+    "selectedBooleans": "Selected Add-ons",
+    "totalPrice": "Total Price",
+    "currency": "USD",
+    "goBack": "Go Back",
+    "placeOrder": "Place Order",
+    "remove": "Remove",
+    "removeItem": "Remove Item",
+    "aria": {
+      "backgroundImage": "Restaurant background image"
+    },
+    "success": {
+      "orderPlaced": "Order placed successfully!"
+    },
+    "errors": {
+      "fetchRestaurantDetails": "Failed to fetch restaurant details.",
+      "placeOrderFailed": "Failed to place order.",
+      "placeOrderError": "An error occurred while placing the order. Please try again.",
+      "invalidRestaurantOrTable": "Invalid restaurant ID or table number.",
+      "noItemsSelected": "Please select at least one item to place an order."
+    }
+  },
+  "orderPage": {
+    "title": "Orders",
+    "goBack": "Go Back",
+    "loading": "Loading...",
+    "table": "Table",
+    "orderDetails": "Order Details",
+    "price": "Price",
+    "currency": "USD",
+    "selectedOptions": "Selected Options",
+    "selectedBooleans": "Selected Add-ons",
+    "additionalInfo": "Additional Information",
+    "noItemsInOrder": "No items in this order.",
+    "noOrders": "No orders available.",
+    "startExecution": "Start Execution",
+    "completeOrder": "Complete Order",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this order?",
+    "success": {
+      "statusUpdated": "Order status updated to {{status}}.",
+      "orderDeleted": "Order deleted successfully."
+    },
+    "errors": {
+      "fetchOrders": "Failed to fetch orders.",
+      "updateStatus": "Failed to update order status.",
+      "updateStatusError": "Failed to update order status: {{error}}",
+      "deleteOrder": "Failed to delete order.",
+      "deleteOrderError": "Failed to delete order: {{error}}"
+    },
+    "status": {
+      "pending": "Pending",
+      "in_progress": "In Progress",
+      "completed": "Completed"
+    },
+    "aria": {
+      "backgroundImage": "Restaurant background image"
+    }
+  },
+  "orderSuccessPage": {
+    "loading": "Loading...",
+    "table": "Table",
+    "orderSummary": "Order Summary",
+    "price": "Price",
+    "currency": "USD",
+    "specialRequest": "Special Request",
+    "selectedOptions": "Selected Options",
+    "noOrderDetails": "No order details available.",
+    "orderAgain": "Order Again",
+    "success": {
+      "statusUpdated": "Order status updated to {{status}}."
+    },
+    "errors": {
+      "fetchOrderStatus": "Failed to fetch order status.",
+      "noOrdersForTable": "No orders found for this table."
+    }
+  },
+  "ticTacToe": {
+    "playWhileWaiting": "Let's play while waiting!",
+    "cell": "Cell",
+    "emptyCell": "Empty Cell",
+    "draw": "It's a draw!",
+    "youWon": "You won!",
+    "youLost": "You lost!",
+    "resetGame": "Reset Game",
+    "maxResetsReached": "You have reached the maximum number of resets. Try again next time!"
+  },
+    "seo": {
+      "title": "Welcome to Qr Qaema",
+      "description": "Experience the most advanced QR menu system designed for modern restaurants.",
+      "keywords": "QR menu, digital menu, restaurant technology, online ordering, QR codes, order management",
+      "author": "Qr Qaema",
+      "og": {
+        "title": "Qr Qaema - Leading QR Menu Solution",
+        "description": "Qr Qaema offers a cutting-edge digital solution to manage and display restaurant menus through QR codes.",
+        "url": "https://qrqaema.com/",
+        "type": "website",
+        "image": "https://qrqaema.com/images/logo.png"
+      },
+      "twitter": {
+        "card": "summary_large_image",
+        "title": "Qr Qaema - Your Comprehensive Digital Restaurant Solution",
+        "description": "Discover Qr Qaema, the premier choice for digital menu management and online ordering.",
+        "image": "https://qrqaema.com/images/logo.png"
+      }
+    },
+    "hero": {
+      "title": "Welcome to Qr Qaema",
+      "subtitle": "Transforming Restaurant Menus for the Digital Age",
+      "discoverFeatures": "Explore Features",
+      "startNow": "Get Started"
+    },
+    "features": {
+      "title": "Our Features",
+      "feature1": {
+        "title": "Customizable Menus",
+        "description": "Easily design and update your restaurant's menu to reflect your brand and offerings."
+      },
+      "feature2": {
+        "title": "Seamless QR Code Integration",
+        "description": "Provide customers with instant access to your menu through unique QR codes at each table."
+      },
+      "feature3": {
+        "title": "Real-Time Order Management",
+        "description": "Manage and track customer orders efficiently with our intuitive platform."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "step1": {
+        "title": "Set Up Your Restaurant Profile",
+        "description": "Create an account and establish your restaurant's digital presence with our easy setup process."
+      },
+      "step2": {
+        "title": "Generate Unique QR Codes",
+        "description": "Create personalized QR codes for each table, ensuring a smooth customer experience."
+      },
+      "step3": {
+        "title": "Manage Orders Digitally",
+        "description": "Allow customers to place orders directly from their smartphones and manage them in real-time."
+      }
+    },
+    "pricing": {
+      "title": "Pricing",
+      "subtitle": "Enjoy all our features absolutely free.",
+      "plan": "Free Plan",
+      "price": "Free",
+      "description": "Access all features at no cost, with no hidden fees.",
+      "features": {
+        "feature1": "Fully Customizable Menus",
+        "feature2": "Unlimited QR Code Generation",
+        "feature3": "Real-Time Order Tracking",
+        "feature4": "Dedicated Customer Support"
+      },
+      "button": "Get Started"
+    },
+    "testimonials": {
+      "title": "Customer Testimonials",
+      "testimonial1": "Qr Qaema revolutionized our order management system.",
+      "user1": "Ali, Restaurant Owner",
+      "testimonial2": "Our customers appreciate the ease of scanning QR codes.",
+      "user2": "Sara, Cafe Manager",
+      "testimonial3": "A game changer for our restaurant operations!",
+      "user3": "Hassan, Restaurant Manager"
+    },
+    "cta": {
+      "title": "Ready to Transform Your Restaurant?",
+      "subtitle": "Sign up today to streamline your menu and order management.",
+      "button": "Get Started"
+    },
+    "footer": {
+      "rights": "© 2024 Qr Qaema. All rights reserved.",
+      "privacyPolicy": "Privacy Policy",
+      "termsAndConditions": "Terms and Conditions"
+    },  
+    "login": {
+      "title": "Login to Your Account",
+      "username": "Username",
+      "password": "Password",
+      "placeholders": {
+        "enterUsername": "Enter your username",
+        "enterPassword": "Enter your password"
+      },
+      "buttons": {
+        "login": "Login",
+        "loggingIn": "Logging in..."
+      },
+      "errors": {
+        "requiredFields": "Please fill in both the username and password.",
+        "invalidCredentials": "Invalid username or password.",
+        "unexpectedError": "An unexpected error occurred. Please try again later."
+      },
+      "links": {
+        "returnHome": "Return to Home",
+        "noAccount": "Don't have an account?",
+        "register": "Register Here",
+        "forgotPassword": "Forgot your password?",
+        "recoverUsername": "Forgot your username?"
+      }
+    },
+    "tour": {
+      "header": "This is the Restaurant Management Header where you can manage restaurant details and user actions.",
+      "headerLogout": "Click here to securely log out from your account.",
+      "headerManageEmployees": "Click here to manage your restaurant's staff, including adding and removing employees.",
+      "headerManageMenu": "This section allows you to manage the restaurant's menu, including categories and individual menu items.",
+      "headerManageCategories": "Use this section to manage different menu categories in your restaurant.",
+      "headerManageMenuItems": "Here you can manage individual menu items under different categories.",
+      "headerProfile": "Here you can view and update your profile details, such as your username and other personal information.",
+      "headerLanguageSelector": "Change the display language of the system using this dropdown.",
+      "headerBrand": "This is your restaurant's brand/logo displayed on the dashboard.",
+      "completedOrdersCard": "View the number of completed orders in this section.",
+      "inProgressOrdersCard": "This card shows orders that are currently being prepared in the kitchen.",
+      "pendingOrdersCard": "Here you can see all pending orders waiting for approval.",
+      "helpRequestSection": "This is where you manage help requests from customers.",
+      "helpRequestItem": "Manage individual help requests from customers, such as assistance with orders or services.",
+      "addTableButton": "Click here to add a new table to your restaurant. Each new table gets assigned a unique QR code.",
+      "tableCard": "Each card represents a table in your restaurant. Click to view or manage the orders for this table.",
+      "recentOrdersTable": "This table shows the most recent orders placed by customers.",
+      "replayTour": "Replay this guided tour at any time to familiarize yourself with the dashboard.",
+      "headerViewMenu": "Click here to view the restaurant's menu."
+    },
+"helpRequests": "Help Requests",
+    "helpRequest": {
+      "details": "Help Request Details",
+      "tableNumber": "Table Number",
+      "username": "Username",
+      "anonymous": "Anonymous",
+      "description": "Description",
+      "noDescription": "No description provided.",
+      "status": "Status",
+      "response": "Response",
+      "enterResponseValidation": "Please enter a response before submitting.",
+      "yourResponse": "Your Response",
+      "enterResponse": "Enter your response here...",
+      "respondToAccept": "Respond to Accept Help Request",
+      "respondToDecline": "Respond to Decline Help Request",
+      "accepted": "Help request accepted successfully.",
+      "declined": "Help request declined successfully.",
+      "indicatorTitle": "There is a pending help request for this table.",
+      "deleteConfirmation": "Are you sure you want to delete this help request?",
+      "deleted": "Help request deleted successfully.",
+      "noHelpRequests": "There are no help requests at the moment."
+    },
+    "statuses": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "resolved": "Resolved",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "empty": "Empty"
+    },
+    "customerMenuPage": {
+      "title": "Welcome to Table {{tableNumber}}",
+      "loading": "Loading the menu...",
+      "error": "Failed to load the menu. Please try again later.",
+      "noCategories": "No categories available at the moment.",
+      "aria": {
+        "backgroundImage": "Background image of {{restaurantName}}"
+      },
+      "errors": {
+        "fetchFailed": "Failed to fetch categories or restaurant details."
+      }
+    },
+    "header": {
+      "tableNumber": "Table Number",
+      "total": "Total",
+      "viewBasketAriaLabel": "View basket with total items",
+      "requestHelpAriaLabel": "Request help",
+      "errors": {
+        "missingRestaurantOrTable": "Restaurant ID or table number is missing.",
+        "submitHelpRequest": "Error submitting help request."
+      },
+      "helpRequestSuccess": "Help request submitted successfully!",
+      "viewBasket": "View Basket",
+      "requestHelp": "Request Help",
+      "helpRequestFailed": "Failed to submit help request: {{error}}",
+      "helpRequestError": "Failed to submit help request. Please try again.",
+      "helpModal": {
+        "title": "Need Assistance?",
+        "descriptionLabel": "Describe your issue (optional):",
+        "descriptionPlaceholder": "Enter your description here...",
+        "descriptionRequired": "Please provide a description.",
+        "cancel": "Cancel",
+        "submit": "Submit",
+        "submitting": "Submitting..."
+      }
+    }
+
+  
+}

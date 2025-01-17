@@ -1,0 +1,481 @@
+{
+  "manageEmployees": "إدارة الموظفين",
+  "manageMenu": "إدارة القائمة",
+  "profile": "الملف الشخصي",
+  "logout": "تسجيل الخروج",
+  "restaurantManagement": "إدارة المطعم",
+  "categories": "الفئات",
+  "menuItems": "عناصر القائمة",
+  "orderBasket": "سلة الطلبات",
+  "orderSuccess": "تم الطلب بنجاح",
+  "welcome": "مرحبا",
+  "orders": {
+    "completed": "الطلبات المكتملة",
+    "inProgress": "الطلبات قيد التنفيذ",
+    "pending": "الطلبات المعلقة"
+  },
+  "tables": "الطاولات",
+  "addTable": "إضافة طاولة",
+  "removeTable": "إزالة طاولة",
+  "table": "طاولة",
+  "qrCodeFor": "رمز QR لـ",
+  "downloadQr": "تنزيل رمز QR",
+  "noTablesAvailable": "لا توجد طاولات متاحة",
+  "recentOrders": "الطلبات الحديثة",
+  "tableNumber": "رقم الطاولة",
+  "customerName": "اسم العميل",
+  "status": "الحالة",
+  "time": "الوقت",
+  "noOrdersCurrently": "لا توجد طلبات حالياً",
+  "tableStatus": "حالة الطاولة",
+  "statuses": {
+    "pending": "معلق",
+    "in_progress": "قيد التنفيذ",
+    "completed": "مكتمل",
+    "empty": "فارغ"
+  },
+  "errors": {
+    "loadDataFailed": "فشل تحميل بيانات الطاولة أو رموز QR",
+    "fetchOrdersError": "خطأ في جلب الطلبات:",
+    "addTableError": "فشل في إضافة الطاولة.",
+    "removeTableError": "فشل في إزالة الطاولة.",
+    "fetchCategories": "فشل في جلب الفئات.",
+    "addCategory": "فشل في إضافة الفئة.",
+    "deleteCategory": "فشل في حذف الفئة.",
+    "updateCategory": "فشل في تحديث الفئة.",
+    "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة.",
+    "imageProcessingFailed": "فشل في معالجة الصورة المحددة.",
+    "priceExceedsLimit": "لا يمكن أن يتجاوز السعر 9999.99.",
+    "optionNameRequired": "يرجى ملء اسم الخيار.",
+    "atLeastOneChoice": "يرجى إضافة اختيار واحد على الأقل لكل خيار.",
+    "choiceFieldsRequired": "يرجى ملء جميع الحقول للاختيارات.",
+    "fetchMenuItem": "فشل في جلب بيانات عنصر القائمة.",
+    "createMenuItemFailed": "فشل في إنشاء عنصر القائمة.",
+    "updateMenuItemFailed": "فشل في تحديث عنصر القائمة.",
+    "loadRestaurantProfile": "فشل في تحميل ملف تعريف المطعم.",
+    "updateProfileFailed": "فشل في تحديث الملف الشخصي.",
+    "fetchStaff": "فشل في جلب الموظفين.",
+    "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
+    "addStaffFailed": "فشل في إضافة الموظف.",
+    "removeStaffFailed": "فشل في إزالة الموظف.",
+    "activationFailed": "فشل تفعيل الحساب. يرجى المحاولة مرة أخرى.",
+    "invalidToken": "رمز التفعيل غير صالح أو منتهي الصلاحية.",
+    "userAlreadyActive": "حساب المستخدم مفعل بالفعل.",
+    "fetchFailed": "فشل في جلب عناصر القائمة أو تفاصيل المطعم.",
+    "invalidIds": "معرف المطعم أو الفئة غير صالح."
+  },
+  "success": {
+    "categoryAdded": "تمت إضافة الفئة بنجاح.",
+    "categoryDeleted": "تم حذف الفئة بنجاح.",
+    "categoryUpdated": "تم تحديث الفئة بنجاح.",
+    "menuItemCreated": "تم إنشاء عنصر القائمة بنجاح!",
+    "menuItemDeleted": "تم حذف عنصر القائمة بنجاح.",
+    "menuItemUpdated": "تم تحديث عنصر القائمة بنجاح.",
+    "profileUpdated": "تم تحديث الملف الشخصي بنجاح.",
+    "staffAdded": "تمت إضافة الموظف بنجاح.",
+    "staffRemoved": "تمت إزالة الموظف بنجاح.",
+    "accountActivated": "تم تفعيل حسابك بنجاح!"
+  },
+  "loading": "جار التحميل...",
+  "manageCategories": "إدارة الفئات",
+  "categoryName": "اسم الفئة",
+  "enterCategoryNamePlaceholder": "أدخل اسم الفئة",
+  "categoryImage": "صورة الفئة",
+  "newCategoryImagePreview": "معاينة صورة الفئة الجديدة",
+  "editCategoryImagePreview": "معاينة صورة الفئة المعدلة",
+  "addCategory": "إضافة فئة",
+  "addingCategory": "جارٍ إضافة...",
+  "categoriesList": "قائمة الفئات",
+  "loadingCategories": "جارٍ تحميل الفئات...",
+  "noCategoriesAvailable": "لا توجد فئات متاحة.",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "confirm": {
+    "deleteCategory": "هل أنت متأكد أنك تريد حذف هذه الفئة؟",
+    "deleteMenuItem": "هل أنت متأكد أنك تريد حذف هذا عنصر القائمة؟",
+    "removeStaff": "هل أنت متأكد أنك تريد إزالة هذا الموظف؟"
+  },
+  "editCategory": "تعديل الفئة",
+  "updateCategory": "تحديث الفئة",
+  "menuItemImagePreview": "معاينة صورة عنصر القائمة",
+  "addNewMenuItem": "إضافة عنصر قائمة جديد",
+  "editMenuItem": "تعديل عنصر القائمة",
+  "itemName": "اسم العنصر",
+  "enterMenuItemName": "أدخل اسم عنصر القائمة",
+  "description": "الوصف",
+  "enterDescription": "أدخل الوصف",
+  "price": "السعر",
+  "currency": "$",
+  "enterPrice": "أدخل السعر",
+  "image": "الصورة",
+  "imagePreview": "معاينة الصورة",
+  "currentImage": "الصورة الحالية",
+  "currentMenuItemImage": "صورة عنصر القائمة الحالية",
+  "selectCategory": "اختر الفئة",
+  "options": "الخيارات",
+  "option": "خيار",
+  "optionName": "اسم الخيار",
+  "enterOptionName": "أدخل اسم الخيار",
+  "choices": "الاختيارات",
+  "commaSeparated": "مفصولة بفواصل",
+  "enterChoiceName": "أدخل اسم الاختيار",
+  "enterPriceModifier": "أدخل معدل السعر",
+  "addAnotherChoice": "أضف اختيارًا آخر",
+  "addOptionCategory": "أضف فئة خيار",
+  "addOption": "أضف خيار",
+  "booleanOptions": "خيارات بوليانية",
+  "booleanOption": "خيار بولياني",
+  "priceModifier": "معدل السعر",
+  "addBooleanOption": "أضف خيارًا بوليانيًا",
+  "createMenuItem": "إنشاء عنصر القائمة",
+  "updatingMenuItem": "جارٍ تحديث...",
+  "menuItemManagement": "إدارة عناصر القائمة",
+  "loadingMenuItems": "جارٍ تحميل عناصر القائمة...",
+  "noMenuItemsAvailable": "لا توجد عناصر قائمة متاحة. يرجى إضافة عنصر قائمة جديد.",
+  "backgroundImage": "صورة الخلفية",
+  "backgroundImageAlt": "صورة الخلفية",
+  "backgroundImagePreview": "معاينة صورة الخلفية",
+  "logo": "الشعار",
+  "logoAlt": "الشعار",
+  "logoPreview": "معاينة الشعار",
+  "updateRestaurantProfile": "تحديث ملف تعريف المطعم",
+  "loadingRestaurantProfile": "جارٍ تحميل ملف تعريف المطعم...",
+  "staffManagement": "إدارة الموظفين",
+  "addNewStaff": "إضافة موظف جديد",
+  "addStaff": "إضافة موظف",
+  "remove": "إزالة",
+  "addAnotherStaff": "إضافة موظف آخر",
+  "passwordRequirements": "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
+  "username": "اسم المستخدم",
+  "enterUsername": "أدخل اسم المستخدم",
+  "actions": "الإجراءات",
+  "loadingStaff": "جارٍ تحميل الموظفين...",
+  "noStaff": "لا توجد أعضاء في الفريق.",
+  "close": "إغلاق",
+  "updatingStaff": "جارٍ تحديث...",
+  "password": "كلمة المرور",
+  "enterPassword": "أدخل كلمة المرور",
+  "activateAccount": "تفعيل الحساب",
+  "passwordResetConfirm": {
+    "title": "إعادة تعيين كلمة المرور",
+    "labels": {
+      "newPassword": "كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور"
+    },
+    "placeholders": {
+      "newPassword": "أدخل كلمة المرور الجديدة",
+      "confirmPassword": "أعد إدخال كلمة المرور الجديدة"
+    },
+    "buttons": {
+      "resetPassword": "إعادة تعيين كلمة المرور",
+      "resetting": "جارٍ إعادة التعيين..."
+    },
+    "errors": {
+      "requiredFields": "جميع الحقول مطلوبة.",
+      "passwordMismatch": "كلمتا المرور غير متطابقتين.",
+      "invalidToken": "رابط إعادة التعيين غير صالح أو منتهي الصلاحية.",
+      "userAlreadyActive": "حساب المستخدم مفعل بالفعل.",
+      "unexpectedError": "حدث خطأ أثناء إعادة تعيين كلمة المرور. يرجى المحاولة مرة أخرى."
+    },
+    "success": {
+      "passwordReset": "تمت إعادة تعيين كلمة المرور بنجاح."
+    }
+  },
+  "passwordResetRequest": {
+    "title": "إعادة تعيين كلمة المرور",
+    "labels": {
+      "email": "عنوان البريد الإلكتروني"
+    },
+    "placeholders": {
+      "enterEmail": "أدخل عنوان بريدك الإلكتروني"
+    },
+    "buttons": {
+      "sendResetLink": "إرسال رابط إعادة التعيين",
+      "sending": "جارٍ الإرسال..."
+    },
+    "messages": {
+      "success": "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني."
+    },
+    "errors": {
+      "requiredEmail": "عنوان البريد الإلكتروني مطلوب.",
+      "invalidEmail": "عنوان البريد الإلكتروني غير صالح.",
+      "emailNotFound": "لا يوجد مستخدم مرتبط بهذا البريد الإلكتروني.",
+      "unexpectedError": "حدث خطأ غير متوقع أثناء إرسال رابط إعادة التعيين."
+    }
+  },
+  "register": {
+    "title": "إنشاء حساب جديد",
+    "userForm": {
+      "username": "اسم المستخدم",
+      "email": "البريد الإلكتروني",
+      "password": "كلمة المرور",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "placeholders": {
+        "username": "أدخل اسم المستخدم الخاص بك",
+        "email": "أدخل عنوان بريدك الإلكتروني",
+        "password": "أدخل كلمة المرور الخاصة بك",
+        "confirmPassword": "أعد إدخال كلمة المرور الخاصة بك"
+      }
+    },
+    "restaurantForm": {
+      "name": "اسم المطعم",
+      "address": "العنوان",
+      "phoneNumber": "رقم الهاتف",
+      "tables": "عدد الطاولات",
+      "country": "البلد",
+      "city": "المدينة",
+      "postalCode": "الرمز البريدي",
+      "currency": "العملة",
+      "numberOfEmployees": "عدد الموظفين",
+      "placeholders": {
+        "name": "أدخل اسم مطعمك",
+        "address": "أدخل العنوان",
+        "phoneNumber": "أدخل رقم الهاتف",
+        "tables": "أدخل عدد الطاولات",
+        "country": "اختر البلد",
+        "city": "أدخل المدينة",
+        "postalCode": "أدخل الرمز البريدي",
+        "currency": "اختر العملة",
+        "numberOfEmployees": "أدخل عدد الموظفين"
+      }
+    },
+    "buttons": {
+      "next": "التالي",
+      "previous": "السابق",
+      "finish": "إنهاء"
+    },
+    "success": {
+      "message": "تم إنشاء الحساب والمطعم بنجاح! يرجى التحقق من بريدك الإلكتروني لتفعيل حسابك.",
+      "redirect": "سيتم توجيهك إلى صفحة تسجيل الدخول قريبًا..."
+    },
+    "errors": {
+      "passwordsDoNotMatch": "كلمتا المرور غير متطابقتين.",
+      "usernameExists": "اسم المستخدم موجود بالفعل.",
+      "emailExists": "البريد الإلكتروني قيد الاستخدام بالفعل.",
+      "unexpectedUserError": "حدث خطأ غير متوقع أثناء تسجيل المستخدم.",
+      "selectCountryAndCurrency": "يرجى اختيار بلد وعملة.",
+      "unexpectedRestaurantError": "حدث خطأ غير متوقع أثناء إنشاء المطعم.",
+      "unexpectedError": "حدث خطأ غير متوقع."
+    },
+    "links": {
+      "returnToLogin": "العودة إلى تسجيل الدخول"
+    },
+    "steps": {
+      "step1": "الخطوة 1",
+      "step2": "الخطوة 2",
+      "step3": "الخطوة 3"
+    }
+  },
+  "usernameRecovery": {
+    "title": "استعادة اسم المستخدم",
+    "emailLabel": "عنوان البريد الإلكتروني",
+    "emailPlaceholder": "أدخل بريدك الإلكتروني",
+    "emailRequired": "البريد الإلكتروني مطلوب.",
+    "sending": "جارٍ الإرسال...",
+    "sendButton": "إرسال اسم المستخدم",
+    "errorSending": "حدث خطأ أثناء إرسال اسم المستخدم."
+  },
+  "navbar": {
+    "brand": "نظام إدارة القائمة",
+    "home": "الصفحة الرئيسية",
+    "features": "الميزات",
+    "pricing": "التسعير",
+    "testimonials": "الشهادات",
+    "dashboard": "اذهب إلى لوحة التحكم",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "language": "اللغة"
+  },
+  "categoryPage": {
+    "title": "القائمة لـ {{restaurantName}}",
+    "loading": "جارٍ التحميل...",
+    "price": "السعر",
+    "noItems": "لا توجد عناصر متاحة في هذه الفئة.",
+    "backButton": "عودة",
+    "aria": {
+      "backgroundImage": "صورة الخلفية للمطعم"
+    },
+    "errors": {
+      "fetchFailed": "فشل في تحميل عناصر القائمة أو تفاصيل المطعم.",
+      "invalidIds": "معرف المطعم أو الفئة غير صالح."
+    }
+  },
+  "customerMenuItemPage": {
+    "loading": "جارٍ التحميل...",
+    "errors": {
+      "fetchFailed": "فشل في تحميل تفاصيل المنتج."
+    },
+    "aria": {
+      "backgroundImage": "صورة الخلفية لـ {{itemName}}"
+    },
+    "idBadge": "ID: {{id}}",
+    "details": "التفاصيل",
+    "pricing": "التسعير",
+    "basePrice": "السعر الأساسي",
+    "totalPrice": "السعر الإجمالي",
+    "chooseOptions": "اختر الإضافات",
+    "optionChoice": "{{choiceName}} (+${{priceModifier}})",
+    "noAdditions": "لا توجد إضافات متاحة.",
+    "quantity": "الكمية",
+    "decreaseQuantity": "تقليل الكمية",
+    "increaseQuantity": "زيادة الكمية",
+    "addToBasket": "أضف إلى السلة",
+    "alerts": {
+      "minQuantity": "يرجى اختيار عنصر واحد على الأقل."
+    }
+  },
+  "menuItemCreatePage": {
+    "addNewMenuItem": "إضافة عنصر قائمة جديد",
+    "itemName": "اسم العنصر",
+    "enterMenuItemName": "أدخل اسم عنصر القائمة",
+    "description": "الوصف",
+    "enterDescription": "أدخل الوصف",
+    "price": "السعر",
+    "currency": "USD",
+    "enterPrice": "أدخل السعر",
+    "image": "الصورة",
+    "imagePreview": "معاينة الصورة",
+    "menuItemImagePreview": "معاينة صورة عنصر القائمة",
+    "category": "الفئة",
+    "selectCategory": "اختر فئة",
+    "options": "الخيارات",
+    "option": "خيار",
+    "remove": "إزالة",
+    "optionName": "اسم الخيار",
+    "enterOptionName": "أدخل اسم الخيار",
+    "choices": "الاختيارات",
+    "commaSeparated": "مفصولة بفواصل",
+    "enterChoices": "أدخل الاختيارات، مفصولة بفواصل",
+    "addAnotherChoice": "أضف اختيارًا آخر",
+    "addOption": "أضف خيارًا",
+    "booleanOptions": "خيارات بوليانية",
+    "booleanOption": "خيار بولياني",
+    "priceModifier": "معدل السعر",
+    "enterPriceModifier": "أدخل معدل السعر",
+    "addBooleanOption": "أضف خيارًا بوليانيًا",
+    "createMenuItem": "إنشاء عنصر القائمة",
+    "noAdditions": "لا توجد إضافات متاحة.",
+    "loading": "جارٍ التحميل...",
+    "errors": {
+      "fetchCategories": "فشل في جلب الفئات.",
+      "imageProcessingFailed": "فشل في معالجة الصورة.",
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة.",
+      "createMenuItemFailed": "فشل في إنشاء عنصر القائمة."
+    },
+    "success": {
+      "menuItemCreated": "تم إنشاء عنصر القائمة بنجاح!"
+    }
+  },
+  "menuPage": {
+    "title": "القائمة",
+    "loading": "جارٍ التحميل...",
+    "errorLoading": "فشل في تحميل عناصر القائمة.",
+    "noItems": "لا توجد عناصر قائمة متاحة.",
+    "price": "السعر: ${{price}}",
+    "addToOrder": "أضف إلى الطلب",
+    "added": "تمت الإضافة",
+    "placeOrder": "قم بالطلب",
+    "selectedItems": "العناصر المختارة",
+    "success": {
+      "orderPlaced": "تم الطلب بنجاح!"
+    },
+    "errors": {
+      "fetchMenuItems": "فشل في جلب عناصر القائمة.",
+      "placeOrderFailed": "فشل في تقديم الطلب.",
+      "noItemsSelected": "يرجى اختيار عنصر واحد على الأقل لتقديم الطلب."
+    }
+  },
+  "orderBasketPage": {
+    "title": "سلة طلبك",
+    "loading": "جارٍ التحميل...",
+    "emptyBasket": "سلتك فارغة. أضف بعض العناصر!",
+    "basePrice": "السعر الأساسي",
+    "quantity": "الكمية",
+    "selectedOptions": "الخيارات المختارة",
+    "selectedBooleans": "الإضافات المختارة",
+    "totalPrice": "السعر الإجمالي",
+    "currency": "USD",
+    "goBack": "عودة",
+    "placeOrder": "قم بالطلب",
+    "remove": "إزالة",
+    "removeItem": "إزالة العنصر",
+    "aria": {
+      "backgroundImage": "صورة الخلفية للمطعم"
+    },
+    "success": {
+      "orderPlaced": "تم الطلب بنجاح!"
+    },
+    "errors": {
+      "fetchRestaurantDetails": "فشل في جلب تفاصيل المطعم.",
+      "placeOrderFailed": "فشل في تقديم الطلب.",
+      "placeOrderError": "حدث خطأ أثناء تقديم الطلب. يرجى المحاولة مرة أخرى.",
+      "invalidRestaurantOrTable": "معرف المطعم أو رقم الطاولة غير صالح.",
+      "noItemsSelected": "يرجى اختيار عنصر واحد على الأقل لتقديم الطلب."
+    }
+  },
+  "orderPage": {
+    "title": "الطلبات",
+    "goBack": "عودة",
+    "loading": "جارٍ التحميل...",
+    "table": "طاولة",
+    "orderDetails": "تفاصيل الطلب",
+    "price": "السعر",
+    "currency": "USD",
+    "selectedOptions": "الخيارات المختارة",
+    "selectedBooleans": "الإضافات المختارة",
+    "additionalInfo": "معلومات إضافية",
+    "noItemsInOrder": "لا توجد عناصر في هذا الطلب.",
+    "noOrders": "لا توجد طلبات متاحة.",
+    "startExecution": "بدء التنفيذ",
+    "completeOrder": "إكمال الطلب",
+    "delete": "حذف",
+    "confirmDelete": "هل أنت متأكد أنك تريد حذف هذا الطلب؟",
+    "success": {
+      "statusUpdated": "تم تحديث حالة الطلب إلى {{status}}.",
+      "orderDeleted": "تم حذف الطلب بنجاح."
+    },
+    "errors": {
+      "fetchOrders": "فشل في جلب الطلبات.",
+      "updateStatus": "فشل في تحديث حالة الطلب.",
+      "updateStatusError": "فشل في تحديث حالة الطلب: {{error}}",
+      "deleteOrder": "فشل في حذف الطلب.",
+      "deleteOrderError": "فشل في حذف الطلب: {{error}}"
+    },
+    "status": {
+      "pending": "معلق",
+      "in_progress": "قيد التنفيذ",
+      "completed": "مكتمل"
+    },
+    "aria": {
+      "backgroundImage": "صورة الخلفية للمطعم"
+    }
+  },
+  "orderSuccessPage": {
+    "loading": "جارٍ التحميل...",
+    "table": "طاولة",
+    "orderSummary": "ملخص الطلب",
+    "price": "السعر",
+    "currency": "USD",
+    "specialRequest": "طلب خاص",
+    "selectedOptions": "الخيارات المختارة",
+    "noOrderDetails": "لا توجد تفاصيل للطلب.",
+    "orderAgain": "أطلب مرة أخرى",
+    "success": {
+      "statusUpdated": "تم تحديث حالة الطلب إلى {{status}}."
+    },
+    "errors": {
+      "fetchOrderStatus": "فشل في جلب حالة الطلب.",
+      "noOrdersForTable": "لا توجد طلبات لهذه الطاولة."
+    }
+  },
+  "ticTacToe": {
+    "playWhileWaiting": "لنلعب أثناء الانتظار!",
+    "cell": "خلية",
+    "emptyCell": "خلية فارغة",
+    "draw": "إنه تعادل!",
+    "youWon": "لقد ربحت!",
+    "youLost": "لقد خسرت!",
+    "resetGame": "إعادة تعيين اللعبة",
+    "maxResetsReached": "لقد وصلت إلى الحد الأقصى لإعادة التعيين. حاول مرة أخرى في المرة القادمة!"
+  }
+}

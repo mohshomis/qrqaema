@@ -1,0 +1,27 @@
+0000000000000000000000000000000000000000 8af3d6766b4d774c1fe8f413ff5ea3e137aa10ca mohshomis <162036961+mohshomis@users.noreply.github.com> 1727299066 +0200	commit (initial): added changes
+8af3d6766b4d774c1fe8f413ff5ea3e137aa10ca 29fc60d2db9944660830dc33a2414775e1e25446 mohshomis <162036961+mohshomis@users.noreply.github.com> 1727437080 +0200	commit: almost finished the basic structure and modeling , now time to make it perfect especially the dashboard
+29fc60d2db9944660830dc33a2414775e1e25446 9a91758219cf6bb9bbd5407215e8a9278f9d5414 mohshomis <162036961+mohshomis@users.noreply.github.com> 1727471292 +0200	commit: fixed some stuff in the front end
+9a91758219cf6bb9bbd5407215e8a9278f9d5414 2e3d21afafa1bc044c16269d6cb77310d77f4f0b mohshomis <162036961+mohshomis@users.noreply.github.com> 1729009598 +0200	commit: fixed some stuff
+2e3d21afafa1bc044c16269d6cb77310d77f4f0b 998d3a0f865c67c1a8d7cca53737e19beb666ab8 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729037808 +0200	commit: fixed alot of stuff specially front end
+998d3a0f865c67c1a8d7cca53737e19beb666ab8 c3552a7baeade4be4c08e2a1eb2305374c4ef3eb mohshomis <162036961+mohshomis@users.noreply.github.com> 1729075037 +0200	commit: before online
+c3552a7baeade4be4c08e2a1eb2305374c4ef3eb e2e6f46ae259a1472f4854d11211d9b3b21a90aa mohshomis <162036961+mohshomis@users.noreply.github.com> 1729092683 +0200	commit: fixed registeration
+e2e6f46ae259a1472f4854d11211d9b3b21a90aa 85b6cd2f4e811e4d924e213372368caf995989b1 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729128397 +0200	commit: now the system works quite fine , I need a day or two to get it to a state so that it can be tested by someone else
+85b6cd2f4e811e4d924e213372368caf995989b1 48c80b8539afa56fe1207372c559a48061225f07 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729251931 +0200	commit: fixed categories '
+48c80b8539afa56fe1207372c559a48061225f07 b69d496811e1662706b3f09548896755027eacc6 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729258748 +0200	commit: fixed the menu item detail
+b69d496811e1662706b3f09548896755027eacc6 ac3ad3670b504b2e63bc3b55c32d6dc52e44a81b mohshomis <162036961+mohshomis@users.noreply.github.com> 1729284042 +0200	commit: fixed alot of issues especially frontend
+ac3ad3670b504b2e63bc3b55c32d6dc52e44a81b e871b455e9ae59b6739fadfbf68e836bcd2ab9bb mohshomis <162036961+mohshomis@users.noreply.github.com> 1729389682 +0200	commit: fixed menuitem stuff
+e871b455e9ae59b6739fadfbf68e836bcd2ab9bb 6012de3eb355e10438324ec128e96c4b0cad7f62 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729390722 +0200	commit: only staff remained
+6012de3eb355e10438324ec128e96c4b0cad7f62 2a42e8b6e69ec8cf90af23a51c45411b6f69b9d4 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729508633 +0200	commit: Fixed order
+2a42e8b6e69ec8cf90af23a51c45411b6f69b9d4 2731871e0d86d3af8e23a7a03a76a9101e460852 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729788319 +0200	commit: fixed
+2731871e0d86d3af8e23a7a03a76a9101e460852 2731871e0d86d3af8e23a7a03a76a9101e460852 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729788547 +0200	Branch: renamed refs/heads/master to refs/heads/main
+2731871e0d86d3af8e23a7a03a76a9101e460852 87a19aa0d6cd322d131d45400350370183067706 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729788718 +0200	commit: fsdlk
+87a19aa0d6cd322d131d45400350370183067706 87a19aa0d6cd322d131d45400350370183067706 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729788764 +0200	Branch: renamed refs/heads/main to refs/heads/main
+87a19aa0d6cd322d131d45400350370183067706 87a19aa0d6cd322d131d45400350370183067706 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729789148 +0200	Branch: renamed refs/heads/main to refs/heads/main
+87a19aa0d6cd322d131d45400350370183067706 87a19aa0d6cd322d131d45400350370183067706 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729789252 +0200	Branch: renamed refs/heads/main to refs/heads/main
+87a19aa0d6cd322d131d45400350370183067706 87a19aa0d6cd322d131d45400350370183067706 mohshomis <162036961+mohshomis@users.noreply.github.com> 1729789382 +0200	Branch: renamed refs/heads/main to refs/heads/main
+87a19aa0d6cd322d131d45400350370183067706 87a19aa0d6cd322d131d45400350370183067706 mohshomis <162036961+mohshomis@users.noreply.github.com> 1730501561 +0100	Branch: renamed refs/heads/main to refs/heads/main
+87a19aa0d6cd322d131d45400350370183067706 ddb8591ed0a2d15c0570b5af212e3d8eab96fe53 mohshomis <162036961+mohshomis@users.noreply.github.com> 1730501882 +0100	commit: fixing before gitlab
+ddb8591ed0a2d15c0570b5af212e3d8eab96fe53 7bb7622ca4444f41d93a50a286dd7854f12d6a26 mohshomis <162036961+mohshomis@users.noreply.github.com> 1730504152 +0100	commit: added
+7bb7622ca4444f41d93a50a286dd7854f12d6a26 0b10d211395701ea88bbb126de881200f8c9305f mohshomis <162036961+mohshomis@users.noreply.github.com> 1730505212 +0100	commit: fixed stuff
+0b10d211395701ea88bbb126de881200f8c9305f 9ed7d03bc21ac783b5e83b82e30cbbf6c52abd2d mohshomis <162036961+mohshomis@users.noreply.github.com> 1730505248 +0100	commit: fixed
+9ed7d03bc21ac783b5e83b82e30cbbf6c52abd2d f266e059fdeffb20a4238a5938767ad1883cbfa4 mohshomis <162036961+mohshomis@users.noreply.github.com> 1730505297 +0100	commit: last version in production , after now I'll work on an update

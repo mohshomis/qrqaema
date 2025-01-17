@@ -1,0 +1,436 @@
+<!-- analysis/templates/analysis/dashboard.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprehensive Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Add any additional CSS here -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        section {
+            margin-bottom: 50px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        table, th, td {
+            border: 1px solid #aaa;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        .metric {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Comprehensive Analytics Dashboard</h1>
+
+    <!-- General Metrics -->
+    <section>
+        <h2>General Metrics</h2>
+        <div class="metric">
+            <p><strong>Total Restaurants:</strong> {{ total_restaurants }}</p>
+            <p><strong>Total Orders:</strong> {{ total_orders }}</p>
+            <p><strong>Total Revenue:</strong> €{{ total_revenue }}</p>
+            <p><strong>Total Tables:</strong> {{ total_tables }}</p>
+            <p><strong>Average Order Value:</strong> €{{ average_order_value|floatformat:2 }}</p>
+            <p><strong>Active Users:</strong> {{ active_users }}</p>
+            <p><strong>New Users (Last 30 Days):</strong> {{ new_users }}</p>
+        </div>
+    </section>
+
+    <!-- Order Metrics -->
+    <section>
+        <h2>Order Metrics</h2>
+        <canvas id="ordersPerRestaurantChart"></canvas>
+        <canvas id="ordersByHourChart"></canvas>
+        <p><strong>Order Completion Rate:</strong> {{ order_completion_rate|floatformat:2 }}%</p>
+        <p><strong>Average Preparation Time:</strong> {{ average_preparation_time|floatformat:2 }} minutes</p>
+        <p><strong>Order Cancellation Rate:</strong> {{ order_cancellation_rate|floatformat:2 }}%</p>
+        <canvas id="topSellingMenuItemsChart"></canvas>
+        <p><strong>Average Items per Order:</strong> {{ average_items_per_order|floatformat:2 }}</p>
+        <canvas id="revenueByMenuCategoryChart"></canvas>
+        <canvas id="salesTrendsOverTimeChart"></canvas>
+    </section>
+
+    <!-- Table Metrics -->
+    <section>
+        <h2>Table Metrics</h2>
+        <p><strong>Table Utilization Rate:</strong> {{ table_utilization_rate|floatformat:2 }}%</p>
+        <canvas id="tableUtilizationChart"></canvas>
+        <h3>Top 10 Tables by Number of Orders</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Table Number</th>
+                    <th>Capacity</th>
+                    <th>Number of Orders</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for table in table_utilization %}
+                <tr>
+                    <td>{{ table.number }}</td>
+                    <td>{{ table.capacity }}</td>
+                    <td>{{ table.order_count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Menu Interaction Metrics -->
+    <section>
+        <h2>Menu Interaction Metrics</h2>
+        <canvas id="mostAccessedMenusChart"></canvas>
+        <canvas id="menuUpdateFrequencyChart"></canvas>
+        <p><strong>Average Time Spent on Menu Pages:</strong> {{ average_time_spent_on_menu }} seconds</p>
+        <!-- Placeholder: Implement tracking to populate this metric -->
+    </section>
+
+    <!-- Additional Metrics -->
+    <section>
+        <h2>Additional Metrics</h2>
+        <!-- Placeholder: Add more metrics as needed -->
+    </section>
+
+    <!-- Chart.js Scripts -->
+    <script>
+        // Helper function to create charts
+        function createChart(ctx, type, labels, data, label, backgroundColors, borderColors, options = {}) {
+            return new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: borderColors,
+                        borderWidth: 1
+                    }]
+                },
+                options: options
+            });
+        }
+
+        // 1. Orders per Restaurant Chart
+        const ordersPerRestaurantCtx = document.getElementById('ordersPerRestaurantChart').getContext('2d');
+        const ordersPerRestaurantChart = new Chart(ordersPerRestaurantCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for restaurant in orders_per_restaurant %}'{{ restaurant.name }}',{% endfor %}],
+                datasets: [{
+                    label: 'Number of Orders',
+                    data: [{% for restaurant in orders_per_restaurant %}{{ restaurant.order_count }},{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Orders'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Restaurants'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. Orders by Time of Day Chart
+        const ordersByHourCtx = document.getElementById('ordersByHourChart').getContext('2d');
+        const ordersByHourChart = new Chart(ordersByHourCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for entry in orders_by_hour %}'{{ entry.hour }}:00',{% endfor %}],
+                datasets: [{
+                    label: 'Number of Orders',
+                    data: [{% for entry in orders_by_hour %}{{ entry.order_count }},{% endfor %}],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Hour of Day'
+                        }
+                    },
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Orders'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Top Selling Menu Items Chart
+        const topSellingMenuItemsCtx = document.getElementById('topSellingMenuItemsChart').getContext('2d');
+        const topSellingMenuItemsChart = new Chart(topSellingMenuItemsCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for item in top_selling_menu_items %}'{{ item.menu_item__name }}',{% endfor %}],
+                datasets: [{
+                    label: 'Total Quantity Sold',
+                    data: [{% for item in top_selling_menu_items %}{{ item.total_quantity }},{% endfor %}],
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Quantity Sold'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Menu Items'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 4. Revenue by Menu Category Chart
+        const revenueByMenuCategoryCtx = document.getElementById('revenueByMenuCategoryChart').getContext('2d');
+        const revenueByMenuCategoryChart = new Chart(revenueByMenuCategoryCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for category in revenue_by_menu_category %}'{{ category.menu_item__category__name }}',{% endfor %}],
+                datasets: [{
+                    label: 'Total Sales (€)',
+                    data: [{% for category in revenue_by_menu_category %}{{ category.total_sales }},{% endfor %}],
+                    backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sales (€)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Menu Categories'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 5. Sales Trends Over Time Chart
+        const salesTrendsOverTimeCtx = document.getElementById('salesTrendsOverTimeChart').getContext('2d');
+        const salesTrendsOverTimeChart = new Chart(salesTrendsOverTimeCtx, {
+            type: 'line',
+            data: {
+                labels: [{% for trend in sales_trends_over_time %}'{{ trend.month|date:"F Y" }}',{% endfor %}],
+                datasets: [{
+                    label: 'Total Sales (€)',
+                    data: [{% for trend in sales_trends_over_time %}{{ trend.total_sales }},{% endfor %}],
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { 
+                        type: 'time',
+                        time: { unit: 'month' },
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Sales (€)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 6. Table Utilization Rate Chart
+        const tableUtilizationCtx = document.getElementById('tableUtilizationChart').getContext('2d');
+        const tableUtilizationChart = new Chart(tableUtilizationCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Occupied', 'Available'],
+                datasets: [{
+                    data: [{{ table_utilization_rate|floatformat:2 }}, {{ 100 - table_utilization_rate|floatformat:2 }}],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+            }
+        });
+
+        // 7. Most Accessed Menus Chart
+        const mostAccessedMenusCtx = document.getElementById('mostAccessedMenusChart').getContext('2d');
+        const mostAccessedMenusChart = new Chart(mostAccessedMenusCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for menu in most_accessed_menus %}'{{ menu.name }}',{% endfor %}],
+                datasets: [{
+                    label: 'Access Count',
+                    data: [{% for menu in most_accessed_menus %}{{ menu.access_count }},{% endfor %}],
+                    backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Access Count'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Menu Items'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 8. Menu Update Frequency Chart
+        const menuUpdateFrequencyCtx = document.getElementById('menuUpdateFrequencyChart').getContext('2d');
+        const menuUpdateFrequencyChart = new Chart(menuUpdateFrequencyCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for menu in menu_update_frequency %}'{{ menu.restaurant__name }}',{% endfor %}],
+                datasets: [{
+                    label: 'Menu Updates',
+                    data: [{% for menu in menu_update_frequency %}{{ menu.update_count }},{% endfor %}],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Updates'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Restaurants'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 9. Average Time Spent on Menu Pages Chart (Placeholder)
+        const averageTimeSpentOnMenuCtx = document.getElementById('averageTimeSpentOnMenuChart').getContext('2d');
+        const averageTimeSpentOnMenuChart = new Chart(averageTimeSpentOnMenuCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Average Time Spent on Menu'],
+                datasets: [{
+                    label: 'Time (seconds)',
+                    data: [{{ average_time_spent_on_menu }}],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Time (seconds)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // 10. Sales Trends Over Time Chart
+        // (Already implemented above as salesTrendsOverTimeChart)
+        // No need to duplicate
+
+    </script>
+</body>
+</html>

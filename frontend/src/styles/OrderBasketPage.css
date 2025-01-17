@@ -1,0 +1,27 @@
+/* OrderBasketPage.css */
+
+.order-basket-page {
+    min-height: 100vh;
+    position: relative;
+  }
+  
+  .order-basket-page .background-image {
+    /* Additional styling if needed */
+  }
+  
+  .order-basket-page .content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Adjustments for list items */
+  .order-basket-page .list-group-item {
+    border: none;
+    background: transparent;
+  }
+  
+  /* Responsive Image */
+  .order-basket-page img {
+    border-radius: 8px;
+  }
+  

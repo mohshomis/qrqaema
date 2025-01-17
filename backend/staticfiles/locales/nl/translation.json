@@ -1,0 +1,719 @@
+{
+  "manageEmployees": "Beheer Medewerkers",
+  "manageMenu": "Beheer Menu",
+  "profile": "Profiel",
+  "logout": "Uitloggen",
+  "restaurantManagement": "Restaurantbeheer",
+  "categories": "Categorieën",
+  "menuItems": "Menu-items",
+  "orderBasket": "Bestelmand",
+  "orderSuccess": "Bestelling Succesvol",
+  "welcome": "Welkom",
+  "orders": {
+    "completed": "Voltooide Bestellingen",
+    "inProgress": "Bestellingen In Uitvoering",
+    "pending": "In Afwachting Van Bestellingen"
+  },
+  "tables": "Tafels",
+  "addTable": {
+    "title": "Tafel Toevoegen",
+    "tableNumber": "Tafelnummer",
+    "enterTableNumber": "Voer tafelnummer in",
+    "capacity": "Capaciteit",
+    "enterCapacity": "Voer capaciteit in",
+    "submit": "Verzenden",
+    "addtablebutton_dutch": "Tafel toevoegen"
+  },
+  "removeTable": "Tafel Verwijderen",
+  "table": "Tafel",
+  "qrCodeFor": "QR-code voor",
+  "downloadQr": "QR-code Downloaden",
+  "noTablesAvailable": "Geen tafels beschikbaar",
+  "recentOrders": "Recente Bestellingen",
+  "tableNumber": "Tafelnummer",
+  "customerName": "Klantnaam",
+  "status": "Status",
+  "time": "Tijd",
+  "noOrdersCurrently": "Er zijn momenteel geen bestellingen",
+  "tableStatus": "Tafelstatus",
+  "errors": {
+    "loadDataFailed": "Laden van tafelgegevens of QR-codes mislukt",
+    "fetchOrdersError": "Fout bij het ophalen van bestellingen:",
+    "addTableError": "Toevoegen van tafel mislukt.",
+    "removeTableError": "Verwijderen van tafel mislukt.",
+    "fetchCategories": "Ophalen van categorieën mislukt.",
+    "addCategory": "Toevoegen van categorie mislukt.",
+    "deleteCategory": "Verwijderen van categorie mislukt.",
+    "updateCategory": "Bijwerken van categorie mislukt.",
+    "fillRequiredFields": "Vul alstublieft alle vereiste velden in.",
+    "imageProcessingFailed": "Verwerken van geselecteerde afbeelding mislukt.",
+    "priceExceedsLimit": "Prijs mag niet hoger zijn dan 9999,99.",
+    "optionNameRequired": "Vul alstublieft de naam van de optie in.",
+    "atLeastOneChoice": "Voeg alstublieft minstens één keuze toe voor elke optie.",
+    "choiceFieldsRequired": "Vul alstublieft alle velden voor keuzes in.",
+    "fetchMenuItem": "Ophalen van menu-item gegevens mislukt.",
+    "createMenuItemFailed": "Maken van menu-item mislukt.",
+    "updateMenuItemFailed": "Bijwerken van menu-item mislukt.",
+    "loadRestaurantProfile": "Laden van restaurantprofiel mislukt.",
+    "updateProfileFailed": "Bijwerken van profiel mislukt.",
+    "fetchStaff": "Ophalen van personeel mislukt.",
+    "passwordTooShort": "Wachtwoord moet minstens 8 tekens lang zijn.",
+    "addStaffFailed": "Toevoegen van personeel mislukt.",
+    "removeStaffFailed": "Verwijderen van personeel mislukt.",
+    "activationFailed": "Accountactivatie mislukt. Probeer het opnieuw.",
+    "invalidToken": "De activatietoken is ongeldig.",
+    "userAlreadyActive": "Dit account is al geactiveerd.",
+    "fetchFailed": "Laden van menu-items of restaurantdetails mislukt.",
+    "invalidIds": "Ongeldige restaurant- of categorie-ID."
+  },
+  "success": {
+    "categoryAdded": "Categorie succesvol toegevoegd.",
+    "categoryDeleted": "Categorie succesvol verwijderd.",
+    "categoryUpdated": "Categorie succesvol bijgewerkt.",
+    "menuItemCreated": "Menu-item succesvol aangemaakt!",
+    "menuItemDeleted": "Menu-item succesvol verwijderd.",
+    "menuItemUpdated": "Menu-item succesvol bijgewerkt.",
+    "profileUpdated": "Profiel succesvol bijgewerkt.",
+    "staffAdded": "Personeel succesvol toegevoegd.",
+    "staffRemoved": "Personeel succesvol verwijderd.",
+    "accountActivated": "Uw account is succesvol geactiveerd!"
+  },
+  "loading": "Bezig met laden...",
+  "manageCategories": "Beheer Categorieën",
+  "categoryName": "Categorienaam",
+  "enterCategoryNamePlaceholder": "Voer categorienaam in",
+  "categoryImage": "Categorie Afbeelding",
+  "newCategoryImagePreview": "Voorbeeld Nieuwe Categorie Afbeelding",
+  "editCategoryImagePreview": "Voorbeeld Bewerkte Categorie Afbeelding",
+  "addCategory": "Categorie Toevoegen",
+  "addingCategory": "Bezig met toevoegen...",
+  "categoriesList": "Categorieënlijst",
+  "loadingCategories": "Categorieën worden geladen...",
+  "noCategoriesAvailable": "Geen categorieën beschikbaar.",
+  "edit": "Bewerken",
+  "delete": "Verwijderen",
+  "confirm": {
+    "deleteCategory": "Weet u zeker dat u deze categorie wilt verwijderen?",
+    "deleteMenuItem": "Weet u zeker dat u dit menu-item wilt verwijderen?",
+    "removeStaff": "Weet u zeker dat u dit personeel wilt verwijderen?"
+  },
+  "editCategory": "Categorie Bewerken",
+  "updateCategory": "Categorie Bijwerken",
+  "menuItemImagePreview": "Voorbeeld Menu-item Afbeelding",
+  "addNewMenuItem": "Nieuw Menu-item Toevoegen",
+  "editMenuItem": "Menu-item Bewerken",
+  "itemName": "Itemnaam",
+  "enterMenuItemName": "Voer menu-item naam in",
+  "description": "Beschrijving",
+  "enterDescription": "Voer beschrijving in",
+  "price": "Prijs",
+  "currency": "$",
+  "enterPrice": "Voer prijs in",
+  "image": "Afbeelding",
+  "imagePreview": "Afbeelding Voorbeeld",
+  "currentImage": "Huidige Afbeelding",
+  "currentMenuItemImage": "Huidige Menu-item Afbeelding",
+  "selectCategory": "Selecteer Categorie",
+  "options": "Opties",
+  "option": "Optie",
+  "optionName": "Optienaam",
+  "enterOptionName": "Voer optienaam in",
+  "choices": "Keuzes",
+  "commaSeparated": "komma-gescheiden",
+  "enterChoiceName": "Voer keuzenaam in",
+  "enterPriceModifier": "Voer prijsmodifier in",
+  "addAnotherChoice": "Nog een keuze toevoegen",
+  "addOptionCategory": "Optiecategorie Toevoegen",
+  "addOption": "Optie Toevoegen",
+  "booleanOptions": "Boolean Opties",
+  "booleanOption": "Boolean Optie",
+  "priceModifier": "Prijsmodifier",
+  "addBooleanOption": "Boolean Optie Toevoegen",
+  "createMenuItem": "Menu-item Aanmaken",
+  "updatingMenuItem": "Bezig met bijwerken...",
+  "menuItemManagement": "Menu-itembeheer",
+  "loadingMenuItems": "Menu-items worden geladen...",
+  "noMenuItemsAvailable": "Geen menu-items beschikbaar. Voeg alstublieft een nieuw menu-item toe.",
+  "backgroundImage": "Achtergrondafbeelding",
+  "backgroundImageAlt": "Achtergrondafbeelding",
+  "backgroundImagePreview": "Voorbeeld Achtergrondafbeelding",
+  "logo": "Logo",
+  "logoAlt": "Logo",
+  "logoPreview": "Logo Voorbeeld",
+  "updateRestaurantProfile": "Restaurantprofiel Bijwerken",
+  "loadingRestaurantProfile": "Restaurantprofiel wordt geladen...",
+  "staffManagement": "Personeelsbeheer",
+  "addNewStaff": "Nieuw Personeel Toevoegen",
+  "addStaff": "Personeel Toevoegen",
+  "remove": "Verwijderen",
+  "addAnotherStaff": "Nog een Personeel Toevoegen",
+  "passwordRequirements": "Wachtwoord moet minimaal 8 tekens lang zijn.",
+  "username": "Gebruikersnaam",
+  "enterUsername": "Voer gebruikersnaam in",
+  "actions": "Acties",
+  "loadingStaff": "Personeel wordt geladen...",
+  "noStaff": "Geen personeelsleden.",
+  "close": "Sluiten",
+  "updatingStaff": "Bezig met bijwerken...",
+  "password": "Wachtwoord",
+  "enterPassword": "Voer wachtwoord in",
+  "activateAccount": "Account Activeren",
+  "passwordResetConfirm": {
+    "title": "Wachtwoord Resetten",
+    "labels": {
+      "newPassword": "Nieuw Wachtwoord",
+      "confirmPassword": "Bevestig Wachtwoord"
+    },
+    "placeholders": {
+      "newPassword": "Voer uw nieuwe wachtwoord in",
+      "confirmPassword": "Voer uw nieuwe wachtwoord opnieuw in"
+    },
+    "buttons": {
+      "resetPassword": "Wachtwoord Resetten",
+      "resetting": "Bezig met resetten..."
+    },
+    "errors": {
+      "requiredFields": "Alle velden zijn verplicht.",
+      "passwordMismatch": "Wachtwoorden komen niet overeen.",
+      "invalidToken": "De resetlink is ongeldig of verlopen.",
+      "userAlreadyActive": "Het gebruikersaccount is al actief.",
+      "unexpectedError": "Er is een fout opgetreden tijdens het resetten van uw wachtwoord. Probeer het opnieuw."
+    },
+    "success": {
+      "passwordReset": "Uw wachtwoord is succesvol gereset."
+    }
+  },
+  "passwordResetRequest": {
+    "title": "Wachtwoord Resetten",
+    "labels": {
+      "email": "E-mailadres"
+    },
+    "placeholders": {
+      "enterEmail": "Voer uw e-mailadres in"
+    },
+    "buttons": {
+      "sendResetLink": "Resetlink Versturen",
+      "sending": "Bezig met versturen..."
+    },
+    "messages": {
+      "success": "Een wachtwoord resetlink is naar uw e-mail verzonden."
+    },
+    "errors": {
+      "requiredEmail": "E-mailadres is verplicht.",
+      "invalidEmail": "Ongeldig e-mailadres.",
+      "emailNotFound": "Geen gebruiker gekoppeld aan dit e-mailadres.",
+      "unexpectedError": "Er is een onverwachte fout opgetreden bij het verzenden van de resetlink."
+    }
+  },
+  "register": {
+    "title": "Maak een Nieuw Account aan",
+    "userForm": {
+      "username": "Gebruikersnaam",
+      "email": "E-mail",
+      "password": "Wachtwoord",
+      "confirmPassword": "Bevestig Wachtwoord",
+      "placeholders": {
+        "username": "Voer uw gebruikersnaam in",
+        "email": "Voer uw e-mailadres in",
+        "password": "Voer uw wachtwoord in",
+        "confirmPassword": "Voer uw wachtwoord opnieuw in",
+        "postalCodeNote": "Als u geen postcode heeft, voer dan 0000 in."
+      }
+    },
+    "restaurantForm": {
+      "name": "Restaurantnaam",
+      "address": "Adres",
+      "phoneNumber": "Telefoonnummer",
+      "tables": "Aantal Tafels",
+      "country": "Land",
+      "city": "Stad",
+      "postalCode": "Postcode",
+      "currency": "Valuta",
+      "numberOfEmployees": "Aantal Medewerkers",
+      "logo": "Restaurantlogo",
+      "logoAlt": "Restaurantlogo",
+      "logoPreview": "Huidig Logo",
+      "backgroundImage": "Achtergrondafbeelding",
+      "backgroundImageAlt": "Achtergrondafbeelding",
+      "backgroundImagePreview": "Huidige Achtergrondafbeelding",
+      "placeholders": {
+        "name": "Voer uw restaurantnaam in",
+        "address": "Voer uw adres in",
+        "phoneNumber": "Voer uw telefoonnummer in",
+        "city": "Voer uw stad in",
+        "postalCode": "Voer uw postcode in",
+        "currency": "Selecteer uw valuta",
+        "country": "Selecteer uw land",
+        "numberOfEmployees": "Voer aantal medewerkers in"
+      }
+    },
+    "buttons": {
+      "next": "Volgende",
+      "previous": "Vorige",
+      "finish": "Voltooien",
+      "updateProfile": "Profiel Bijwerken"
+    },
+    "success": {
+      "title": "Succes",
+      "message": "Account en restaurant succesvol aangemaakt! Controleer uw e-mail om uw account te activeren.",
+      "redirect": "U wordt binnenkort doorgestuurd naar de inlogpagina...",
+      "ok": "OK"
+    },
+    "errors": {
+      "usernameRequired": "Gebruikersnaam is verplicht.",
+      "usernameTooShort": "Gebruikersnaam moet minimaal 3 tekens lang zijn.",
+      "usernameInvalid": "Gebruikersnaam mag alleen letters, cijfers en underscores bevatten.",
+      "emailRequired": "E-mail is verplicht.",
+      "emailInvalid": "Voer een geldig e-mailadres in.",
+      "passwordRequired": "Wachtwoord is verplicht.",
+      "passwordTooShort": "Wachtwoord moet minimaal 6 tekens lang zijn.",
+      "passwordWeak": "Wachtwoord moet zowel letters als cijfers bevatten.",
+      "confirmPasswordRequired": "Bevestig uw wachtwoord alstublieft.",
+      "passwordsDoNotMatch": "Wachtwoorden komen niet overeen.",
+      "restaurantNameRequired": "Restaurantnaam is verplicht.",
+      "addressRequired": "Adres is verplicht.",
+      "phoneNumberRequired": "Telefoonnummer is verplicht.",
+      "phoneNumberInvalid": "Voer een geldig telefoonnummer in.",
+      "tablesRequired": "Aantal tafels is verplicht.",
+      "tablesInvalid": "Aantal tafels moet minimaal 1 zijn.",
+      "countryRequired": "Land is verplicht.",
+      "cityRequired": "Stad is verplicht.",
+      "postalCodeInvalid": "Voer een geldige postcode in.",
+      "currencyRequired": "Valuta is verplicht.",
+      "numberOfEmployeesRequired": "Aantal medewerkers is verplicht.",
+      "numberOfEmployeesInvalid": "Aantal medewerkers moet minimaal 1 zijn.",
+      "selectCountryAndCurrency": "Selecteer alstublieft zowel land als valuta.",
+      "unexpectedError": "Er is een onverwachte fout opgetreden. Probeer het opnieuw."
+    },
+    "links": {
+      "returnToLogin": "Terug naar Inloggen"
+    },
+    "steps": {
+      "step1": "Stap 1",
+      "step2": "Stap 2",
+      "step3": "Stap 3"
+    }
+  },
+  "usernameRecovery": {
+    "title": "Gebruikersnaam Herstellen",
+    "emailLabel": "E-mailadres",
+    "emailPlaceholder": "Voer uw e-mail in",
+    "emailRequired": "E-mailadres is verplicht.",
+    "sending": "Verzenden...",
+    "sendButton": "Gebruikersnaam Versturen",
+    "errorSending": "Er is een fout opgetreden bij het verzenden van de gebruikersnaam."
+  },
+  "navbar": {
+    "brand": "Menu Beheersysteem",
+    "home": "Home",
+    "features": "Functies",
+    "pricing": "Prijzen",
+    "testimonials": "Getuigenissen",
+    "dashboard": "Ga naar Dashboard",
+    "login": "Inloggen",
+    "register": "Registreren",
+    "language": "Taal"
+  },
+  "categoryPage": {
+    "title": "Menu voor {{restaurantName}}",
+    "loading": "Bezig met laden...",
+    "price": "Prijs",
+    "noItems": "Geen items beschikbaar in deze categorie.",
+    "backButton": "Terug",
+    "aria": {
+      "backgroundImage": "Achtergrondafbeelding van het restaurant"
+    },
+    "errors": {
+      "fetchFailed": "Laden van menu-items of restaurantdetails mislukt.",
+      "invalidIds": "Ongeldige restaurant- of categorie-ID."
+    }
+  },
+  "customerMenuItemPage": {
+    "loading": "Bezig met laden...",
+    "errors": {
+      "fetchFailed": "Laden van productdetails mislukt."
+    },
+    "aria": {
+      "backgroundImage": "{{itemName}} achtergrondafbeelding"
+    },
+    "idBadge": "ID: {{id}}",
+    "details": "Details",
+    "pricing": "Prijzen",
+    "basePrice": "Basisprijs",
+    "totalPrice": "Totale Prijs",
+    "chooseOptions": "Kies Toevoegingen",
+    "optionChoice": "{{choiceName}} (+${{priceModifier}})",
+    "noAdditions": "Geen toevoegingen beschikbaar.",
+    "quantity": "Hoeveelheid",
+    "decreaseQuantity": "Hoeveelheid Verlagen",
+    "increaseQuantity": "Hoeveelheid Verhogen",
+    "addToBasket": "Toevoegen aan Mandje",
+    "alerts": {
+      "minQuantity": "Selecteer alstublieft minstens één item."
+    }
+  },
+  "menuItemCreatePage": {
+    "addNewMenuItem": "Nieuw Menu-item Toevoegen",
+    "itemName": "Itemnaam",
+    "enterMenuItemName": "Voer menu-item naam in",
+    "description": "Beschrijving",
+    "enterDescription": "Voer beschrijving in",
+    "price": "Prijs",
+    "currency": "USD",
+    "enterPrice": "Voer prijs in",
+    "image": "Afbeelding",
+    "imagePreview": "Afbeelding Voorbeeld",
+    "menuItemImagePreview": "Voorbeeld Menu-item Afbeelding",
+    "category": "Categorie",
+    "selectCategory": "Selecteer een categorie",
+    "options": "Opties",
+    "option": "Optie",
+    "remove": "Verwijderen",
+    "optionName": "Optienaam",
+    "enterOptionName": "Voer optienaam in",
+    "choices": "Keuzes",
+    "commaSeparated": "komma-gescheiden",
+    "enterChoices": "Voer keuzes in, gescheiden door komma's",
+    "addAnotherChoice": "Nog een keuze toevoegen",
+    "addOption": "Optie Toevoegen",
+    "booleanOptions": "Boolean Opties",
+    "booleanOption": "Boolean Optie",
+    "priceModifier": "Prijsmodifier",
+    "enterPriceModifier": "Voer prijsmodifier in",
+    "addBooleanOption": "Boolean Optie Toevoegen",
+    "createMenuItem": "Menu-item Aanmaken",
+    "noAdditions": "Geen toevoegingen beschikbaar.",
+    "loading": "Bezig met laden...",
+    "errors": {
+      "fetchCategories": "Ophalen van categorieën mislukt.",
+      "imageProcessingFailed": "Verwerken van afbeelding mislukt.",
+      "fillRequiredFields": "Vul alstublieft alle vereiste velden in.",
+      "createMenuItemFailed": "Aanmaken van menu-item mislukt."
+    },
+    "success": {
+      "menuItemCreated": "Menu-item succesvol aangemaakt!"
+    }
+  },
+  "menuPage": {
+    "title": "Menu",
+    "loading": "Bezig met laden...",
+    "errorLoading": "Laden van menu-items mislukt.",
+    "noItems": "Geen menu-items beschikbaar.",
+    "price": "Prijs: ${{price}}",
+    "addToOrder": "Toevoegen aan Bestelling",
+    "added": "Toegevoegd",
+    "placeOrder": "Bestelling Plaatsen",
+    "selectedItems": "Geselecteerde Items",
+    "success": {
+      "orderPlaced": "Bestelling succesvol geplaatst!"
+    },
+    "errors": {
+      "fetchMenuItems": "Ophalen van menu-items mislukt.",
+      "placeOrderFailed": "Bestelling plaatsen mislukt.",
+      "noItemsSelected": "Selecteer alstublieft minstens één item om een bestelling te plaatsen."
+    }
+  },
+  "orderBasketPage": {
+    "title": "Uw Bestelmand",
+    "loading": "Bezig met laden...",
+    "emptyBasket": "Uw mandje is leeg. Voeg wat items toe!",
+    "basePrice": "Basisprijs",
+    "quantity": "Hoeveelheid",
+    "selectedOptions": "Geselecteerde Opties",
+    "selectedBooleans": "Geselecteerde Toevoegingen",
+    "totalPrice": "Totale Prijs",
+    "currency": "USD",
+    "goBack": "Ga Terug",
+    "placeOrder": "Bestelling Plaatsen",
+    "remove": "Verwijderen",
+    "removeItem": "Item Verwijderen",
+    "aria": {
+      "backgroundImage": "Achtergrondafbeelding van het restaurant"
+    },
+    "success": {
+      "orderPlaced": "Bestelling succesvol geplaatst!"
+    },
+    "errors": {
+      "fetchRestaurantDetails": "Ophalen van restaurantdetails mislukt.",
+      "placeOrderFailed": "Bestelling plaatsen mislukt.",
+      "placeOrderError": "Er is een fout opgetreden tijdens het plaatsen van de bestelling. Probeer het opnieuw.",
+      "invalidRestaurantOrTable": "Ongeldige restaurant-ID of tafelnummer.",
+      "noItemsSelected": "Selecteer alstublieft minstens één item om een bestelling te plaatsen."
+    }
+  },
+  "orderPage": {
+    "title": "Bestellingen",
+    "goBack": "Ga Terug",
+    "loading": "Bezig met laden...",
+    "table": "Tafel",
+    "orderDetails": "Bestelgegevens",
+    "price": "Prijs",
+    "currency": "USD",
+    "selectedOptions": "Geselecteerde Opties",
+    "selectedBooleans": "Geselecteerde Toevoegingen",
+    "additionalInfo": "Aanvullende Informatie",
+    "noItemsInOrder": "Er zijn geen items in deze bestelling.",
+    "noOrders": "Geen bestellingen beschikbaar.",
+    "startExecution": "Uitvoering Starten",
+    "completeOrder": "Bestelling Voltooien",
+    "delete": "Verwijderen",
+    "confirmDelete": "Weet u zeker dat u deze bestelling wilt verwijderen?",
+    "success": {
+      "statusUpdated": "Bestelstatus bijgewerkt naar {{status}}.",
+      "orderDeleted": "Bestelling succesvol verwijderd."
+    },
+    "errors": {
+      "fetchOrders": "Ophalen van bestellingen mislukt.",
+      "updateStatus": "Bijwerken van bestelstatus mislukt.",
+      "updateStatusError": "Bijwerken van bestelstatus mislukt: {{error}}",
+      "deleteOrder": "Verwijderen van bestelling mislukt.",
+      "deleteOrderError": "Verwijderen van bestelling mislukt: {{error}}"
+    },
+    "status": {
+      "pending": "In Afwachting",
+      "in_progress": "In Uitvoering",
+      "completed": "Voltooid"
+    },
+    "aria": {
+      "backgroundImage": "Achtergrondafbeelding van het restaurant"
+    }
+  },
+  "orderSuccessPage": {
+    "loading": "Bezig met laden...",
+    "table": "Tafel",
+    "orderSummary": "Besteloverzicht",
+    "price": "Prijs",
+    "currency": "USD",
+    "specialRequest": "Speciale Verzoek",
+    "selectedOptions": "Geselecteerde Opties",
+    "noOrderDetails": "Geen bestelgegevens beschikbaar.",
+    "orderAgain": "Bestelling Opnieuw Plaatsen",
+    "success": {
+      "statusUpdated": "Bestelstatus bijgewerkt naar {{status}}."
+    },
+    "errors": {
+      "fetchOrderStatus": "Ophalen van bestelstatus mislukt.",
+      "noOrdersForTable": "Geen bestellingen gevonden voor deze tafel."
+    }
+  },
+  "ticTacToe": {
+    "playWhileWaiting": "Laten we spelen terwijl we wachten!",
+    "cell": "Cel",
+    "emptyCell": "Lege Cel",
+    "draw": "Het is een gelijkspel!",
+    "youWon": "Je hebt gewonnen!",
+    "youLost": "Je hebt verloren!",
+    "resetGame": "Spel Resetten",
+    "maxResetsReached": "Je hebt het maximale aantal resets bereikt. Probeer het de volgende keer opnieuw!"
+  },
+  "seo": {
+    "title": "Welkom bij Qr Qaema",
+    "description": "Ervaar het meest geavanceerde QR-menu systeem ontworpen voor moderne restaurants.",
+    "keywords": "QR-menu, digitaal menu, restauranttechnologie, online bestellen, QR-codes, orderbeheer",
+    "author": "Qr Qaema",
+    "og": {
+      "title": "Qr Qaema - Toonaangevende QR-menu Oplossing",
+      "description": "Qr Qaema biedt een geavanceerde digitale oplossing om restaurantmenu's te beheren en weer te geven via QR-codes.",
+      "url": "https://qrqaema.com/",
+      "type": "website",
+      "image": "https://qrqaema.com/images/logo.png"
+    },
+    "twitter": {
+      "card": "summary_large_image",
+      "title": "Qr Qaema - Jouw Allesomvattende Digitale Restaurantoplossing",
+      "description": "Ontdek Qr Qaema, de premier keuze voor digitaal menubeheer en online bestellen.",
+      "image": "https://qrqaema.com/images/logo.png"
+    }
+  },
+  "hero": {
+    "title": "Welkom bij Qr Qaema",
+    "subtitle": "Transformeer Restaurantmenu's voor het Digitale Tijdperk",
+    "discoverFeatures": "Ontdek Functies",
+    "startNow": "Begin Nu"
+  },
+  "features": {
+    "title": "Onze Functies",
+    "feature1": {
+      "title": "Aanpasbare Menu's",
+      "description": "Ontwerp en werk eenvoudig het menu van uw restaurant bij om uw merk en aanbiedingen te weerspiegelen."
+    },
+    "feature2": {
+      "title": "Naadloze QR-code Integratie",
+      "description": "Bied klanten directe toegang tot uw menu via unieke QR-codes bij elke tafel."
+    },
+    "feature3": {
+      "title": "Realtime Orderbeheer",
+      "description": "Beheer en volg klantbestellingen efficiënt met ons intuïtieve platform."
+    }
+  },
+  "howItWorks": {
+    "title": "Hoe Het Werkt",
+    "step1": {
+      "title": "Stel Uw Restaurantprofiel In",
+      "description": "Maak een account aan en vestig de digitale aanwezigheid van uw restaurant met ons eenvoudige opstartproces."
+    },
+    "step2": {
+      "title": "Genereer Unieke QR-codes",
+      "description": "Maak gepersonaliseerde QR-codes voor elke tafel, zodat u een soepele klantervaring garandeert."
+    },
+    "step3": {
+      "title": "Beheer Bestellingen Digitaal",
+      "description": "Sta klanten toe direct vanaf hun smartphones bestellingen te plaatsen en beheer ze realtime."
+    }
+  },
+  "pricing": {
+    "title": "Prijzen",
+    "subtitle": "Geniet van al onze functies helemaal gratis.",
+    "plan": "Gratis Plan",
+    "price": "Gratis",
+    "description": "Toegang tot alle functies zonder kosten, zonder verborgen tarieven.",
+    "features": {
+      "feature1": "Volledig Aanpasbare Menu's",
+      "feature2": "Onbeperkt QR-code Genereren",
+      "feature3": "Realtime Ordertracking",
+      "feature4": "Toegewijde Klantenondersteuning"
+    },
+    "button": "Begin Nu"
+  },
+  "testimonials": {
+    "title": "Klantgetuigenissen",
+    "testimonial1": "Qr Qaema heeft ons orderbeheersysteem revolutionair veranderd.",
+    "user1": "Ali, Restaurant Eigenaar",
+    "testimonial2": "Onze klanten waarderen het gemak van het scannen van QR-codes.",
+    "user2": "Sara, Café Manager",
+    "testimonial3": "Een game changer voor onze restaurantoperaties!",
+    "user3": "Hassan, Restaurant Manager"
+  },
+  "cta": {
+    "title": "Klaar Om Uw Restaurant Te Transformeren?",
+    "subtitle": "Meld u vandaag nog aan om uw menu- en orderbeheer te stroomlijnen.",
+    "button": "Begin Nu"
+  },
+  "footer": {
+    "rights": "© 2024 Qr Qaema. Alle rechten voorbehouden.",
+    "privacyPolicy": "Privacybeleid",
+    "termsAndConditions": "Algemene Voorwaarden"
+  },
+  "login": {
+    "title": "Log In Op Uw Account",
+    "username": "Gebruikersnaam",
+    "password": "Wachtwoord",
+    "placeholders": {
+      "enterUsername": "Voer uw gebruikersnaam in",
+      "enterPassword": "Voer uw wachtwoord in"
+    },
+    "buttons": {
+      "login": "Inloggen",
+      "loggingIn": "Bezig met inloggen..."
+    },
+    "errors": {
+      "requiredFields": "Vul zowel de gebruikersnaam als het wachtwoord in.",
+      "invalidCredentials": "Ongeldige gebruikersnaam of wachtwoord.",
+      "unexpectedError": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw."
+    },
+    "links": {
+      "returnHome": "Terug naar Home",
+      "noAccount": "Heeft u geen account?",
+      "register": "Registreer Hier",
+      "forgotPassword": "Wachtwoord vergeten?",
+      "recoverUsername": "Gebruikersnaam vergeten?"
+    }
+  },
+  "tour": {
+    "header": "Dit is de Restaurantbeheer Header waar u restaurantdetails en gebruikersacties kunt beheren.",
+    "headerLogout": "Klik hier om veilig uit te loggen van uw account.",
+    "headerManageEmployees": "Klik hier om het personeel van uw restaurant te beheren, inclusief het toevoegen en verwijderen van medewerkers.",
+    "headerManageMenu": "Deze sectie stelt u in staat het menu van het restaurant te beheren, inclusief categorieën en individuele menu-items.",
+    "headerManageCategories": "Gebruik deze sectie om verschillende menucategorieën in uw restaurant te beheren.",
+    "headerManageMenuItems": "Hier kunt u individuele menu-items beheren onder verschillende categorieën.",
+    "headerProfile": "Hier kunt u uw profielgegevens bekijken en bijwerken, zoals uw gebruikersnaam en andere persoonlijke informatie.",
+    "headerLanguageSelector": "Verander de weergavetaal van het systeem met deze dropdown.",
+    "headerBrand": "Dit is het merk/logo van uw restaurant dat op het dashboard wordt weergegeven.",
+    "completedOrdersCard": "Bekijk het aantal voltooide bestellingen in deze sectie.",
+    "inProgressOrdersCard": "Deze kaart toont bestellingen die momenteel in de keuken worden bereid.",
+    "pendingOrdersCard": "Hier kunt u alle in afwachting zijnde bestellingen zien die wachten op goedkeuring.",
+    "helpRequestSection": "Dit is waar u hulpverzoeken van klanten beheert.",
+    "helpRequestItem": "Beheer individuele hulpverzoeken van klanten, zoals assistentie met bestellingen of diensten.",
+    "addTableButton": "Klik hier om een nieuwe tafel toe te voegen aan uw restaurant. Elke nieuwe tafel krijgt een unieke QR-code toegewezen.",
+    "tableCard": "Elke kaart vertegenwoordigt een tafel in uw restaurant. Klik om de bestellingen voor deze tafel te bekijken of te beheren.",
+    "recentOrdersTable": "Deze tabel toont de meest recente bestellingen geplaatst door klanten.",
+    "replayTour": "Speel deze begeleide tour op elk moment opnieuw af om vertrouwd te raken met het dashboard.",
+    "headerViewMenu": "Klik hier om het menu van het restaurant te bekijken.",
+    "notificationToggle": "Meldingen In-/Uitschakelen"
+  },
+  "helpRequests": "Hulpverzoeken",
+  "helpRequest": {
+    "details": "Hulpverzoek Details",
+    "tableNumber": "Tafelnummer",
+    "username": "Gebruikersnaam",
+    "anonymous": "Anoniem",
+    "description": "Beschrijving",
+    "noDescription": "Geen beschrijving verstrekt.",
+    "status": "Status",
+    "response": "Reactie",
+    "enterResponseValidation": "Voer alstublieft een reactie in voordat u verzendt.",
+    "yourResponse": "Uw Reactie",
+    "enterResponse": "Voer uw reactie hier in...",
+    "respondToAccept": "Reageer om Hulpverzoek te Accepteren",
+    "respondToDecline": "Reageer om Hulpverzoek te Weigeren",
+    "accepted": "Hulpverzoek succesvol geaccepteerd.",
+    "declined": "Hulpverzoek succesvol geweigerd.",
+    "indicatorTitle": "Er is een in afwachting zijnd hulpverzoek voor deze tafel.",
+    "deleteConfirmation": "Weet u zeker dat u dit hulpverzoek wilt verwijderen?",
+    "deleted": "Hulpverzoek succesvol verwijderd.",
+    "noHelpRequests": "Er zijn momenteel geen hulpverzoeken."
+  },
+  "statuses": {
+    "pending": "In Afwachting",
+    "accepted": "Geaccepteerd",
+    "declined": "Weigerd",
+    "resolved": "Opgelost",
+    "in_progress": "In Uitvoering",
+    "completed": "Voltooid",
+    "empty": "Leeg",
+    "undefined": "Niet Gedefinieerd"
+  },
+  "customerMenuPage": {
+    "title": "Welkom bij Tafel {{tableNumber}}",
+    "loading": "Menu aan het laden...",
+    "error": "Laden van het menu is mislukt. Probeer het later opnieuw.",
+    "noCategories": "Er zijn momenteel geen categorieën beschikbaar.",
+    "aria": {
+      "backgroundImage": "Achtergrondafbeelding van {{restaurantName}}"
+    },
+    "errors": {
+      "fetchFailed": "Laden van categorieën of restaurantdetails is mislukt."
+    }
+  },
+  "header": {
+    "tableNumber": "Tafelnummer",
+    "total": "Totaal",
+    "viewBasketAriaLabel": "Bekijk mandje met totaal aantal items",
+    "requestHelpAriaLabel": "Hulp aanvragen",
+    "errors": {
+      "missingRestaurantOrTable": "Restaurant-ID of tafelnummer ontbreekt.",
+      "submitHelpRequest": "Fout bij het indienen van hulpverzoek."
+    },
+    "helpRequestSuccess": "Hulpverzoek succesvol ingediend!",
+    "viewBasket": "Bekijk Mandje",
+    "requestHelp": "Hulp Aanvragen",
+    "helpRequestFailed": "Hulpverzoek kon niet worden ingediend: {{error}}",
+    "helpRequestError": "Hulpverzoek kon niet worden ingediend. Probeer het opnieuw.",
+    "helpModal": {
+      "title": "Heeft u Hulp Nodig?",
+      "descriptionLabel": "Beschrijf uw probleem (optioneel):",
+      "descriptionPlaceholder": "Voer uw beschrijving hier in...",
+      "descriptionRequired": "Voer alstublieft een beschrijving in.",
+      "cancel": "Annuleren",
+      "submit": "Indienen",
+      "submitting": "Bezig met indienen..."
+    }
+  },
+  "viewMenu": "Bekijk Menu",
+  "capacity": "Capaciteit",
+  "cancel": "Annuleren",
+  "decline": "Weigeren",
+  "notifications": {
+    "enable": "Meldingen Inschakelen"
+  }
+}

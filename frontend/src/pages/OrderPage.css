@@ -1,0 +1,31 @@
+/* src/pages/OrderSuccessPage.css */
+
+.order-success-page {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.order-success-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.order-summary h4,
+.order-summary ul {
+    text-align: right;
+}
+
+.action-buttons .btn {
+    width: 100%;
+}
+
+@media (max-width: 576px) {
+    .order-success-content {
+        padding: 10px;
+    }
+
+    .action-buttons .btn {
+        font-size: 1rem;
+    }
+}

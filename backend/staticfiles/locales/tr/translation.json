@@ -1,0 +1,719 @@
+{
+  "manageEmployees": "Çalışanları Yönet",
+  "manageMenu": "Menüyü Yönet",
+  "profile": "Profil",
+  "logout": "Çıkış Yap",
+  "restaurantManagement": "Restoran Yönetimi",
+  "categories": "Kategoriler",
+  "menuItems": "Menü Öğeleri",
+  "orderBasket": "Sipariş Sepeti",
+  "orderSuccess": "Sipariş Başarılı",
+  "welcome": "Hoşgeldiniz",
+  "orders": {
+    "completed": "Tamamlanan Siparişler",
+    "inProgress": "Devam Eden Siparişler",
+    "pending": "Bekleyen Siparişler"
+  },
+  "tables": "Masalar",
+  "addTable": {
+    "title": "Masa Ekle",
+    "tableNumber": "Masa Numarası",
+    "enterTableNumber": "Masa numarasını girin",
+    "capacity": "Kapasite",
+    "enterCapacity": "Kapasiteyi girin",
+    "submit": "Gönder",
+    "addtablebutton_turkish": "Masa Ekle"
+  },
+  "removeTable": "Masayı Kaldır",
+  "table": "Masa",
+  "qrCodeFor": "İçin QR kodu",
+  "downloadQr": "QR Kodunu İndir",
+  "noTablesAvailable": "Mevcut masa yok",
+  "recentOrders": "Son Siparişler",
+  "tableNumber": "Masa Numarası",
+  "customerName": "Müşteri Adı",
+  "status": "Durum",
+  "time": "Zaman",
+  "noOrdersCurrently": "Şu anda sipariş yok",
+  "tableStatus": "Masa Durumu",
+  "errors": {
+    "loadDataFailed": "Masa verilerini veya QR kodlarını yükleme başarısız oldu",
+    "fetchOrdersError": "Siparişler alınırken hata oluştu:",
+    "addTableError": "Masa eklenemedi.",
+    "removeTableError": "Masa kaldırılamadı.",
+    "fetchCategories": "Kategoriler alınamadı.",
+    "addCategory": "Kategori eklenemedi.",
+    "deleteCategory": "Kategori silinemedi.",
+    "updateCategory": "Kategori güncellenemedi.",
+    "fillRequiredFields": "Lütfen tüm gerekli alanları doldurun.",
+    "imageProcessingFailed": "Seçilen resim işlenemedi.",
+    "priceExceedsLimit": "Fiyat 9999.99'u geçemez.",
+    "optionNameRequired": "Lütfen seçenek adını doldurun.",
+    "atLeastOneChoice": "Lütfen her seçenek için en az bir seçim ekleyin.",
+    "choiceFieldsRequired": "Lütfen seçimler için tüm alanları doldurun.",
+    "fetchMenuItem": "Menü öğesi verisi alınamadı.",
+    "createMenuItemFailed": "Menü öğesi oluşturulamadı.",
+    "updateMenuItemFailed": "Menü öğesi güncellenemedi.",
+    "loadRestaurantProfile": "Restoran profilini yükleme başarısız oldu.",
+    "updateProfileFailed": "Profil güncellenemedi.",
+    "fetchStaff": "Personel alınamadı.",
+    "passwordTooShort": "Şifre en az 8 karakter olmalıdır.",
+    "addStaffFailed": "Personel eklenemedi.",
+    "removeStaffFailed": "Personel kaldırılamadı.",
+    "activationFailed": "Hesap etkinleştirme başarısız oldu. Lütfen tekrar deneyin.",
+    "invalidToken": "Etkinleştirme tokenı geçersiz.",
+    "userAlreadyActive": "Bu hesap zaten etkin.",
+    "fetchFailed": "Menü öğeleri veya restoran detayları yüklenemedi.",
+    "invalidIds": "Geçersiz restoran veya kategori kimliği."
+  },
+  "success": {
+    "categoryAdded": "Kategori başarıyla eklendi.",
+    "categoryDeleted": "Kategori başarıyla silindi.",
+    "categoryUpdated": "Kategori başarıyla güncellendi.",
+    "menuItemCreated": "Menü öğesi başarıyla oluşturuldu!",
+    "menuItemDeleted": "Menü öğesi başarıyla silindi.",
+    "menuItemUpdated": "Menü öğesi başarıyla güncellendi.",
+    "profileUpdated": "Profil başarıyla güncellendi.",
+    "staffAdded": "Personel başarıyla eklendi.",
+    "staffRemoved": "Personel başarıyla kaldırıldı.",
+    "accountActivated": "Hesabınız başarıyla etkinleştirildi!"
+  },
+  "loading": "Yükleniyor...",
+  "manageCategories": "Kategorileri Yönet",
+  "categoryName": "Kategori Adı",
+  "enterCategoryNamePlaceholder": "Kategori adını girin",
+  "categoryImage": "Kategori Resmi",
+  "newCategoryImagePreview": "Yeni Kategori Resmi Önizlemesi",
+  "editCategoryImagePreview": "Düzenlenen Kategori Resmi Önizlemesi",
+  "addCategory": "Kategori Ekle",
+  "addingCategory": "Ekleniyor...",
+  "categoriesList": "Kategoriler Listesi",
+  "loadingCategories": "Kategoriler yükleniyor...",
+  "noCategoriesAvailable": "Mevcut kategori yok.",
+  "edit": "Düzenle",
+  "delete": "Sil",
+  "confirm": {
+    "deleteCategory": "Bu kategoriyi silmek istediğinize emin misiniz?",
+    "deleteMenuItem": "Bu menü öğesini silmek istediğinize emin misiniz?",
+    "removeStaff": "Bu personeli kaldırmak istediğinize emin misiniz?"
+  },
+  "editCategory": "Kategori Düzenle",
+  "updateCategory": "Kategori Güncelle",
+  "menuItemImagePreview": "Menü Öğesi Resmi Önizlemesi",
+  "addNewMenuItem": "Yeni Menü Öğesi Ekle",
+  "editMenuItem": "Menü Öğesi Düzenle",
+  "itemName": "Öğe Adı",
+  "enterMenuItemName": "Menü öğesi adını girin",
+  "description": "Açıklama",
+  "enterDescription": "Açıklamayı girin",
+  "price": "Fiyat",
+  "currency": "$",
+  "enterPrice": "Fiyatı girin",
+  "image": "Resim",
+  "imagePreview": "Resim Önizlemesi",
+  "currentImage": "Mevcut Resim",
+  "currentMenuItemImage": "Mevcut Menü Öğesi Resmi",
+  "selectCategory": "Kategori Seç",
+  "options": "Seçenekler",
+  "option": "Seçenek",
+  "optionName": "Seçenek Adı",
+  "enterOptionName": "Seçenek adını girin",
+  "choices": "Seçimler",
+  "commaSeparated": "virgülle ayrılmış",
+  "enterChoiceName": "Seçim adını girin",
+  "enterPriceModifier": "Fiyat değiştiriciyi girin",
+  "addAnotherChoice": "Başka Bir Seçim Ekle",
+  "addOptionCategory": "Seçenek Kategorisi Ekle",
+  "addOption": "Seçenek Ekle",
+  "booleanOptions": "Mantıksal Seçenekler",
+  "booleanOption": "Mantıksal Seçenek",
+  "priceModifier": "Fiyat Değiştirici",
+  "addBooleanOption": "Mantıksal Seçenek Ekle",
+  "createMenuItem": "Menü Öğesi Oluştur",
+  "updatingMenuItem": "Güncelleniyor...",
+  "menuItemManagement": "Menü Öğesi Yönetimi",
+  "loadingMenuItems": "Menü öğeleri yükleniyor...",
+  "noMenuItemsAvailable": "Mevcut menü öğesi yok. Lütfen yeni bir menü öğesi ekleyin.",
+  "backgroundImage": "Arka Plan Resmi",
+  "backgroundImageAlt": "Arka Plan Resmi",
+  "backgroundImagePreview": "Arka Plan Resmi Önizlemesi",
+  "logo": "Logo",
+  "logoAlt": "Logo",
+  "logoPreview": "Logo Önizlemesi",
+  "updateRestaurantProfile": "Restoran Profilini Güncelle",
+  "loadingRestaurantProfile": "Restoran profili yükleniyor...",
+  "staffManagement": "Personel Yönetimi",
+  "addNewStaff": "Yeni Personel Ekle",
+  "addStaff": "Personel Ekle",
+  "remove": "Kaldır",
+  "addAnotherStaff": "Başka Bir Personel Ekle",
+  "passwordRequirements": "Şifre en az 8 karakter olmalıdır.",
+  "username": "Kullanıcı Adı",
+  "enterUsername": "Kullanıcı adını girin",
+  "actions": "Eylemler",
+  "loadingStaff": "Personel yükleniyor...",
+  "noStaff": "Personel yok.",
+  "close": "Kapat",
+  "updatingStaff": "Güncelleniyor...",
+  "password": "Şifre",
+  "enterPassword": "Şifreyi girin",
+  "activateAccount": "Hesabı Etkinleştir",
+  "passwordResetConfirm": {
+    "title": "Şifre Sıfırlama",
+    "labels": {
+      "newPassword": "Yeni Şifre",
+      "confirmPassword": "Şifreyi Onayla"
+    },
+    "placeholders": {
+      "newPassword": "Yeni şifrenizi girin",
+      "confirmPassword": "Yeni şifrenizi tekrar girin"
+    },
+    "buttons": {
+      "resetPassword": "Şifreyi Sıfırla",
+      "resetting": "Şifre Sıfırlanıyor..."
+    },
+    "errors": {
+      "requiredFields": "Tüm alanlar gereklidir.",
+      "passwordMismatch": "Şifreler eşleşmiyor.",
+      "invalidToken": "Şifre sıfırlama bağlantısı geçersiz veya süresi dolmuş.",
+      "userAlreadyActive": "Kullanıcı hesabı zaten aktif.",
+      "unexpectedError": "Şifrenizi sıfırlarken bir hata oluştu. Lütfen tekrar deneyin."
+    },
+    "success": {
+      "passwordReset": "Şifreniz başarıyla sıfırlandı."
+    }
+  },
+  "passwordResetRequest": {
+    "title": "Şifre Sıfırlama",
+    "labels": {
+      "email": "E-posta Adresi"
+    },
+    "placeholders": {
+      "enterEmail": "E-posta adresinizi girin"
+    },
+    "buttons": {
+      "sendResetLink": "Şifre Sıfırlama Bağlantısını Gönder",
+      "sending": "Gönderiliyor..."
+    },
+    "messages": {
+      "success": "Şifre sıfırlama bağlantısı e-postanıza gönderildi."
+    },
+    "errors": {
+      "requiredEmail": "E-posta adresi gereklidir.",
+      "invalidEmail": "Geçersiz e-posta adresi.",
+      "emailNotFound": "Bu e-posta ile ilişkilendirilmiş bir kullanıcı yok.",
+      "unexpectedError": "Şifre sıfırlama bağlantısı gönderilirken beklenmeyen bir hata oluştu."
+    }
+  },
+  "register": {
+    "title": "Yeni Hesap Oluştur",
+    "userForm": {
+      "username": "Kullanıcı Adı",
+      "email": "E-posta",
+      "password": "Şifre",
+      "confirmPassword": "Şifreyi Onayla",
+      "placeholders": {
+        "username": "Kullanıcı adınızı girin",
+        "email": "E-posta adresinizi girin",
+        "password": "Şifrenizi girin",
+        "confirmPassword": "Şifrenizi tekrar girin",
+        "postalCodeNote": "Posta kodunuz yoksa, lütfen 0000 girin."
+      }
+    },
+    "restaurantForm": {
+      "name": "Restoran Adı",
+      "address": "Adres",
+      "phoneNumber": "Telefon Numarası",
+      "tables": "Masa Sayısı",
+      "country": "Ülke",
+      "city": "Şehir",
+      "postalCode": "Posta Kodu",
+      "currency": "Para Birimi",
+      "numberOfEmployees": "Çalışan Sayısı",
+      "logo": "Restoran Logosu",
+      "logoAlt": "Restoran Logosu",
+      "logoPreview": "Mevcut Logo",
+      "backgroundImage": "Arka Plan Resmi",
+      "backgroundImageAlt": "Arka Plan Resmi",
+      "backgroundImagePreview": "Mevcut Arka Plan Resmi",
+      "placeholders": {
+        "name": "Restoran adınızı girin",
+        "address": "Adresinizi girin",
+        "phoneNumber": "Telefon numaranızı girin",
+        "city": "Şehrinizi girin",
+        "postalCode": "Posta kodunuzu girin",
+        "currency": "Para biriminizi seçin",
+        "country": "Ülkenizi seçin",
+        "numberOfEmployees": "Çalışan sayısını girin"
+      }
+    },
+    "buttons": {
+      "next": "İleri",
+      "previous": "Geri",
+      "finish": "Bitir",
+      "updateProfile": "Profili Güncelle"
+    },
+    "success": {
+      "title": "Başarılı",
+      "message": "Hesap ve restoran başarıyla oluşturuldu! Hesabınızı etkinleştirmek için lütfen e-postanızı kontrol edin.",
+      "redirect": "Kısa süre içinde giriş sayfasına yönlendirileceksiniz...",
+      "ok": "Tamam"
+    },
+    "errors": {
+      "usernameRequired": "Kullanıcı adı gereklidir.",
+      "usernameTooShort": "Kullanıcı adı en az 3 karakter olmalıdır.",
+      "usernameInvalid": "Kullanıcı adı sadece harfler, sayılar ve alt çizgiler içerebilir.",
+      "emailRequired": "E-posta gereklidir.",
+      "emailInvalid": "Lütfen geçerli bir e-posta adresi girin.",
+      "passwordRequired": "Şifre gereklidir.",
+      "passwordTooShort": "Şifre en az 6 karakter olmalıdır.",
+      "passwordWeak": "Şifre hem harf hem de sayı içermelidir.",
+      "confirmPasswordRequired": "Lütfen şifrenizi onaylayın.",
+      "passwordsDoNotMatch": "Şifreler eşleşmiyor.",
+      "restaurantNameRequired": "Restoran adı gereklidir.",
+      "addressRequired": "Adres gereklidir.",
+      "phoneNumberRequired": "Telefon numarası gereklidir.",
+      "phoneNumberInvalid": "Lütfen geçerli bir telefon numarası girin.",
+      "tablesRequired": "Masa sayısı gereklidir.",
+      "tablesInvalid": "Masa sayısı en az 1 olmalıdır.",
+      "countryRequired": "Ülke gereklidir.",
+      "cityRequired": "Şehir gereklidir.",
+      "postalCodeInvalid": "Lütfen geçerli bir posta kodu girin.",
+      "currencyRequired": "Para birimi gereklidir.",
+      "numberOfEmployeesRequired": "Çalışan sayısı gereklidir.",
+      "numberOfEmployeesInvalid": "Çalışan sayısı en az 1 olmalıdır.",
+      "selectCountryAndCurrency": "Lütfen hem ülke hem de para birimi seçin.",
+      "unexpectedError": "Beklenmeyen bir hata oluştu. Lütfen tekrar deneyin."
+    },
+    "links": {
+      "returnToLogin": "Giriş Yapmaya Dön"
+    },
+    "steps": {
+      "step1": "Adım 1",
+      "step2": "Adım 2",
+      "step3": "Adım 3"
+    }
+  },
+  "usernameRecovery": {
+    "title": "Kullanıcı Adını Kurtar",
+    "emailLabel": "E-posta Adresi",
+    "emailPlaceholder": "E-postanızı girin",
+    "emailRequired": "E-posta adresi gereklidir.",
+    "sending": "Gönderiliyor...",
+    "sendButton": "Kullanıcı Adını Gönder",
+    "errorSending": "Kullanıcı adını gönderirken bir hata oluştu."
+  },
+  "navbar": {
+    "brand": "Menü Yönetim Sistemi",
+    "home": "Ana Sayfa",
+    "features": "Özellikler",
+    "pricing": "Fiyatlandırma",
+    "testimonials": "Referanslar",
+    "dashboard": "Gösterge Tablosuna Git",
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "language": "Dil"
+  },
+  "categoryPage": {
+    "title": "{{restaurantName}} için Menü",
+    "loading": "Yükleniyor...",
+    "price": "Fiyat",
+    "noItems": "Bu kategoride mevcut öğe yok.",
+    "backButton": "Geri",
+    "aria": {
+      "backgroundImage": "Restoran arka plan resmi"
+    },
+    "errors": {
+      "fetchFailed": "Menü öğeleri veya restoran detayları yüklenemedi.",
+      "invalidIds": "Geçersiz restoran veya kategori kimliği."
+    }
+  },
+  "customerMenuItemPage": {
+    "loading": "Yükleniyor...",
+    "errors": {
+      "fetchFailed": "Ürün detayları yüklenemedi."
+    },
+    "aria": {
+      "backgroundImage": "{{itemName}} arka plan resmi"
+    },
+    "idBadge": "ID: {{id}}",
+    "details": "Detaylar",
+    "pricing": "Fiyatlandırma",
+    "basePrice": "Temel Fiyat",
+    "totalPrice": "Toplam Fiyat",
+    "chooseOptions": "Ekstraları Seçin",
+    "optionChoice": "{{choiceName}} (+${{priceModifier}})",
+    "noAdditions": "Mevcut ekstralar yok.",
+    "quantity": "Miktar",
+    "decreaseQuantity": "Miktarı Azalt",
+    "increaseQuantity": "Miktarı Artır",
+    "addToBasket": "Sepete Ekle",
+    "alerts": {
+      "minQuantity": "Lütfen en az bir ürün seçin."
+    }
+  },
+  "menuItemCreatePage": {
+    "addNewMenuItem": "Yeni Menü Öğesi Ekle",
+    "itemName": "Öğe Adı",
+    "enterMenuItemName": "Menü öğesi adını girin",
+    "description": "Açıklama",
+    "enterDescription": "Açıklamayı girin",
+    "price": "Fiyat",
+    "currency": "USD",
+    "enterPrice": "Fiyatı girin",
+    "image": "Resim",
+    "imagePreview": "Resim Önizlemesi",
+    "menuItemImagePreview": "Menü öğesi resim önizlemesi",
+    "category": "Kategori",
+    "selectCategory": "Bir kategori seçin",
+    "options": "Seçenekler",
+    "option": "Seçenek",
+    "remove": "Kaldır",
+    "optionName": "Seçenek Adı",
+    "enterOptionName": "Seçenek adını girin",
+    "choices": "Seçimler",
+    "commaSeparated": "virgülle ayrılmış",
+    "enterChoices": "Virgülle ayrılmış seçimleri girin",
+    "addAnotherChoice": "Başka Bir Seçim Ekle",
+    "addOption": "Seçenek Ekle",
+    "booleanOptions": "Mantıksal Seçenekler",
+    "booleanOption": "Mantıksal Seçenek",
+    "priceModifier": "Fiyat Değiştirici",
+    "enterPriceModifier": "Fiyat değiştiriciyi girin",
+    "addBooleanOption": "Mantıksal Seçenek Ekle",
+    "createMenuItem": "Menü Öğesi Oluştur",
+    "noAdditions": "Mevcut ekstralar yok.",
+    "loading": "Yükleniyor...",
+    "errors": {
+      "fetchCategories": "Kategoriler alınamadı.",
+      "imageProcessingFailed": "Resim işleme başarısız oldu.",
+      "fillRequiredFields": "Lütfen tüm gerekli alanları doldurun.",
+      "createMenuItemFailed": "Menü öğesi oluşturulamadı."
+    },
+    "success": {
+      "menuItemCreated": "Menü öğesi başarıyla oluşturuldu!"
+    }
+  },
+  "menuPage": {
+    "title": "Menü",
+    "loading": "Yükleniyor...",
+    "errorLoading": "Menü öğeleri yüklenemedi.",
+    "noItems": "Mevcut menü öğesi yok.",
+    "price": "Fiyat: ${{price}}",
+    "addToOrder": "Siparişe Ekle",
+    "added": "Eklendi",
+    "placeOrder": "Sipariş Ver",
+    "selectedItems": "Seçilen Öğeler",
+    "success": {
+      "orderPlaced": "Sipariş başarıyla verildi!"
+    },
+    "errors": {
+      "fetchMenuItems": "Menü öğeleri alınamadı.",
+      "placeOrderFailed": "Sipariş verilemedi.",
+      "noItemsSelected": "Sipariş vermek için lütfen en az bir öğe seçin."
+    }
+  },
+  "orderBasketPage": {
+    "title": "Sipariş Sepetiniz",
+    "loading": "Yükleniyor...",
+    "emptyBasket": "Sepetiniz boş. Biraz öğe ekleyin!",
+    "basePrice": "Temel Fiyat",
+    "quantity": "Miktar",
+    "selectedOptions": "Seçilen Seçenekler",
+    "selectedBooleans": "Seçilen Ekstralar",
+    "totalPrice": "Toplam Fiyat",
+    "currency": "USD",
+    "goBack": "Geri Dön",
+    "placeOrder": "Sipariş Ver",
+    "remove": "Kaldır",
+    "removeItem": "Öğeyi Kaldır",
+    "aria": {
+      "backgroundImage": "Restoran arka plan resmi"
+    },
+    "success": {
+      "orderPlaced": "Sipariş başarıyla verildi!"
+    },
+    "errors": {
+      "fetchRestaurantDetails": "Restoran detayları alınamadı.",
+      "placeOrderFailed": "Sipariş verilemedi.",
+      "placeOrderError": "Sipariş verirken bir hata oluştu. Lütfen tekrar deneyin.",
+      "invalidRestaurantOrTable": "Geçersiz restoran ID'si veya masa numarası.",
+      "noItemsSelected": "Sipariş vermek için lütfen en az bir öğe seçin."
+    }
+  },
+  "orderPage": {
+    "title": "Siparişler",
+    "goBack": "Geri Dön",
+    "loading": "Yükleniyor...",
+    "table": "Masa",
+    "orderDetails": "Sipariş Detayları",
+    "price": "Fiyat",
+    "currency": "USD",
+    "selectedOptions": "Seçilen Seçenekler",
+    "selectedBooleans": "Seçilen Ekstralar",
+    "additionalInfo": "Ek Bilgi",
+    "noItemsInOrder": "Bu siparişte öğe yok.",
+    "noOrders": "Mevcut sipariş yok.",
+    "startExecution": "Uygulamayı Başlat",
+    "completeOrder": "Siparişi Tamamla",
+    "delete": "Sil",
+    "confirmDelete": "Bu siparişi silmek istediğinize emin misiniz?",
+    "success": {
+      "statusUpdated": "Sipariş durumu {{status}} olarak güncellendi.",
+      "orderDeleted": "Sipariş başarıyla silindi."
+    },
+    "errors": {
+      "fetchOrders": "Siparişler alınamadı.",
+      "updateStatus": "Sipariş durumu güncellenemedi.",
+      "updateStatusError": "Sipariş durumu güncellenemedi: {{error}}",
+      "deleteOrder": "Sipariş silinemedi.",
+      "deleteOrderError": "Sipariş silinemedi: {{error}}"
+    },
+    "status": {
+      "pending": "Beklemede",
+      "in_progress": "Devam Ediyor",
+      "completed": "Tamamlandı"
+    },
+    "aria": {
+      "backgroundImage": "Restoran arka plan resmi"
+    }
+  },
+  "orderSuccessPage": {
+    "loading": "Yükleniyor...",
+    "table": "Masa",
+    "orderSummary": "Sipariş Özeti",
+    "price": "Fiyat",
+    "currency": "USD",
+    "specialRequest": "Özel İstek",
+    "selectedOptions": "Seçilen Seçenekler",
+    "noOrderDetails": "Sipariş detayları mevcut değil.",
+    "orderAgain": "Tekrar Sipariş Ver",
+    "success": {
+      "statusUpdated": "Sipariş durumu {{status}} olarak güncellendi."
+    },
+    "errors": {
+      "fetchOrderStatus": "Sipariş durumu alınamadı.",
+      "noOrdersForTable": "Bu masa için sipariş bulunamadı."
+    }
+  },
+  "ticTacToe": {
+    "playWhileWaiting": "Beklerken oynayalım!",
+    "cell": "Hücre",
+    "emptyCell": "Boş Hücre",
+    "draw": "Berabere!",
+    "youWon": "Kazandın!",
+    "youLost": "Kaybettin!",
+    "resetGame": "Oyunu Sıfırla",
+    "maxResetsReached": "En fazla sıfırlama sayısına ulaştınız. Bir dahaki sefere tekrar deneyin!"
+  },
+  "seo": {
+    "title": "Qr Qaema'ya Hoşgeldiniz",
+    "description": "Modern restoranlar için tasarlanmış en gelişmiş QR menü sistemini deneyimleyin.",
+    "keywords": "QR menü, dijital menü, restoran teknolojisi, online sipariş, QR kodları, sipariş yönetimi",
+    "author": "Qr Qaema",
+    "og": {
+      "title": "Qr Qaema - Öncü QR Menü Çözümü",
+      "description": "Qr Qaema, QR kodları aracılığıyla restoran menülerini yönetmek ve görüntülemek için kesintisiz bir dijital çözüm sunar.",
+      "url": "https://qrqaema.com/",
+      "type": "web sitesi",
+      "image": "https://qrqaema.com/images/logo.png"
+    },
+    "twitter": {
+      "card": "özeti_büyük_görsel",
+      "title": "Qr Qaema - Kapsamlı Dijital Restoran Çözümünüz",
+      "description": "Qr Qaema'yı keşfedin, dijital menü yönetimi ve online sipariş için en iyi seçim.",
+      "image": "https://qrqaema.com/images/logo.png"
+    }
+  },
+  "hero": {
+    "title": "Qr Qaema'ya Hoşgeldiniz",
+    "subtitle": "Restoran Menülerini Dijital Çağ için Dönüştürün",
+    "discoverFeatures": "Özellikleri Keşfedin",
+    "startNow": "Şimdi Başla"
+  },
+  "features": {
+    "title": "Özelliklerimiz",
+    "feature1": {
+      "title": "Özelleştirilebilir Menüler",
+      "description": "Restoranınızın menüsünü markanızı ve sunumlarınızı yansıtacak şekilde kolayca tasarlayın ve güncelleyin."
+    },
+    "feature2": {
+      "title": "Sorunsuz QR Kod Entegrasyonu",
+      "description": "Her masada benzersiz QR kodları aracılığıyla müşterilerinize menünüze anında erişim sağlayın."
+    },
+    "feature3": {
+      "title": "Gerçek Zamanlı Sipariş Yönetimi",
+      "description": "Sezgisel platformumuzla müşteri siparişlerini verimli bir şekilde yönetin ve takip edin."
+    }
+  },
+  "howItWorks": {
+    "title": "Nasıl Çalışır",
+    "step1": {
+      "title": "Restoran Profilinizi Kurun",
+      "description": "Hesap oluşturun ve kolay kurulum sürecimizle restoranınızın dijital varlığını oluşturun."
+    },
+    "step2": {
+      "title": "Benzersiz QR Kodları Oluşturun",
+      "description": "Her masa için kişiselleştirilmiş QR kodları oluşturun, böylece müşteriler için sorunsuz bir deneyim sağlayın."
+    },
+    "step3": {
+      "title": "Siparişleri Dijital Olarak Yönetin",
+      "description": "Müşterilerin akıllı telefonlarından doğrudan sipariş vermesine izin verin ve bunları gerçek zamanlı olarak yönetin."
+    }
+  },
+  "pricing": {
+    "title": "Fiyatlandırma",
+    "subtitle": "Tüm özelliklerimizden tamamen ücretsiz olarak faydalanın.",
+    "plan": "Ücretsiz Plan",
+    "price": "Ücretsiz",
+    "description": "Tüm özelliklere hiçbir maliyet olmadan erişin, gizli ücretler yok.",
+    "features": {
+      "feature1": "Tamamen Özelleştirilebilir Menüler",
+      "feature2": "Sınırsız QR Kod Oluşturma",
+      "feature3": "Gerçek Zamanlı Sipariş Takibi",
+      "feature4": "Özel Müşteri Desteği"
+    },
+    "button": "Başlayın"
+  },
+  "testimonials": {
+    "title": "Müşteri Yorumları",
+    "testimonial1": "Qr Qaema, sipariş yönetim sistemimizi devrim yarattı.",
+    "user1": "Ali, Restoran Sahibi",
+    "testimonial2": "Müşterilerimiz QR kodlarını taramanın kolaylığını takdir ediyor.",
+    "user2": "Sara, Kafe Müdürü",
+    "testimonial3": "Restoran operasyonlarımız için bir oyun değiştirici!",
+    "user3": "Hassan, Restoran Müdürü"
+  },
+  "cta": {
+    "title": "Restoranınızı Dönüştürmeye Hazır Mısınız?",
+    "subtitle": "Menünüzü ve sipariş yönetiminizi basitleştirmek için bugün kaydolun.",
+    "button": "Başlayın"
+  },
+  "footer": {
+    "rights": "© 2024 Qr Qaema. Tüm hakları saklıdır.",
+    "privacyPolicy": "Gizlilik Politikası",
+    "termsAndConditions": "Şartlar ve Koşullar"
+  },
+  "login": {
+    "title": "Hesabınıza Giriş Yapın",
+    "username": "Kullanıcı Adı",
+    "password": "Şifre",
+    "placeholders": {
+      "enterUsername": "Kullanıcı adınızı girin",
+      "enterPassword": "Şifrenizi girin"
+    },
+    "buttons": {
+      "login": "Giriş Yap",
+      "loggingIn": "Giriş Yapılıyor..."
+    },
+    "errors": {
+      "requiredFields": "Lütfen hem kullanıcı adını hem de şifreyi doldurun.",
+      "invalidCredentials": "Geçersiz kullanıcı adı veya şifre.",
+      "unexpectedError": "Beklenmeyen bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+    },
+    "links": {
+      "returnHome": "Ana Sayfaya Dön",
+      "noAccount": "Hesabınız yok mu?",
+      "register": "Buradan Kayıt Olun",
+      "forgotPassword": "Şifrenizi mi unuttunuz?",
+      "recoverUsername": "Kullanıcı adınızı mı unuttunuz?"
+    }
+  },
+  "tour": {
+    "header": "Bu, restoran detaylarını ve kullanıcı eylemlerini yönetebileceğiniz Restoran Yönetimi Başlığıdır.",
+    "headerLogout": "Hesabınızdan güvenli bir şekilde çıkış yapmak için buraya tıklayın.",
+    "headerManageEmployees": "Restoran personelinizi yönetmek için buraya tıklayın, çalışan ekleme ve çıkarma dahil.",
+    "headerManageMenu": "Bu bölüm, restoran menünüzü yönetmenize olanak tanır, kategoriler ve bireysel menü öğeleri dahil.",
+    "headerManageCategories": "Bu bölümü, restoranınızdaki farklı menü kategorilerini yönetmek için kullanın.",
+    "headerManageMenuItems": "Burada farklı kategoriler altındaki bireysel menü öğelerini yönetebilirsiniz.",
+    "headerProfile": "Burada kullanıcı adınız ve diğer kişisel bilgiler gibi profil detaylarınızı görüntüleyebilir ve güncelleyebilirsiniz.",
+    "headerLanguageSelector": "Bu açılır menüyü kullanarak sistemin gösterim dilini değiştirin.",
+    "headerBrand": "Bu, gösterge tablosunda görüntülenen restoranınızın markası/logosu.",
+    "completedOrdersCard": "Bu bölümde tamamlanan sipariş sayısını görüntüleyin.",
+    "inProgressOrdersCard": "Bu kart, mutfakta şu anda hazırlanmakta olan siparişleri gösterir.",
+    "pendingOrdersCard": "Burada onay bekleyen tüm bekleyen siparişleri görebilirsiniz.",
+    "helpRequestSection": "Bu, müşterilerden gelen yardım isteklerini yönettiğiniz yerdir.",
+    "helpRequestItem": "Müşterilerden gelen bireysel yardım isteklerini yönetin, siparişler veya hizmetler ile ilgili yardım gibi.",
+    "addTableButton": "Restoranınıza yeni bir masa eklemek için buraya tıklayın. Her yeni masaya benzersiz bir QR kod atanır.",
+    "tableCard": "Her kart, restoranınızdaki bir masayı temsil eder. Bu masanın siparişlerini görüntülemek veya yönetmek için tıklayın.",
+    "recentOrdersTable": "Bu tablo, müşteriler tarafından verilen en son siparişleri gösterir.",
+    "replayTour": "Gösterge tablosunu tanımak için bu rehber turu herhangi bir zamanda tekrar oynatın.",
+    "headerViewMenu": "Restoran menüsünü görüntülemek için buraya tıklayın.",
+    "notificationToggle": "Bildirimleri Aç/Kapa"
+  },
+  "helpRequests": "Yardım İstekleri",
+  "helpRequest": {
+    "details": "Yardım İsteği Detayları",
+    "tableNumber": "Masa Numarası",
+    "username": "Kullanıcı Adı",
+    "anonymous": "Anonim",
+    "description": "Açıklama",
+    "noDescription": "Açıklama sağlanmadı.",
+    "status": "Durum",
+    "response": "Yanıt",
+    "enterResponseValidation": "Göndermeden önce bir yanıt girin lütfen.",
+    "yourResponse": "Yanıtınız",
+    "enterResponse": "Yanıtınızı buraya girin...",
+    "respondToAccept": "Yardım İsteğini Kabul Etmek İçin Yanıt Verin",
+    "respondToDecline": "Yardım İsteğini Reddetmek İçin Yanıt Verin",
+    "accepted": "Yardım isteği başarıyla kabul edildi.",
+    "declined": "Yardım isteği başarıyla reddedildi.",
+    "indicatorTitle": "Bu masada bekleyen bir yardım isteği var.",
+    "deleteConfirmation": "Bu yardım isteğini silmek istediğinize emin misiniz?",
+    "deleted": "Yardım isteği başarıyla silindi.",
+    "noHelpRequests": "Şu anda yardım isteği yok."
+  },
+  "statuses": {
+    "pending": "Beklemede",
+    "accepted": "Kabul Edildi",
+    "declined": "Reddedildi",
+    "resolved": "Çözüldü",
+    "in_progress": "Devam Ediyor",
+    "completed": "Tamamlandı",
+    "empty": "Boş",
+    "undefined": "Tanımlanmamış"
+  },
+  "customerMenuPage": {
+    "title": "Masa {{tableNumber}}'a Hoşgeldiniz",
+    "loading": "Menü yükleniyor...",
+    "error": "Menü yüklenemedi. Lütfen daha sonra tekrar deneyin.",
+    "noCategories": "Şu anda mevcut kategori yok.",
+    "aria": {
+      "backgroundImage": "{{restaurantName}} arka plan resmi"
+    },
+    "errors": {
+      "fetchFailed": "Kategoriler veya restoran detayları alınamadı."
+    }
+  },
+  "header": {
+    "tableNumber": "Masa Numarası",
+    "total": "Toplam",
+    "viewBasketAriaLabel": "Toplam öğelerle sepeti görüntüle",
+    "requestHelpAriaLabel": "Yardım iste",
+    "errors": {
+      "missingRestaurantOrTable": "Restoran ID'si veya masa numarası eksik.",
+      "submitHelpRequest": "Yardım isteği gönderilirken hata oluştu."
+    },
+    "helpRequestSuccess": "Yardım isteği başarıyla gönderildi!",
+    "viewBasket": "Sepeti Görüntüle",
+    "requestHelp": "Yardım İste",
+    "helpRequestFailed": "Yardım isteği gönderilemedi: {{error}}",
+    "helpRequestError": "Yardım isteği gönderilemedi. Lütfen tekrar deneyin.",
+    "helpModal": {
+      "title": "Yardıma mı İhtiyacınız Var?",
+      "descriptionLabel": "Sorununuzu tanımlayın (isteğe bağlı):",
+      "descriptionPlaceholder": "Buraya açıklamanızı girin...",
+      "descriptionRequired": "Lütfen bir açıklama sağlayın.",
+      "cancel": "İptal",
+      "submit": "Gönder",
+      "submitting": "Gönderiliyor..."
+    }
+  },
+  "viewMenu": "Menüyü Görüntüle",
+  "capacity": "Kapasite",
+  "cancel": "İptal",
+  "decline": "Reddet",
+  "notifications": {
+    "enable": "Bildirimleri Etkinleştir"
+  }
+}

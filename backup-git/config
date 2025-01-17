@@ -1,0 +1,20 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "heroku"]
+	url = https://git.heroku.com/restaurant-order-system.git
+	fetch = +refs/heads/*:refs/remotes/heroku/*
+[remote "origin"]
+	url = https://gitlab.com/shotechsolutions/shotech-work-repo/our-products/qrqaema.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+[branch "update_version_0.1"]
+	remote = origin
+	merge = refs/heads/update_version_0.1
+	vscode-merge-base = origin/main

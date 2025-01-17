@@ -1,0 +1,98 @@
+/* src/components/TicTacToe.css */
+
+.tic-tac-toe {
+    max-width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.cell {
+    width: 100%;
+    padding-top: 100%; /* Makes the button square */
+    position: relative;
+    font-size: 2rem;
+    text-align: center;
+    line-height: 1;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    overflow: hidden; /* Prevents content overflow */
+}
+
+.cell:hover {
+    background-color: #f0f0f0;
+    transform: scale(1.05);
+}
+
+.cell:focus {
+    outline: none;
+}
+
+.cell-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.winning-cell {
+    background-color: #d4edda !important;
+    animation: highlight 1s ease-in-out;
+}
+
+@keyframes highlight {
+    from { background-color: #fff; }
+    to { background-color: #d4edda; }
+}
+
+.result p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.animate-fade-in {
+    animation: fadeIn 1s ease-in-out;
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); color: #6c757d; }
+    50% { transform: scale(1.05); color: #adb5bd; }
+    100% { transform: scale(1); color: #6c757d; }
+}
+
+@media (max-width: 576px) {
+    .tic-tac-toe {
+        max-width: 90%;
+    }
+
+    .cell {
+        font-size: 1.5rem;
+    }
+
+    .result p {
+        font-size: 1.2rem;
+    }
+}

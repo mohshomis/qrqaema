@@ -1,0 +1,67 @@
+/* CustomerMenuItemPage.css */
+
+/* Ensure the main container has enough padding and relative positioning */
+.customer-menu-item-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Customize card titles for better alignment and spacing */
+  .card-title h2,
+  .card-title h5 {
+    display: flex;
+    align-items: center;
+  }
+  
+  .card-title h2 svg,
+  .card-title h5 svg {
+    margin-right: 0.5rem;
+  }
+  
+  /* Adjust form labels and checkboxes for RTL */
+  .form-check-label {
+    margin-right: 0.5rem;
+  }
+  
+  /* Responsive adjustments for smaller screens */
+  @media (max-width: 767px) {
+    .customer-menu-item-page .background-image {
+      height: 300px;
+    }
+  
+    .customer-menu-item-page .content {
+      padding: 1rem;
+    }
+  
+    .card-body {
+      padding: 1rem;
+    }
+  
+    /* Adjust image size on smaller screens */
+    .customer-menu-item-page img {
+      max-height: 300px;
+    }
+  }
+  /* Animation for flying to basket */
+.flying-image {
+  position: fixed;
+  bottom: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150px;
+  z-index: 1000;
+  pointer-events: none;
+  animation: flyToBasket 1s ease-in-out forwards;
+}
+
+@keyframes flyToBasket {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-500%, -500%) scale(0);
+  }
+}

@@ -1,0 +1,61 @@
+/* Header.css */
+
+/* Prevent wrapping and handle overflow */
+.navbar .container-fluid {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Button hover animation */
+.basket-button {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.basket-button:hover {
+    background-color: #0056b3; /* Darker shade of primary color */
+    transform: translateY(-2px); /* Subtle upward movement */
+}
+
+/* Adjust icon sizes on small screens */
+@media (max-width: 576px) {
+    .navbar .bi {
+        font-size: 1.2rem;
+    }
+
+    .basket-button .bi {
+        font-size: 1.2rem;
+    }
+
+    /* Make button thinner */
+    .basket-button {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Ensure text remains readable on all devices */
+.navbar .text-muted strong {
+    font-size: 1rem;
+}
+
+/* Adjust overall header height */
+.navbar {
+    transition: padding 0.3s ease;
+}
+
+/* Optional: Reduce padding on very small devices */
+@media (max-width: 400px) {
+    .navbar {
+        padding-top: 0.4rem;
+        padding-bottom: 0.4rem;
+    }
+
+    .basket-button {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    .navbar .text-muted strong {
+        font-size: 0.9rem;
+    }
+}

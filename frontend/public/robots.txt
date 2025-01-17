@@ -1,0 +1,14 @@
+User-agent: *
+Disallow: /login
+Disallow: /register
+Disallow: /logout
+Disallow: /dashboard
+Disallow: /orders/
+Disallow: /restaurant/*/menu-items/
+Disallow: /restaurant/*/staff/
+Disallow: /restaurant/*/categories/
+Disallow: /restaurant/*/menu-item/
+Allow: /
+
+# Sitemap Location
+Sitemap: https://qrqaema.com/sitemap.xml

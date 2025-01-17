@@ -1,0 +1,8 @@
+f266e059fdeffb20a4238a5938767ad1883cbfa4	refs/heads/main
+2a42e8b6e69ec8cf90af23a51c45411b6f69b9d4	refs/heads/newbranch
+8aad0999c091560b13bf84c6b76d183a497032c5	refs/heads/update_version_0.1
+8f2008fea12c9e14a3ba70a73c84e72c8541cef7	refs/remotes/heroku/master
+f942f1d2fc9c70010e964d660ae36d220f2774d5	refs/remotes/heroku/temp
+f266e059fdeffb20a4238a5938767ad1883cbfa4	refs/remotes/origin/main
+c9bd0b8641917244c9cd979bc829d519bc41213e	refs/remotes/origin/update_version_0.1
+0d4d7dec41408c007a1b8618e711ff6bd8c55e7b	refs/stash

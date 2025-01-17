@@ -1,0 +1,29 @@
+/* LoginPage.css */
+.login-page-container {
+    background-color: #f7f7f7;
+}
+
+
+.login-box {
+    max-width: 400px;
+    padding: 2rem;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h2 {
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}

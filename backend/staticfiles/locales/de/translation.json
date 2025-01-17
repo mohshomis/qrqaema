@@ -1,0 +1,720 @@
+{
+    "manageEmployees": "Mitarbeiter verwalten",
+    "manageMenu": "Menü verwalten",
+    "profile": "Profil",
+    "logout": "Abmelden",
+    "restaurantManagement": "Restaurantverwaltung",
+    "categories": "Kategorien",
+    "menuItems": "Menüartikel",
+    "orderBasket": "Bestellkorb",
+    "orderSuccess": "Bestellung erfolgreich",
+    "welcome": "Willkommen",
+    "orders": {
+      "completed": "Abgeschlossene Bestellungen",
+      "inProgress": "Bestellungen in Bearbeitung",
+      "pending": "Ausstehende Bestellungen"
+    },
+    "tables": "Tische",
+    "addTable": {
+      "title": "Tisch hinzufügen",
+      "tableNumber": "Tischnummer",
+      "enterTableNumber": "Tischnummer eingeben",
+      "capacity": "Kapazität",
+      "enterCapacity": "Kapazität eingeben",
+      "submit": "Absenden",
+      "addtablebutton_german": "Tisch hinzufügen"
+    },
+    "removeTable": "Tisch entfernen",
+    "table": "Tisch",
+    "qrCodeFor": "QR-Code für",
+    "downloadQr": "QR-Code herunterladen",
+    "noTablesAvailable": "Keine Tische verfügbar",
+    "recentOrders": "Letzte Bestellungen",
+    "tableNumber": "Tischnummer",
+    "customerName": "Kundenname",
+    "status": "Status",
+    "time": "Zeit",
+    "noOrdersCurrently": "Derzeit keine Bestellungen",
+    "tableStatus": "Tischstatus",
+    "errors": {
+      "loadDataFailed": "Laden der Tischdaten oder QR-Codes fehlgeschlagen",
+      "fetchOrdersError": "Fehler beim Abrufen der Bestellungen:",
+      "addTableError": "Tisch hinzufügen fehlgeschlagen.",
+      "removeTableError": "Tisch entfernen fehlgeschlagen.",
+      "fetchCategories": "Abrufen der Kategorien fehlgeschlagen.",
+      "addCategory": "Kategorie hinzufügen fehlgeschlagen.",
+      "deleteCategory": "Kategorie löschen fehlgeschlagen.",
+      "updateCategory": "Kategorie aktualisieren fehlgeschlagen.",
+      "fillRequiredFields": "Bitte füllen Sie alle erforderlichen Felder aus.",
+      "imageProcessingFailed": "Ausgewähltes Bild konnte nicht verarbeitet werden.",
+      "priceExceedsLimit": "Der Preis darf 9999,99 nicht überschreiten.",
+      "optionNameRequired": "Bitte geben Sie den Namen der Option ein.",
+      "atLeastOneChoice": "Bitte fügen Sie für jede Option mindestens eine Auswahl hinzu.",
+      "choiceFieldsRequired": "Bitte füllen Sie alle Felder für die Auswahlen aus.",
+      "fetchMenuItem": "Abrufen der Menüartikel-Daten fehlgeschlagen.",
+      "createMenuItemFailed": "Erstellen des Menüartikels fehlgeschlagen.",
+      "updateMenuItemFailed": "Aktualisieren des Menüartikels fehlgeschlagen.",
+      "loadRestaurantProfile": "Laden des Restaurantprofils fehlgeschlagen.",
+      "updateProfileFailed": "Profil aktualisieren fehlgeschlagen.",
+      "fetchStaff": "Abrufen des Personals fehlgeschlagen.",
+      "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+      "addStaffFailed": "Hinzufügen des Personals fehlgeschlagen.",
+      "removeStaffFailed": "Entfernen des Personals fehlgeschlagen.",
+      "activationFailed": "Kontenaktivierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "invalidToken": "Das Aktivierungstoken ist ungültig.",
+      "userAlreadyActive": "Dieses Konto ist bereits aktiv.",
+      "fetchFailed": "Laden der Menüartikel oder Restaurantdetails fehlgeschlagen.",
+      "invalidIds": "Ungültige Restaurant- oder Kategorie-ID."
+    },
+    "success": {
+      "categoryAdded": "Kategorie erfolgreich hinzugefügt.",
+      "categoryDeleted": "Kategorie erfolgreich gelöscht.",
+      "categoryUpdated": "Kategorie erfolgreich aktualisiert.",
+      "menuItemCreated": "Menüartikel erfolgreich erstellt!",
+      "menuItemDeleted": "Menüartikel erfolgreich gelöscht.",
+      "menuItemUpdated": "Menüartikel erfolgreich aktualisiert.",
+      "profileUpdated": "Profil erfolgreich aktualisiert.",
+      "staffAdded": "Personal erfolgreich hinzugefügt.",
+      "staffRemoved": "Personal erfolgreich entfernt.",
+      "accountActivated": "Ihr Konto wurde erfolgreich aktiviert!"
+    },
+    "loading": "Wird geladen...",
+    "manageCategories": "Kategorien verwalten",
+    "categoryName": "Kategoriename",
+    "enterCategoryNamePlaceholder": "Kategoriename eingeben",
+    "categoryImage": "Kategorienbild",
+    "newCategoryImagePreview": "Vorschau des neuen Kategorienbildes",
+    "editCategoryImagePreview": "Vorschau des bearbeiteten Kategorienbildes",
+    "addCategory": "Kategorie hinzufügen",
+    "addingCategory": "Hinzufügen...",
+    "categoriesList": "Kategorienliste",
+    "loadingCategories": "Kategorien werden geladen...",
+    "noCategoriesAvailable": "Keine Kategorien verfügbar.",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "confirm": {
+      "deleteCategory": "Sind Sie sicher, dass Sie diese Kategorie löschen möchten?",
+      "deleteMenuItem": "Sind Sie sicher, dass Sie diesen Menüartikel löschen möchten?",
+      "removeStaff": "Sind Sie sicher, dass Sie dieses Personal entfernen möchten?"
+    },
+    "editCategory": "Kategorie bearbeiten",
+    "updateCategory": "Kategorie aktualisieren",
+    "menuItemImagePreview": "Vorschau des Menüartikelbildes",
+    "addNewMenuItem": "Neuen Menüartikel hinzufügen",
+    "editMenuItem": "Menüartikel bearbeiten",
+    "itemName": "Artikelname",
+    "enterMenuItemName": "Menüartikelname eingeben",
+    "description": "Beschreibung",
+    "enterDescription": "Beschreibung eingeben",
+    "price": "Preis",
+    "currency": "$",
+    "enterPrice": "Preis eingeben",
+    "image": "Bild",
+    "imagePreview": "Bildvorschau",
+    "currentImage": "Aktuelles Bild",
+    "currentMenuItemImage": "Aktuelles Menüartikelbild",
+    "selectCategory": "Kategorie auswählen",
+    "options": "Optionen",
+    "option": "Option",
+    "optionName": "Optionsname",
+    "enterOptionName": "Optionsname eingeben",
+    "choices": "Auswahlen",
+    "commaSeparated": "durch Kommas getrennt",
+    "enterChoiceName": "Auswahlnamen eingeben",
+    "enterPriceModifier": "Preismodifier eingeben",
+    "addAnotherChoice": "Weitere Auswahl hinzufügen",
+    "addOptionCategory": "Optionskategorie hinzufügen",
+    "addOption": "Option hinzufügen",
+    "booleanOptions": "Boolesche Optionen",
+    "booleanOption": "Boolesche Option",
+    "priceModifier": "Preismodifier",
+    "addBooleanOption": "Boolesche Option hinzufügen",
+    "createMenuItem": "Menüartikel erstellen",
+    "updatingMenuItem": "Aktualisieren...",
+    "menuItemManagement": "Menüartikelverwaltung",
+    "loadingMenuItems": "Menüartikel werden geladen...",
+    "noMenuItemsAvailable": "Keine Menüartikel verfügbar. Bitte fügen Sie einen neuen Menüartikel hinzu.",
+    "backgroundImage": "Hintergrundbild",
+    "backgroundImageAlt": "Hintergrundbild",
+    "backgroundImagePreview": "Vorschau des Hintergrundbildes",
+    "logo": "Logo",
+    "logoAlt": "Logo",
+    "logoPreview": "Logo-Vorschau",
+    "updateRestaurantProfile": "Restaurantprofil aktualisieren",
+    "loadingRestaurantProfile": "Restaurantprofil wird geladen...",
+    "staffManagement": "Personalverwaltung",
+    "addNewStaff": "Neues Personal hinzufügen",
+    "addStaff": "Personal hinzufügen",
+    "remove": "Entfernen",
+    "addAnotherStaff": "Weiteres Personal hinzufügen",
+    "passwordRequirements": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+    "username": "Benutzername",
+    "enterUsername": "Benutzernamen eingeben",
+    "actions": "Aktionen",
+    "loadingStaff": "Personal wird geladen...",
+    "noStaff": "Kein Personal vorhanden.",
+    "close": "Schließen",
+    "updatingStaff": "Aktualisieren...",
+    "password": "Passwort",
+    "enterPassword": "Passwort eingeben",
+    "activateAccount": "Konto aktivieren",
+    "passwordResetConfirm": {
+      "title": "Passwort zurücksetzen",
+      "labels": {
+        "newPassword": "Neues Passwort",
+        "confirmPassword": "Passwort bestätigen"
+      },
+      "placeholders": {
+        "newPassword": "Geben Sie Ihr neues Passwort ein",
+        "confirmPassword": "Geben Sie Ihr neues Passwort erneut ein"
+      },
+      "buttons": {
+        "resetPassword": "Passwort zurücksetzen",
+        "resetting": "Passwort wird zurückgesetzt..."
+      },
+      "errors": {
+        "requiredFields": "Alle Felder sind erforderlich.",
+        "passwordMismatch": "Passwörter stimmen nicht überein.",
+        "invalidToken": "Der Zurücksetzlink ist ungültig oder abgelaufen.",
+        "userAlreadyActive": "Das Benutzerkonto ist bereits aktiv.",
+        "unexpectedError": "Beim Zurücksetzen Ihres Passworts ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut."
+      },
+      "success": {
+        "passwordReset": "Ihr Passwort wurde erfolgreich zurückgesetzt."
+      }
+    },
+    "passwordResetRequest": {
+      "title": "Passwort zurücksetzen",
+      "labels": {
+        "email": "E-Mail-Adresse"
+      },
+      "placeholders": {
+        "enterEmail": "Geben Sie Ihre E-Mail-Adresse ein"
+      },
+      "buttons": {
+        "sendResetLink": "Reset-Link senden",
+        "sending": "Senden..."
+      },
+      "messages": {
+        "success": "Ein Passwort-Reset-Link wurde an Ihre E-Mail gesendet."
+      },
+      "errors": {
+        "requiredEmail": "E-Mail-Adresse ist erforderlich.",
+        "invalidEmail": "Ungültige E-Mail-Adresse.",
+        "emailNotFound": "Kein Benutzer ist mit dieser E-Mail verbunden.",
+        "unexpectedError": "Beim Senden des Reset-Links ist ein unerwarteter Fehler aufgetreten."
+      }
+    },
+    "register": {
+      "title": "Neues Konto erstellen",
+      "userForm": {
+        "username": "Benutzername",
+        "email": "E-Mail",
+        "password": "Passwort",
+        "confirmPassword": "Passwort bestätigen",
+        "placeholders": {
+          "username": "Geben Sie Ihren Benutzernamen ein",
+          "email": "Geben Sie Ihre E-Mail-Adresse ein",
+          "password": "Geben Sie Ihr Passwort ein",
+          "confirmPassword": "Geben Sie Ihr Passwort erneut ein",
+          "postalCodeNote": "Wenn Sie keine Postleitzahl haben, geben Sie bitte 0000 ein."
+        }
+      },
+      "restaurantForm": {
+        "name": "Restaurantname",
+        "address": "Adresse",
+        "phoneNumber": "Telefonnummer",
+        "tables": "Anzahl der Tische",
+        "country": "Land",
+        "city": "Stadt",
+        "postalCode": "Postleitzahl",
+        "currency": "Währung",
+        "numberOfEmployees": "Anzahl der Mitarbeiter",
+        "logo": "Restaurantlogo",
+        "logoAlt": "Restaurantlogo",
+        "logoPreview": "Aktuelles Logo",
+        "backgroundImage": "Hintergrundbild",
+        "backgroundImageAlt": "Hintergrundbild",
+        "backgroundImagePreview": "Aktuelles Hintergrundbild",
+        "placeholders": {
+          "name": "Geben Sie Ihren Restaurantnamen ein",
+          "address": "Geben Sie Ihre Adresse ein",
+          "phoneNumber": "Geben Sie Ihre Telefonnummer ein",
+          "city": "Geben Sie Ihre Stadt ein",
+          "postalCode": "Geben Sie Ihre Postleitzahl ein",
+          "currency": "Wählen Sie Ihre Währung",
+          "country": "Wählen Sie Ihr Land",
+          "numberOfEmployees": "Geben Sie die Anzahl der Mitarbeiter ein"
+        }
+      },
+      "buttons": {
+        "next": "Weiter",
+        "previous": "Zurück",
+        "finish": "Fertigstellen",
+        "updateProfile": "Profil aktualisieren"
+      },
+      "success": {
+        "title": "Erfolg",
+        "message": "Konto und Restaurant erfolgreich erstellt! Bitte überprüfen Sie Ihre E-Mail, um Ihr Konto zu aktivieren.",
+        "redirect": "Sie werden in Kürze zur Anmeldeseite weitergeleitet...",
+        "ok": "OK"
+      },
+      "errors": {
+        "usernameRequired": "Benutzername ist erforderlich.",
+        "usernameTooShort": "Der Benutzername muss mindestens 3 Zeichen lang sein.",
+        "usernameInvalid": "Der Benutzername darf nur Buchstaben, Zahlen und Unterstriche enthalten.",
+        "emailRequired": "E-Mail ist erforderlich.",
+        "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+        "passwordRequired": "Passwort ist erforderlich.",
+        "passwordTooShort": "Das Passwort muss mindestens 6 Zeichen lang sein.",
+        "passwordWeak": "Das Passwort muss sowohl Buchstaben als auch Zahlen enthalten.",
+        "confirmPasswordRequired": "Bitte bestätigen Sie Ihr Passwort.",
+        "passwordsDoNotMatch": "Passwörter stimmen nicht überein.",
+        "restaurantNameRequired": "Restaurantname ist erforderlich.",
+        "addressRequired": "Adresse ist erforderlich.",
+        "phoneNumberRequired": "Telefonnummer ist erforderlich.",
+        "phoneNumberInvalid": "Bitte geben Sie eine gültige Telefonnummer ein.",
+        "tablesRequired": "Anzahl der Tische ist erforderlich.",
+        "tablesInvalid": "Die Anzahl der Tische muss mindestens 1 sein.",
+        "countryRequired": "Land ist erforderlich.",
+        "cityRequired": "Stadt ist erforderlich.",
+        "postalCodeInvalid": "Bitte geben Sie eine gültige Postleitzahl ein.",
+        "currencyRequired": "Währung ist erforderlich.",
+        "numberOfEmployeesRequired": "Anzahl der Mitarbeiter ist erforderlich.",
+        "numberOfEmployeesInvalid": "Die Anzahl der Mitarbeiter muss mindestens 1 sein.",
+        "selectCountryAndCurrency": "Bitte wählen Sie sowohl Land als auch Währung aus.",
+        "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut."
+      },
+      "links": {
+        "returnToLogin": "Zurück zum Login"
+      },
+      "steps": {
+        "step1": "Schritt 1",
+        "step2": "Schritt 2",
+        "step3": "Schritt 3"
+      }
+    },
+    "usernameRecovery": {
+      "title": "Benutzernamen Wiederherstellen",
+      "emailLabel": "E-Mail-Adresse",
+      "emailPlaceholder": "Geben Sie Ihre E-Mail ein",
+      "emailRequired": "E-Mail-Adresse ist erforderlich.",
+      "sending": "Senden...",
+      "sendButton": "Benutzernamen senden",
+      "errorSending": "Beim Senden des Benutzernamens ist ein Fehler aufgetreten."
+    },
+    "navbar": {
+      "brand": "Menüverwaltungssystem",
+      "home": "Startseite",
+      "features": "Funktionen",
+      "pricing": "Preise",
+      "testimonials": "Testimonials",
+      "dashboard": "Zum Dashboard",
+      "login": "Anmelden",
+      "register": "Registrieren",
+      "language": "Sprache"
+    },
+    "categoryPage": {
+      "title": "Menü für {{restaurantName}}",
+      "loading": "Wird geladen...",
+      "price": "Preis",
+      "noItems": "Keine Artikel in dieser Kategorie verfügbar.",
+      "backButton": "Zurück",
+      "aria": {
+        "backgroundImage": "Hintergrundbild des Restaurants"
+      },
+      "errors": {
+        "fetchFailed": "Laden der Menüartikel oder Restaurantdetails fehlgeschlagen.",
+        "invalidIds": "Ungültige Restaurant- oder Kategorie-ID."
+      }
+    },
+    "customerMenuItemPage": {
+      "loading": "Wird geladen...",
+      "errors": {
+        "fetchFailed": "Laden der Produktdetails fehlgeschlagen."
+      },
+      "aria": {
+        "backgroundImage": "{{itemName}} Hintergrundbild"
+      },
+      "idBadge": "ID: {{id}}",
+      "details": "Details",
+      "pricing": "Preisgestaltung",
+      "basePrice": "Grundpreis",
+      "totalPrice": "Gesamtpreis",
+      "chooseOptions": "Zusätze wählen",
+      "optionChoice": "{{choiceName}} (+${{priceModifier}})",
+      "noAdditions": "Keine Zusätze verfügbar.",
+      "quantity": "Menge",
+      "decreaseQuantity": "Menge verringern",
+      "increaseQuantity": "Menge erhöhen",
+      "addToBasket": "Zum Korb hinzufügen",
+      "alerts": {
+        "minQuantity": "Bitte wählen Sie mindestens einen Artikel aus."
+      }
+    },
+    "menuItemCreatePage": {
+      "addNewMenuItem": "Neuen Menüartikel hinzufügen",
+      "itemName": "Artikelname",
+      "enterMenuItemName": "Artikelname eingeben",
+      "description": "Beschreibung",
+      "enterDescription": "Beschreibung eingeben",
+      "price": "Preis",
+      "currency": "USD",
+      "enterPrice": "Preis eingeben",
+      "image": "Bild",
+      "imagePreview": "Bildvorschau",
+      "menuItemImagePreview": "Vorschau des Menüartikelbildes",
+      "category": "Kategorie",
+      "selectCategory": "Kategorie auswählen",
+      "options": "Optionen",
+      "option": "Option",
+      "remove": "Entfernen",
+      "optionName": "Optionsname",
+      "enterOptionName": "Optionsname eingeben",
+      "choices": "Auswahlen",
+      "commaSeparated": "durch Kommas getrennt",
+      "enterChoices": "Geben Sie Auswahlen ein, getrennt durch Kommas",
+      "addAnotherChoice": "Weitere Auswahl hinzufügen",
+      "addOption": "Option hinzufügen",
+      "booleanOptions": "Boolesche Optionen",
+      "booleanOption": "Boolesche Option",
+      "priceModifier": "Preismodifier",
+      "enterPriceModifier": "Preismodifier eingeben",
+      "addBooleanOption": "Boolesche Option hinzufügen",
+      "createMenuItem": "Menüartikel erstellen",
+      "noAdditions": "Keine Zusätze verfügbar.",
+      "loading": "Wird geladen...",
+      "errors": {
+        "fetchCategories": "Abrufen der Kategorien fehlgeschlagen.",
+        "imageProcessingFailed": "Bildverarbeitung fehlgeschlagen.",
+        "fillRequiredFields": "Bitte füllen Sie alle erforderlichen Felder aus.",
+        "createMenuItemFailed": "Erstellen des Menüartikels fehlgeschlagen."
+      },
+      "success": {
+        "menuItemCreated": "Menüartikel erfolgreich erstellt!"
+      }
+    },
+    "menuPage": {
+      "title": "Menü",
+      "loading": "Wird geladen...",
+      "errorLoading": "Laden der Menüartikel fehlgeschlagen.",
+      "noItems": "Keine Menüartikel verfügbar.",
+      "price": "Preis: ${{price}}",
+      "addToOrder": "Zur Bestellung hinzufügen",
+      "added": "Hinzugefügt",
+      "placeOrder": "Bestellung aufgeben",
+      "selectedItems": "Ausgewählte Artikel",
+      "success": {
+        "orderPlaced": "Bestellung erfolgreich aufgegeben!"
+      },
+      "errors": {
+        "fetchMenuItems": "Abrufen der Menüartikel fehlgeschlagen.",
+        "placeOrderFailed": "Bestellung aufgeben fehlgeschlagen.",
+        "noItemsSelected": "Bitte wählen Sie mindestens einen Artikel aus, um eine Bestellung aufzugeben."
+      }
+    },
+    "orderBasketPage": {
+      "title": "Ihr Bestellkorb",
+      "loading": "Wird geladen...",
+      "emptyBasket": "Ihr Korb ist leer. Fügen Sie einige Artikel hinzu!",
+      "basePrice": "Grundpreis",
+      "quantity": "Menge",
+      "selectedOptions": "Ausgewählte Optionen",
+      "selectedBooleans": "Ausgewählte Zusätze",
+      "totalPrice": "Gesamtpreis",
+      "currency": "USD",
+      "goBack": "Zurück",
+      "placeOrder": "Bestellung aufgeben",
+      "remove": "Entfernen",
+      "removeItem": "Artikel entfernen",
+      "aria": {
+        "backgroundImage": "Hintergrundbild des Restaurants"
+      },
+      "success": {
+        "orderPlaced": "Bestellung erfolgreich aufgegeben!"
+      },
+      "errors": {
+        "fetchRestaurantDetails": "Abrufen der Restaurantdetails fehlgeschlagen.",
+        "placeOrderFailed": "Bestellung aufgeben fehlgeschlagen.",
+        "placeOrderError": "Beim Aufgeben der Bestellung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+        "invalidRestaurantOrTable": "Ungültige Restaurant-ID oder Tischnummer.",
+        "noItemsSelected": "Bitte wählen Sie mindestens einen Artikel aus, um eine Bestellung aufzugeben."
+      }
+    },
+    "orderPage": {
+      "title": "Bestellungen",
+      "goBack": "Zurück",
+      "loading": "Wird geladen...",
+      "table": "Tisch",
+      "orderDetails": "Bestelldetails",
+      "price": "Preis",
+      "currency": "USD",
+      "selectedOptions": "Ausgewählte Optionen",
+      "selectedBooleans": "Ausgewählte Zusätze",
+      "additionalInfo": "Zusätzliche Informationen",
+      "noItemsInOrder": "Keine Artikel in dieser Bestellung.",
+      "noOrders": "Keine Bestellungen verfügbar.",
+      "startExecution": "Ausführung starten",
+      "completeOrder": "Bestellung abschließen",
+      "delete": "Löschen",
+      "confirmDelete": "Sind Sie sicher, dass Sie diese Bestellung löschen möchten?",
+      "success": {
+        "statusUpdated": "Bestellstatus auf {{status}} aktualisiert.",
+        "orderDeleted": "Bestellung erfolgreich gelöscht."
+      },
+      "errors": {
+        "fetchOrders": "Abrufen der Bestellungen fehlgeschlagen.",
+        "updateStatus": "Aktualisieren des Bestellstatus fehlgeschlagen.",
+        "updateStatusError": "Aktualisieren des Bestellstatus fehlgeschlagen: {{error}}",
+        "deleteOrder": "Löschen der Bestellung fehlgeschlagen.",
+        "deleteOrderError": "Löschen der Bestellung fehlgeschlagen: {{error}}"
+      },
+      "status": {
+        "pending": "Ausstehend",
+        "in_progress": "In Bearbeitung",
+        "completed": "Abgeschlossen"
+      },
+      "aria": {
+        "backgroundImage": "Hintergrundbild des Restaurants"
+      }
+    },
+    "orderSuccessPage": {
+      "loading": "Wird geladen...",
+      "table": "Tisch",
+      "orderSummary": "Bestellübersicht",
+      "price": "Preis",
+      "currency": "USD",
+      "specialRequest": "Sonderwunsch",
+      "selectedOptions": "Ausgewählte Optionen",
+      "noOrderDetails": "Keine Bestelldetails verfügbar.",
+      "orderAgain": "Nochmals bestellen",
+      "success": {
+        "statusUpdated": "Bestellstatus auf {{status}} aktualisiert."
+      },
+      "errors": {
+        "fetchOrderStatus": "Abrufen des Bestellstatus fehlgeschlagen.",
+        "noOrdersForTable": "Keine Bestellungen für diesen Tisch gefunden."
+      }
+    },
+    "ticTacToe": {
+      "playWhileWaiting": "Lass uns spielen, während wir warten!",
+      "cell": "Zelle",
+      "emptyCell": "Leere Zelle",
+      "draw": "Unentschieden!",
+      "youWon": "Du hast gewonnen!",
+      "youLost": "Du hast verloren!",
+      "resetGame": "Spiel zurücksetzen",
+      "maxResetsReached": "Du hast die maximale Anzahl an Zurücksetzungen erreicht. Versuche es beim nächsten Mal erneut!"
+    },
+    "seo": {
+      "title": "Willkommen bei Qr Qaema",
+      "description": "Erleben Sie das fortschrittlichste QR-Menüs-System, das für moderne Restaurants entwickelt wurde.",
+      "keywords": "QR-Menü, digitales Menü, Restauranttechnologie, Online-Bestellung, QR-Codes, Bestellverwaltung",
+      "author": "Qr Qaema",
+      "og": {
+        "title": "Qr Qaema - Führende QR-Menü-Lösung",
+        "description": "Qr Qaema bietet eine hochmoderne digitale Lösung zur Verwaltung und Anzeige von Restaurantmenüs über QR-Codes.",
+        "url": "https://qrqaema.com/",
+        "type": "website",
+        "image": "https://qrqaema.com/images/logo.png"
+      },
+      "twitter": {
+        "card": "summary_large_image",
+        "title": "Qr Qaema - Ihre umfassende digitale Restaurantlösung",
+        "description": "Entdecken Sie Qr Qaema, die erste Wahl für digitales Menümanagement und Online-Bestellungen.",
+        "image": "https://qrqaema.com/images/logo.png"
+      }
+    },
+    "hero": {
+      "title": "Willkommen bei Qr Qaema",
+      "subtitle": "Transformieren Sie Restaurantmenüs für das digitale Zeitalter",
+      "discoverFeatures": "Entdecken Sie Funktionen",
+      "startNow": "Jetzt starten"
+    },
+    "features": {
+      "title": "Unsere Funktionen",
+      "feature1": {
+        "title": "Anpassbare Menüs",
+        "description": "Entwerfen und aktualisieren Sie das Menü Ihres Restaurants einfach, um Ihre Marke und Angebote widerzuspiegeln."
+      },
+      "feature2": {
+        "title": "Nahtlose QR-Code-Integration",
+        "description": "Bieten Sie Ihren Kunden durch einzigartige QR-Codes an jedem Tisch sofortigen Zugriff auf Ihr Menü."
+      },
+      "feature3": {
+        "title": "Echtzeit-Bestellverwaltung",
+        "description": "Verwalten und verfolgen Sie Kundenbestellungen effizient mit unserer intuitiven Plattform."
+      }
+    },
+    "howItWorks": {
+      "title": "Wie es funktioniert",
+      "step1": {
+        "title": "Richten Sie Ihr Restaurantprofil ein",
+        "description": "Erstellen Sie ein Konto und etablieren Sie die digitale Präsenz Ihres Restaurants mit unserem einfachen Einrichtungsprozess."
+      },
+      "step2": {
+        "title": "Erzeugen Sie einzigartige QR-Codes",
+        "description": "Erstellen Sie personalisierte QR-Codes für jeden Tisch, um ein reibungsloses Kundenerlebnis zu gewährleisten."
+      },
+      "step3": {
+        "title": "Verwalten Sie Bestellungen digital",
+        "description": "Ermöglichen Sie es Ihren Kunden, Bestellungen direkt von ihren Smartphones aus aufzugeben und diese in Echtzeit zu verwalten."
+      }
+    },
+    "pricing": {
+      "title": "Preise",
+      "subtitle": "Genießen Sie alle unsere Funktionen völlig kostenlos.",
+      "plan": "Kostenloser Plan",
+      "price": "Kostenlos",
+      "description": "Zugang zu allen Funktionen ohne Kosten, ohne versteckte Gebühren.",
+      "features": {
+        "feature1": "Vollständig anpassbare Menüs",
+        "feature2": "Unbegrenzte QR-Code-Erstellung",
+        "feature3": "Echtzeit-Bestellverfolgung",
+        "feature4": "Dedizierter Kundensupport"
+      },
+      "button": "Jetzt starten"
+    },
+    "testimonials": {
+      "title": "Kundenreferenzen",
+      "testimonial1": "Qr Qaema hat unser Bestellsystem revolutioniert.",
+      "user1": "Ali, Restaurantbesitzer",
+      "testimonial2": "Unsere Kunden schätzen die Einfachheit des Scannens von QR-Codes.",
+      "user2": "Sara, Café-Managerin",
+      "testimonial3": "Ein Game Changer für unsere Restaurantabläufe!",
+      "user3": "Hassan, Restaurantmanager"
+    },
+    "cta": {
+      "title": "Bereit, Ihr Restaurant zu transformieren?",
+      "subtitle": "Melden Sie sich noch heute an, um Ihr Menü- und Bestellmanagement zu optimieren.",
+      "button": "Jetzt starten"
+    },
+    "footer": {
+      "rights": "© 2024 Qr Qaema. Alle Rechte vorbehalten.",
+      "privacyPolicy": "Datenschutzrichtlinie",
+      "termsAndConditions": "Allgemeine Geschäftsbedingungen"
+    },
+    "login": {
+      "title": "Melden Sie sich bei Ihrem Konto an",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "placeholders": {
+        "enterUsername": "Geben Sie Ihren Benutzernamen ein",
+        "enterPassword": "Geben Sie Ihr Passwort ein"
+      },
+      "buttons": {
+        "login": "Anmelden",
+        "loggingIn": "Melde mich an..."
+      },
+      "errors": {
+        "requiredFields": "Bitte füllen Sie sowohl den Benutzernamen als auch das Passwort aus.",
+        "invalidCredentials": "Ungültiger Benutzername oder Passwort.",
+        "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+      },
+      "links": {
+        "returnHome": "Zurück zur Startseite",
+        "noAccount": "Haben Sie kein Konto?",
+        "register": "Hier registrieren",
+        "forgotPassword": "Passwort vergessen?",
+        "recoverUsername": "Benutzernamen vergessen?"
+      }
+    },
+    "tour": {
+      "header": "Dies ist die Restaurantverwaltungs-Header, wo Sie Restaurantdetails und Benutzeraktionen verwalten können.",
+      "headerLogout": "Klicken Sie hier, um sich sicher von Ihrem Konto abzumelden.",
+      "headerManageEmployees": "Klicken Sie hier, um das Personal Ihres Restaurants zu verwalten, einschließlich Hinzufügen und Entfernen von Mitarbeitern.",
+      "headerManageMenu": "Dieser Abschnitt ermöglicht es Ihnen, das Menü Ihres Restaurants zu verwalten, einschließlich Kategorien und einzelner Menüartikel.",
+      "headerManageCategories": "Verwenden Sie diesen Abschnitt, um verschiedene Menükategorien in Ihrem Restaurant zu verwalten.",
+      "headerManageMenuItems": "Hier können Sie einzelne Menüartikel unter verschiedenen Kategorien verwalten.",
+      "headerProfile": "Hier können Sie Ihre Profildaten anzeigen und aktualisieren, wie Ihren Benutzernamen und andere persönliche Informationen.",
+      "headerLanguageSelector": "Ändern Sie die Anzeigesprache des Systems mit diesem Dropdown-Menü.",
+      "headerBrand": "Dies ist die Marke/Logo Ihres Restaurants, die auf dem Dashboard angezeigt wird.",
+      "completedOrdersCard": "Sehen Sie sich die Anzahl der abgeschlossenen Bestellungen in diesem Abschnitt an.",
+      "inProgressOrdersCard": "Diese Karte zeigt Bestellungen, die derzeit in der Küche zubereitet werden.",
+      "pendingOrdersCard": "Hier können Sie alle ausstehenden Bestellungen sehen, die auf Genehmigung warten.",
+      "helpRequestSection": "Dies ist der Bereich, in dem Sie Hilfeanfragen von Kunden verwalten.",
+      "helpRequestItem": "Verwalten Sie einzelne Hilfeanfragen von Kunden, wie Unterstützung bei Bestellungen oder Dienstleistungen.",
+      "addTableButton": "Klicken Sie hier, um einen neuen Tisch zu Ihrem Restaurant hinzuzufügen. Jeder neue Tisch erhält einen einzigartigen QR-Code zugewiesen.",
+      "tableCard": "Jede Karte repräsentiert einen Tisch in Ihrem Restaurant. Klicken Sie, um die Bestellungen für diesen Tisch anzuzeigen oder zu verwalten.",
+      "recentOrdersTable": "Diese Tabelle zeigt die neuesten von Kunden aufgegebenen Bestellungen.",
+      "replayTour": "Spielen Sie diese geführte Tour jederzeit erneut ab, um sich mit dem Dashboard vertraut zu machen.",
+      "headerViewMenu": "Klicken Sie hier, um das Menü des Restaurants anzusehen.",
+      "notificationToggle": "Benachrichtigungen Umschalten"
+    },
+    "helpRequests": "Hilfeanfragen",
+    "helpRequest": {
+      "details": "Details der Hilfeanfrage",
+      "tableNumber": "Tischnummer",
+      "username": "Benutzername",
+      "anonymous": "Anonym",
+      "description": "Beschreibung",
+      "noDescription": "Keine Beschreibung angegeben.",
+      "status": "Status",
+      "response": "Antwort",
+      "enterResponseValidation": "Bitte geben Sie eine Antwort ein, bevor Sie absenden.",
+      "yourResponse": "Ihre Antwort",
+      "enterResponse": "Geben Sie Ihre Antwort hier ein...",
+      "respondToAccept": "Antworten, um Hilfeanfrage zu akzeptieren",
+      "respondToDecline": "Antworten, um Hilfeanfrage abzulehnen",
+      "accepted": "Hilfeanfrage erfolgreich akzeptiert.",
+      "declined": "Hilfeanfrage erfolgreich abgelehnt.",
+      "indicatorTitle": "Es gibt eine ausstehende Hilfeanfrage für diesen Tisch.",
+      "deleteConfirmation": "Sind Sie sicher, dass Sie diese Hilfeanfrage löschen möchten?",
+      "deleted": "Hilfeanfrage erfolgreich gelöscht.",
+      "noHelpRequests": "Derzeit gibt es keine Hilfeanfragen."
+    },
+    "statuses": {
+      "pending": "Ausstehend",
+      "accepted": "Akzeptiert",
+      "declined": "Abgelehnt",
+      "resolved": "Gelöst",
+      "in_progress": "In Bearbeitung",
+      "completed": "Abgeschlossen",
+      "empty": "Leer",
+      "undefined": "Undefiniert"
+    },
+    "customerMenuPage": {
+      "title": "Willkommen am Tisch {{tableNumber}}",
+      "loading": "Menü wird geladen...",
+      "error": "Laden des Menüs fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+      "noCategories": "Derzeit sind keine Kategorien verfügbar.",
+      "aria": {
+        "backgroundImage": "Hintergrundbild von {{restaurantName}}"
+      },
+      "errors": {
+        "fetchFailed": "Abrufen der Kategorien oder Restaurantdetails fehlgeschlagen."
+      }
+    },
+    "header": {
+      "tableNumber": "Tischnummer",
+      "total": "Gesamt",
+      "viewBasketAriaLabel": "Warenkorb mit Gesamtanzahl der Artikel anzeigen",
+      "requestHelpAriaLabel": "Hilfe anfordern",
+      "errors": {
+        "missingRestaurantOrTable": "Restaurant-ID oder Tischnummer fehlt.",
+        "submitHelpRequest": "Fehler beim Senden der Hilfeanfrage."
+      },
+      "helpRequestSuccess": "Hilfeanfrage erfolgreich gesendet!",
+      "viewBasket": "Warenkorb anzeigen",
+      "requestHelp": "Hilfe anfordern",
+      "helpRequestFailed": "Hilfeanfrage konnte nicht gesendet werden: {{error}}",
+      "helpRequestError": "Hilfeanfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+      "helpModal": {
+        "title": "Brauchen Sie Hilfe?",
+        "descriptionLabel": "Beschreiben Sie Ihr Problem (optional):",
+        "descriptionPlaceholder": "Geben Sie Ihre Beschreibung hier ein...",
+        "descriptionRequired": "Bitte geben Sie eine Beschreibung ein.",
+        "cancel": "Abbrechen",
+        "submit": "Senden",
+        "submitting": "Wird gesendet..."
+      }
+    },
+    "viewMenu": "Menü anzeigen",
+    "capacity": "Kapazität",
+    "cancel": "Abbrechen",
+    "decline": "Ablehnen",
+    "notifications": {
+      "enable": "Benachrichtigungen aktivieren"
+    }
+  }
+  
