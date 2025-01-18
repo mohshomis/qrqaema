@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { FaUserCircle, FaUtensils, FaSignOutAlt, FaLanguage, FaEye, FaGlobe } from 'react-icons/fa';
+import { FaUserCircle, FaUtensils, FaSignOutAlt, FaLanguage, FaEye } from 'react-icons/fa';
 import { HiUserGroup } from 'react-icons/hi';
-import { MdCategory } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { AuthContext } from '../AuthContext';
+import { AuthContext } from '../../../AuthContext';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 
@@ -101,12 +100,13 @@ const RestaurantManagementHeader = () => {
                     <FaUserCircle className="me-2" /> {t('profile')}
                   </Nav.Link>
 
-                  {/* New "View the Menu" Option */}
+                  {/* View Menu Link */}
                   <Nav.Link
-                    as={Link}
-                    to={`/restaurant/${restaurant_id}/table/1`}
+                    href={`/restaurant/${restaurant_id}/table/1`}
                     className="text-white d-flex align-items-center"
                     data-tour="header-view-menu"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
                     <FaEye className="me-2" /> {t('viewMenu')}
                   </Nav.Link>

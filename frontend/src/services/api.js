@@ -111,7 +111,10 @@ export const getMenuItems = (restaurantId, menuId, categoryId) => {
     if (categoryId) {
         params.category = categoryId;
     }
-    return axiosInstance.get('menu-items/', { params });
+    return axiosInstance.get('menu-items/', { 
+        params,
+        headers: {} // Public endpoint
+    });
 };
 
 // Get a Menu Item by restaurantId and itemId
@@ -188,7 +191,8 @@ export const getRestaurantPublicDetails = (restaurantId) => {
 
 // Get Menu Item Details (Public endpoint)
 export const getMenuItemDetails = (restaurantId, itemId) => {
-    return axiosInstance.get(`restaurants/${restaurantId}/menu-items/${itemId}/`, {
+    return axiosInstance.get(`menu-items/${itemId}/`, {
+        params: { restaurant: restaurantId },
         headers: {} // Override auth headers for public endpoint
     });
 };
@@ -314,13 +318,24 @@ export const updateCategory = (categoryId, name, imageFile, menuId) => {
 
 // Delete a Category
 export const deleteCategory = (categoryId) => {
-    return axiosInstance.delete(`categories/${categoryId}/`);
+    if (!categoryId) {
+        throw new Error('Category ID is required');
+    }
+    return axiosInstance.delete(`categories/${categoryId}/`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
 };
 
 // Get Categories for a specific restaurant
 export const getCategories = (restaurantId, menuId) => {
+    if (!menuId) {
+        throw new Error('Menu ID is required');
+    }
     return axiosInstance.get(`restaurants/${restaurantId}/categories/`, {
-        params: { menu: menuId }
+        params: { menu: menuId },
+        headers: {} // Public endpoint
     });
 };
 
@@ -353,7 +368,14 @@ export const updateMenuItem = (menuItemId, formData) => {
 
 // Delete Menu Item
 export const deleteMenuItem = (menuItemId) => {
-    return axiosInstance.delete(`menu-items/${menuItemId}/`);
+    if (!menuItemId) {
+        throw new Error('Menu Item ID is required');
+    }
+    return axiosInstance.delete(`menu-items/${menuItemId}/`, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
 };
 
 // Get All Restaurants for an Owner

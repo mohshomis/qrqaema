@@ -28,7 +28,6 @@ const MenuManagementPage = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [editMenu, setEditMenu] = useState(null);
     const [formData, setFormData] = useState({
-        name: '',
         language: '',
         is_default: false,
     });
@@ -37,12 +36,22 @@ const MenuManagementPage = () => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [menuToDelete, setMenuToDelete] = useState(null);
 
+    const getMenuName = (lang) => {
+        switch(lang) {
+            case 'en': return 'English Menu';
+            case 'ar': return 'القائمة العربية';
+            case 'tr': return 'Türkçe Menü';
+            case 'nl': return 'Nederlands Menu';
+            default: return '';
+        }
+    };
+
     const fetchMenus = async () => {
         try {
             const response = await axios.get(`${API_URL}/restaurants/${restaurantId}/menus/`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
-            setMenus(response.data);
+            setMenus(response.data.menus || []);
         } catch (err) {
             setError(t('menuManagement.errors.fetchFailed'));
         }
@@ -56,14 +65,12 @@ const MenuManagementPage = () => {
         if (menu) {
             setEditMenu(menu);
             setFormData({
-                name: menu.name,
                 language: menu.language,
                 is_default: menu.is_default,
             });
         } else {
             setEditMenu(null);
             setFormData({
-                name: '',
                 language: '',
                 is_default: false,
             });
@@ -75,7 +82,6 @@ const MenuManagementPage = () => {
         setOpenDialog(false);
         setEditMenu(null);
         setFormData({
-            name: '',
             language: '',
             is_default: false,
         });
@@ -84,10 +90,16 @@ const MenuManagementPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            const menuData = {
+                ...formData,
+                name: getMenuName(formData.language),
+                restaurant: restaurantId
+            };
+
             if (editMenu) {
                 await axios.put(
                     `${API_URL}/restaurants/${restaurantId}/menus/${editMenu.id}/`,
-                    { ...formData, restaurant: restaurantId },
+                    menuData,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -96,7 +108,7 @@ const MenuManagementPage = () => {
             } else {
                 await axios.post(
                     `${API_URL}/restaurants/${restaurantId}/menus/`,
-                    { ...formData, restaurant: restaurantId },
+                    menuData,
                     {
                         headers: { Authorization: `Bearer ${token}` },
                     }
@@ -238,28 +250,19 @@ const MenuManagementPage = () => {
                     <Modal.Body>
                         <Form onSubmit={handleSubmit}>
                             <Form.Group className="mb-3">
-                                <Form.Label>{t('menuManagement.form.name')}</Form.Label>
-                                <Form.Control
-                                    type="text"
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    required
-                                    className="menu-form-control"
-                                />
-                            </Form.Group>
-                            <Form.Group className="mb-3">
                                 <Form.Label>{t('menuManagement.form.language')}</Form.Label>
-                                <Form.Control
-                                    type="text"
+                                <Form.Select
                                     value={formData.language}
                                     onChange={(e) => setFormData({ ...formData, language: e.target.value })}
                                     required
-                                    placeholder="en, es, fr, etc."
                                     className="menu-form-control"
-                                />
-                                <Form.Text className="text-muted">
-                                    {t('menuManagement.form.languageHelp')}
-                                </Form.Text>
+                                >
+                                    <option value="">{t('menuManagement.form.selectLanguage')}</option>
+                                    <option value="en">🇬🇧 English</option>
+                                    <option value="ar">🇸🇦 Arabic</option>
+                                    <option value="tr">🇹🇷 Turkish</option>
+                                    <option value="nl">🇳🇱 Dutch</option>
+                                </Form.Select>
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Check

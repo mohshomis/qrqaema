@@ -51,18 +51,26 @@ const MenuItemManagementPage = () => {
                 setLoading(true);
                 // Fetch menu details using api service
                 const menuResponse = await getRestaurantMenus(restaurantId);
-                const menuData = menuResponse.data.find(menu => menu.id === menuId);
-                setMenuName(menuData.name);
-                setMenuLanguage(menuData.language);
+                const menuData = menuResponse.data.menus.find(menu => menu.id === menuId);
+                if (menuData) {
+                    setMenuName(menuData.name);
+                    setMenuLanguage(menuData.language);
+                } else {
+                    console.error('Menu not found:', menuId);
+                    setError(t('menuItemManagement.errors.menuNotFound'));
+                }
 
                 // Fetch categories
                 const categoriesResponse = await getCategories(restaurantId, menuId);
-                setCategories(categoriesResponse.data);
+                setCategories(categoriesResponse.data.categories || []);
 
                 if (categoryId) {
-                    const category = categoriesResponse.data.find(c => c.id.toString() === categoryId);
+                    const category = categoriesResponse.data.categories?.find(c => c.id === categoryId);
                     if (category) {
                         setCategoryName(category.name);
+                    } else {
+                        console.error('Category not found:', categoryId);
+                        setError(t('menuItemManagement.errors.categoryNotFound'));
                     }
                 }
 
@@ -127,15 +135,22 @@ const MenuItemManagementPage = () => {
 
     const handleDeleteConfirm = async () => {
         try {
+            if (!itemToDelete?.id) {
+                setError(t('menuItemManagement.errors.invalidItem'));
+                return;
+            }
+            console.log('Deleting menu item:', itemToDelete.id);
             await deleteMenuItem(itemToDelete.id);
             setSuccess(t('menuItemManagement.success.deleted'));
             const response = await getMenuItems(restaurantId, menuId, categoryId);
             setMenuItems(response.data);
         } catch (error) {
-            setError(t('menuItemManagement.errors.deleteFailed'));
+            console.error('Error deleting menu item:', error);
+            setError(error.response?.data?.error || t('menuItemManagement.errors.deleteFailed'));
+        } finally {
+            setShowDeleteConfirm(false);
+            setItemToDelete(null);
         }
-        setShowDeleteConfirm(false);
-        setItemToDelete(null);
     };
 
     const handleEditItem = (item) => {

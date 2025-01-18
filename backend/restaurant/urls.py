@@ -32,7 +32,10 @@ urlpatterns = [
 # Menu-specific endpoints (moved to top to take precedence)
     path(
         'restaurants/<uuid:restaurant_id>/menus/',
-        MenuViewSet.as_view({'get': 'menus_for_restaurant'}),
+        MenuViewSet.as_view({
+            'get': 'menus_for_restaurant',
+            'post': 'create'
+        }),
         name='restaurant_menus'
     ),
     path(
@@ -59,9 +62,18 @@ urlpatterns = [
     
     # Custom path for menu item details with restaurantId and itemId using UUIDs
     path(
-        'restaurants/<uuid:restaurantId>/menu-items/<int:itemId>/',
+        'restaurants/<uuid:restaurantId>/menu-items/<uuid:itemId>/',
         MenuItemViewSet.as_view({'get': 'retrieve_item_for_restaurant'}),
         name='retrieve_item_for_restaurant'
+    ),
+    path(
+        'menu-items/<uuid:pk>/',
+        MenuItemViewSet.as_view({
+            'delete': 'destroy',
+            'patch': 'partial_update',
+            'put': 'update'
+        }),
+        name='menu-item-detail'
     ),
 
     # Registration-related endpoints
@@ -116,8 +128,20 @@ urlpatterns = [
     # Category retrieval for specific restaurant using UUIDs
     path(
         'restaurants/<uuid:restaurantId>/categories/',
-        CategoryViewSet.as_view({'get': 'categories_for_restaurant'}),
+        CategoryViewSet.as_view({
+            'get': 'categories_for_restaurant',
+            'delete': 'destroy'
+        }),
         name='categories_for_restaurant'
+    ),
+    path(
+        'categories/<uuid:pk>/',
+        CategoryViewSet.as_view({
+            'delete': 'destroy',
+            'patch': 'partial_update',
+            'put': 'update'
+        }),
+        name='category-detail'
     ),
 
 

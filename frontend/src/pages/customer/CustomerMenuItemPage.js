@@ -27,7 +27,7 @@ import '../../styles/NewCustomerPages.css';
 
 const CustomerMenuItemPage = ({ addToBasket }) => {
   const { t, i18n } = useTranslation();
-  const { restaurantId, itemId } = useParams();
+  const { restaurantId, itemId, menuId, tableNumber } = useParams();
   const [menuItem, setMenuItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedOptions, setSelectedOptions] = useState({});
@@ -35,52 +35,11 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
   const [error, setError] = useState(null);
   const [animateBasket, setAnimateBasket] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [currentMenu, setCurrentMenu] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchMenus = async () => {
-      try {
-        const response = await getRestaurantMenus(restaurantId);
-        const { menus } = response.data;
-        
-        const savedMenuId = localStorage.getItem(`restaurant_${restaurantId}_menu`);
-        const savedLanguage = localStorage.getItem(`restaurant_${restaurantId}_language`);
-        
-        if (savedMenuId) {
-          const matchingMenu = menus.find(menu => menu.id === savedMenuId);
-          if (matchingMenu) {
-            setCurrentMenu(matchingMenu);
-            // Only change language if it's different from current
-            if (i18n.language !== (savedLanguage || matchingMenu.language)) {
-              i18n.changeLanguage(savedLanguage || matchingMenu.language);
-            }
-          }
-        } else {
-          const defaultMenu = menus.find(menu => menu.is_default);
-          if (defaultMenu) {
-            setCurrentMenu(defaultMenu);
-            // Only change language if it's different from current
-            if (i18n.language !== defaultMenu.language) {
-              i18n.changeLanguage(defaultMenu.language);
-            }
-            localStorage.setItem(`restaurant_${restaurantId}_menu`, defaultMenu.id);
-            localStorage.setItem(`restaurant_${restaurantId}_language`, defaultMenu.language);
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching menus:', err);
-        setError(t('customerMenuItemPage.errors.fetchFailed'));
-      }
-    };
-
-    fetchMenus();
-  }, [restaurantId, i18n, t]);
 
   useEffect(() => {
     const fetchMenuItem = async () => {
       try {
-        if (!currentMenu) return;
         const menuItemResponse = await getMenuItemDetails(restaurantId, itemId);
         const item = menuItemResponse.data;
         setMenuItem(item);
@@ -93,10 +52,8 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
       }
     };
 
-    if (currentMenu) {
-      fetchMenuItem();
-    }
-  }, [restaurantId, itemId, currentMenu, t]);
+    fetchMenuItem();
+  }, [restaurantId, itemId, t]);
 
   const calculatePrice = () => {
     if (!menuItem) return;
@@ -129,13 +86,13 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
   const handleAddToBasket = () => {
     if (quantity > 0) {
       const basketItem = {
-        id: menuItem.id,
+        id: Number(menuItem.id), // Convert to number
         name: menuItem.name,
         quantity,
         selectedOptions: {},
         price: calculatedPrice,
         image: menuItem.image_url,
-        menu: currentMenu.id
+        menu: menuId
       };
 
       Object.keys(selectedOptions).forEach(optionId => {
@@ -156,7 +113,11 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
       setAnimateBasket(true);
       setTimeout(() => {
         addToBasket(basketItem);
-        navigate(`/restaurant/${restaurantId}/table/1`);
+        const baseUrl = `/restaurant/${restaurantId}`;
+        const path = menuId 
+          ? `${baseUrl}/menu/${menuId}/table/${tableNumber}`
+          : `${baseUrl}/table/${tableNumber}`;
+        navigate(path);
         setAnimateBasket(false);
       }, 1000);
     }
@@ -188,7 +149,7 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
   if (!menuItem) return null;
 
   return (
-    <div className="customer-page" dir={i18n.dir()}>
+    <div className="customer-page min-vh-100 d-flex flex-column" dir={i18n.dir()}>
       {animateBasket && (
         <div className="flying-image">
           <Image
@@ -199,38 +160,39 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
         </div>
       )}
 
-      <Container className="content-container">
-        <div className="menu-card fade-in">
-          <div className="menu-image-container" style={{ paddingTop: '50%' }}>
+      <Container className="content-container flex-grow-1 py-4">
+            <div className="menu-card fade-in shadow-lg h-100">
+          <div className="menu-image-container position-relative" style={{ paddingTop: '40%', minHeight: '200px' }}>
             <img
               src={menuItem.image_url}
               alt={menuItem.name}
-              className="menu-image"
+              className="menu-image rounded-top"
               loading="lazy"
+              style={{ objectFit: 'cover' }}
             />
-            <div className="price-badge">
+            <div className="price-badge bg-primary text-white px-3 py-2 rounded-pill position-absolute top-0 end-0 m-3">
               <FaDollarSign className="me-1" />
               {calculatedPrice.toFixed(2)}
             </div>
           </div>
 
-          <div className="card-content">
-            <h2 className="card-title d-flex align-items-center">
+            <div className="card-content px-3 px-md-4 py-4">
+            <h2 className="card-title d-flex align-items-center fs-3 fs-md-2">
               <FaUtensils className="me-2 text-primary" />
               {menuItem.name}
             </h2>
 
-            <p className="card-description">{menuItem.description}</p>
+            <p className="card-description text-light-50">{menuItem.description}</p>
 
             {menuItem.options && menuItem.options.length > 0 && (
-              <div className="options-section">
-                <h3 className="option-title">
+              <div className="options-section mt-4">
+                <h3 className="option-title fs-4">
                   <FaInfoCircle className="me-2" />
                   {t('customerMenuItemPage.chooseOptions')}
                 </h3>
                 {menuItem.options.map(option => (
                   <div key={option.id} className="mb-4">
-                    <h4 className="mb-3">
+                    <h4 className="mb-3 fs-5">
                       <FaCheckCircle className="me-2 text-success" />
                       {option.name}
                     </h4>
@@ -238,7 +200,7 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
                       <Row className="g-3">
                         {option.choices && option.choices.length > 0 ? (
                           option.choices.map(choice => (
-                            <Col md={6} key={choice.id}>
+                            <Col xs={12} sm={6} key={choice.id}>
                               <div
                                 className={`option-choice ${
                                   selectedOptions[option.id] === choice.id ? 'selected' : ''
@@ -268,14 +230,15 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
               </div>
             )}
 
-            <div className="quantity-control">
-              <span>{t('customerMenuItemPage.quantity')}:</span>
-              <div className="d-flex align-items-center">
+            <div className="quantity-control bg-dark bg-opacity-10 p-3 p-md-4 rounded-3 mt-4">
+              <h4 className="mb-3 fs-5">{t('customerMenuItemPage.quantity')}:</h4>
+              <div className="d-flex align-items-center justify-content-center">
                 <Button
-                  variant="outline-primary"
+                  variant="primary"
                   onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
                   disabled={quantity <= 1}
-                  className="quantity-button"
+                  className="quantity-button rounded-circle d-flex align-items-center justify-content-center"
+                  style={{ width: '40px', height: '40px' }}
                 >
                   <FaMinus />
                 </Button>
@@ -283,34 +246,40 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
                   type="text"
                   readOnly
                   value={quantity}
-                  className="quantity-input"
+                  className="quantity-input text-center mx-3 bg-transparent border-0 fs-4 fw-bold"
+                  style={{ width: '60px' }}
                 />
                 <Button
-                  variant="outline-primary"
+                  variant="primary"
                   onClick={() => setQuantity(prev => prev + 1)}
-                  className="quantity-button"
+                  className="quantity-button rounded-circle d-flex align-items-center justify-content-center"
+                  style={{ width: '40px', height: '40px' }}
                 >
                   <FaPlus />
                 </Button>
               </div>
             </div>
 
-            <Row className="g-3 mt-4">
-              <Col xs={4}>
+            <Row className="g-3 mt-4 sticky-bottom pb-3">
+              <Col xs={12} sm={4}>
                 <Button
-                  variant="outline-primary"
+                  variant="outline-light"
                   onClick={() => navigate(-1)}
-                  className="action-button outline-button"
+                  className="action-button w-100 py-3 rounded-pill shadow-sm"
                 >
                   <FaArrowLeft className="me-2" />
                   {t('customerMenuItemPage.back')}
                 </Button>
               </Col>
-              <Col xs={8}>
+              <Col xs={12} sm={8}>
                 <Button
                   variant="primary"
                   onClick={handleAddToBasket}
-                  className="action-button primary-button"
+                  className="action-button w-100 py-3 rounded-pill shadow btn-glow mb-2 mb-sm-0"
+                  style={{ 
+                    background: 'linear-gradient(45deg, #007bff, #0056b3)',
+                    border: 'none'
+                  }}
                 >
                   <FaShoppingCart className="me-2" />
                   {t('customerMenuItemPage.addToBasket')}

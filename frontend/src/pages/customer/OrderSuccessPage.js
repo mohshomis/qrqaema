@@ -31,7 +31,7 @@ import {
 
 const OrderSuccessPage = () => {
   const { t, i18n } = useTranslation();
-  const { restaurantId, tableNumber } = useParams();
+  const { restaurantId, tableNumber, menuId } = useParams();
   const navigate = useNavigate();
   const [orderStatus, setOrderStatus] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -93,7 +93,11 @@ const OrderSuccessPage = () => {
   }, [restaurantId, tableNumber, t]);
 
   const handleOrderAgain = () => {
-    navigate(`/restaurant/${restaurantId}/table/${tableNumber}`);
+    const baseUrl = `/restaurant/${restaurantId}`;
+    const path = menuId 
+      ? `${baseUrl}/menu/${menuId}/table/${tableNumber}`
+      : `${baseUrl}/table/${tableNumber}`;
+    navigate(path);
   };
 
   if (loading) {

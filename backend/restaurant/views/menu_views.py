@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404
 from ..models import Category, MenuItem, Restaurant, Menu
 from ..serializers import CategorySerializer, MenuItemSerializer
 from ..serializers.menu_serializers import MenuSerializer
+from ..serializers.restaurant_serializers import MenuBasicSerializer
 from .permissions import IsOwnerOrStaff
 import logging
 
@@ -89,27 +90,15 @@ class MenuViewSet(viewsets.ModelViewSet):
             )
             serialized_data = serializer.data
             
-            # If no menus exist, create default menu
-            if not serialized_data:
-                logger.info("Creating default menu for restaurant")
-                default_menu = Menu.objects.create(
-                    restaurant=restaurant,
-                    name="Default Menu",
-                    language=restaurant.default_language or 'en',
-                    is_default=True
-                )
-                serializer = self.get_serializer(
-                    [default_menu], 
-                    many=True,
-                    context={'request': request}
-                )
-                serialized_data = serializer.data
-                available_languages = [default_menu.language]
             
-            # Return both menus and available languages
+            # Return menus and available languages
             response_data = {
                 'menus': serialized_data,
                 'available_languages': available_languages,
+                'default_language': restaurant.default_language
+            } if serialized_data else {
+                'menus': [],
+                'available_languages': [],
                 'default_language': restaurant.default_language
             }
             
@@ -162,10 +151,25 @@ class CategoryViewSet(viewsets.ModelViewSet):
         serializer.save(restaurant=restaurant, menu=menu)
 
     def get_queryset(self):
+        if self.action == 'destroy':
+            return Category.objects.all()
         menu_id = self.request.query_params.get('menu')
         if menu_id:
             return Category.objects.filter(menu__id=menu_id)
         return Category.objects.none()
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            logger.info(f"Deleting category: {instance.id}")
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            logger.error(f"Error deleting category: {str(e)}")
+            return Response(
+                {"error": f"Failed to delete category: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     @action(detail=False, methods=['get'], url_path=r'menu-items-by-category/(?P<category_id>[0-9a-f-]+)', permission_classes=[AllowAny])
     def menu_items_by_category(self, request, category_id=None):
@@ -178,15 +182,59 @@ class CategoryViewSet(viewsets.ModelViewSet):
     def categories_for_restaurant(self, request, restaurantId=None):
         try:
             menu_id = request.query_params.get('menu')
-            categories = Category.objects.filter(restaurant__id=restaurantId)
-            if menu_id:
-                categories = categories.filter(menu__id=menu_id)
-            serializer = self.get_serializer(categories, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except Restaurant.DoesNotExist:
-            return Response({"error": "Restaurant not found."}, status=status.HTTP_404_NOT_FOUND)
+            logger.info(f"Getting categories for restaurant {restaurantId} and menu {menu_id}")
+            
+            if not menu_id:
+                return Response({"error": "Menu ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                menu = Menu.objects.get(id=menu_id, restaurant__id=restaurantId)
+                logger.info(f"Found menu: {menu.name} ({menu.language})")
+            except Menu.DoesNotExist:
+                logger.error(f"Menu not found: {menu_id}")
+                return Response({"error": "Menu not found."}, status=status.HTTP_404_NOT_FOUND)
+
+            try:
+                categories = Category.objects.filter(menu=menu).select_related(
+                    'menu',
+                    'menu__restaurant',
+                    'restaurant'
+                ).prefetch_related(
+                    'menu_items',
+                    'menu_items__options',
+                    'menu_items__options__choices'
+                )
+                logger.info(f"Found {categories.count()} categories")
+            except Exception as e:
+                logger.error(f"Error fetching categories: {str(e)}")
+                raise
+
+            try:
+                # Serialize categories with menu details
+                category_serializer = self.get_serializer(
+                    categories, 
+                    many=True,
+                    context={'request': self.request}
+                )
+                menu_serializer = MenuBasicSerializer(menu)
+                
+                response_data = {
+                    'categories': category_serializer.data,
+                    'menu': menu_serializer.data
+                }
+                logger.info("Successfully serialized response data")
+                
+                return Response(response_data, status=status.HTTP_200_OK)
+            except Exception as e:
+                logger.error(f"Error serializing data: {str(e)}")
+                raise
+
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.error(f"Unexpected error in categories_for_restaurant: {str(e)}")
+            return Response(
+                {"error": f"An unexpected error occurred: {str(e)}"}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class MenuItemViewSet(viewsets.ModelViewSet):
     queryset = MenuItem.objects.all()
@@ -194,11 +242,22 @@ class MenuItemViewSet(viewsets.ModelViewSet):
     parser_classes = [JSONParser, MultiPartParser, FormParser]
 
     def get_permissions(self):
+        logger.info(f"MenuItemViewSet.get_permissions called for action: {self.action}")
         if self.action in ['create', 'update', 'destroy', 'partial_update']:
-            return [IsAuthenticated()]
-        if self.action in ['list', 'retrieve', 'customer_menu']:
+            logger.info("Requiring authentication and owner/staff permissions")
+            return [IsAuthenticated(), IsOwnerOrStaff()]
+        if self.action in ['list', 'retrieve', 'customer_menu', 'menu_items_by_category']:
+            logger.info("Allowing public access")
             return [AllowAny()]
+        logger.info("Using default permissions")
         return super().get_permissions()
+
+    def perform_destroy(self, instance):
+        logger.info(f"Performing destroy on menu item: {instance.id}")
+        if instance.restaurant.owner != self.request.user and not instance.restaurant.staff.filter(id=self.request.user.id).exists():
+            logger.warning(f"Permission denied for user {self.request.user.id}")
+            raise PermissionDenied("You don't have permission to delete items from this restaurant.")
+        super().perform_destroy(instance)
 
     @action(detail=False, methods=['get'], url_path=r'menu-items-by-category/(?P<category_id>[0-9a-f-]+)', permission_classes=[AllowAny])
     def menu_items_by_category(self, request, category_id=None):
@@ -221,8 +280,11 @@ class MenuItemViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         logger.info("MenuItemViewSet.get_queryset called")
-        logger.info(f"Query params: {self.request.query_params}")
+        logger.info(f"Action: {self.action}")
         
+        if self.action == 'destroy':
+            return MenuItem.objects.all()
+            
         queryset = MenuItem.objects.all()
         
         restaurant_id = self.request.query_params.get('restaurant')
@@ -241,6 +303,19 @@ class MenuItemViewSet(viewsets.ModelViewSet):
         result = queryset if (restaurant_id or menu_id or category_id) else MenuItem.objects.none()
         logger.info(f"Returning {result.count()} menu items")
         return result
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            logger.info(f"Deleting menu item: {instance.id}")
+            self.perform_destroy(instance)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            logger.error(f"Error deleting menu item: {str(e)}")
+            return Response(
+                {"error": f"Failed to delete menu item: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     def perform_create(self, serializer):
         restaurant_id = self.request.data.get('restaurant')

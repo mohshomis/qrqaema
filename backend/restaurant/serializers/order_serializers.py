@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.db import transaction
-from ..models import Order, OrderItem, MenuItem, Restaurant, Table, MenuItemBooleanOption
+from ..models import Order, OrderItem, MenuItem, Restaurant, Table, MenuItemBooleanOption, Menu
 from .menu_serializers import MenuItemBooleanOptionSerializer
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -35,6 +35,8 @@ class OrderSerializer(serializers.ModelSerializer):
     restaurant = serializers.PrimaryKeyRelatedField(queryset=Restaurant.objects.all())
     table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all())
     items = OrderItemSerializer(source='order_items', many=True, required=False)
+    menu = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), required=False)
+    menu_language = serializers.CharField(source='menu.language', read_only=True)
 
     class Meta:
         model = Order
@@ -42,6 +44,8 @@ class OrderSerializer(serializers.ModelSerializer):
             'id',
             'restaurant',
             'table',
+            'menu',
+            'menu_language',
             'status',
             'additional_info',
             'items',
@@ -57,6 +61,13 @@ class OrderSerializer(serializers.ModelSerializer):
             if not restaurant or not table:
                 raise serializers.ValidationError({
                     'error': 'Both restaurant and table are required.'
+                })
+
+            # Validate menu belongs to restaurant if provided
+            menu = data.get('menu')
+            if menu and menu.restaurant != restaurant:
+                raise serializers.ValidationError({
+                    'menu': "The selected menu does not belong to the specified restaurant."
                 })
 
             if table.restaurant != restaurant:

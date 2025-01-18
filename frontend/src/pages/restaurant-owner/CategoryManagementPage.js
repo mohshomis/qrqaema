@@ -41,15 +41,12 @@ const CategoryManagementPage = () => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // Fetch menu details using api service
-                const menuResponse = await getRestaurantMenus(restaurantId);
-                const menuData = menuResponse.data.find(menu => menu.id === menuId);
-                setMenuName(menuData.name);
-                setMenuLanguage(menuData.language);
-
-                // Fetch categories for this menu
                 const categoriesResponse = await getCategories(restaurantId, menuId);
-                setCategories(categoriesResponse.data);
+                setCategories(categoriesResponse.data.categories || []);
+                if (categoriesResponse.data.menu) {
+                    setMenuName(categoriesResponse.data.menu.name);
+                    setMenuLanguage(categoriesResponse.data.menu.language);
+                }
                 setError(null);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -74,7 +71,8 @@ const CategoryManagementPage = () => {
             setNewCategoryImage(null);
             setSuccess(t('categoryManagement.success.created'));
             const response = await getCategories(restaurantId, menuId);
-            setCategories(response.data);
+            setCategories(response.data.categories || []);
+            handleCloseEditModal(); // Close the modal after successful creation
         } catch (error) {
             console.error('Error creating category:', error);
             setError(t('categoryManagement.errors.createFailed'));
@@ -88,16 +86,22 @@ const CategoryManagementPage = () => {
 
     const handleDeleteConfirm = async () => {
         try {
+            if (!categoryToDelete?.id) {
+                setError(t('categoryManagement.errors.invalidCategory'));
+                return;
+            }
+            console.log('Deleting category:', categoryToDelete.id);
             await deleteCategory(categoryToDelete.id);
             setSuccess(t('categoryManagement.success.deleted'));
             const response = await getCategories(restaurantId, menuId);
-            setCategories(response.data);
+            setCategories(response.data.categories || []);
         } catch (error) {
             console.error('Error deleting category:', error);
-            setError(t('categoryManagement.errors.deleteFailed'));
+            setError(error.response?.data?.error || t('categoryManagement.errors.deleteFailed'));
+        } finally {
+            setShowDeleteConfirm(false);
+            setCategoryToDelete(null);
         }
-        setShowDeleteConfirm(false);
-        setCategoryToDelete(null);
     };
 
     const handleShowEditModal = (category) => {
@@ -126,7 +130,7 @@ const CategoryManagementPage = () => {
             await updateCategory(currentCategory.id, editCategoryName, editCategoryImage, menuId);
             setSuccess(t('categoryManagement.success.updated'));
             const response = await getCategories(restaurantId, menuId);
-            setCategories(response.data);
+            setCategories(response.data.categories || []);
             handleCloseEditModal();
         } catch (error) {
             console.error('Error updating category:', error);
@@ -173,7 +177,7 @@ const CategoryManagementPage = () => {
                 )}
 
                 <Row className="g-4">
-                    {categories.length === 0 ? (
+                    {!error && categories.length === 0 ? (
                         <Col>
                             <Alert variant="info">
                                 {t('categoryManagement.noCategories')}

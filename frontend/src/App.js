@@ -3,7 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
 import jwtDecode from 'jwt-decode'; // Corrected import statement
-import Header from './components/Header';
+import { getRestaurantMenus } from './services/api';
+import CustomerHeader from './pages/customer/components/CustomerHeader';
+import HomePageHeader from './pages/landing/components/HomePageHeader';
+import RestaurantManagementHeader from './pages/restaurant-owner/components/RestaurantManagementHeader';
 import Layout from './components/Layout';
 import RestaurantManagementLayout from './components/RestaurantManagementLayout';
 import CustomerMenuPage from './pages/customer/CustomerMenuPage';
@@ -104,10 +107,49 @@ const App = () => {
         );
     };
 
-    // Extract restaurantId and tableNumber from route using useParams
-    const HeaderWithRestaurantIdAndTableNumber = () => {
-        const { restaurantId, tableNumber } = useParams();
-        return <Header basket={basketItems} totalPrice={totalPrice} restaurantId={restaurantId} tableNumber={tableNumber} />;
+    // Extract params and handle menu selection
+    const CustomerHeaderWithParams = () => {
+        const { restaurantId, tableNumber, menuId } = useParams();
+        const [availableMenus, setAvailableMenus] = useState([]);
+        const [currentMenu, setCurrentMenu] = useState(null);
+
+        useEffect(() => {
+            const fetchMenus = async () => {
+                try {
+                    const response = await getRestaurantMenus(restaurantId);
+                    setAvailableMenus(response.data.menus);
+                    
+                    // If menuId is provided, find that menu
+                    if (menuId) {
+                        const menu = response.data.menus.find(m => m.id === menuId);
+                        if (menu) setCurrentMenu(menu);
+                    }
+                } catch (error) {
+                    console.error('Error fetching menus:', error);
+                }
+            };
+
+            if (restaurantId) {
+                fetchMenus();
+            }
+        }, [restaurantId, menuId]);
+
+        const handleMenuChange = (newMenu) => {
+            setCurrentMenu(newMenu);
+        };
+
+        return (
+            <CustomerHeader 
+                basket={basketItems} 
+                totalPrice={totalPrice} 
+                restaurantId={restaurantId} 
+                tableNumber={tableNumber}
+                menuId={menuId}
+                availableMenus={availableMenus}
+                currentMenu={currentMenu}
+                onMenuChange={handleMenuChange}
+            />
+        );
     };
 
     return (
@@ -115,7 +157,12 @@ const App = () => {
             <Router>
                 <Routes>
                     {/* Route for Home Page */}
-                    <Route path="/" element={<HomePage />} />
+                    <Route path="/" element={
+                        <>
+                            <HomePageHeader />
+                            <HomePage />
+                        </>
+                    } />
 
                     {/* Auth-related Routes */}
                     <Route path="/login" element={<LoginPage />} />
@@ -177,29 +224,40 @@ const App = () => {
                     </Route>
 
                     {/* Public (Non-Authenticated) Customer Routes */}
+                    {/* Route for QR code access with menu ID */}
+                    <Route
+                        path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber"
+                        element={
+                            <Layout>
+                                <CustomerHeaderWithParams />
+                                <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
+                            </Layout>
+                        }
+                    />
+                    {/* Fallback route without menu ID */}
                     <Route
                         path="/restaurant/:restaurantId/table/:tableNumber"
                         element={
                             <Layout>
-                                <HeaderWithRestaurantIdAndTableNumber />
+                                <CustomerHeaderWithParams />
                                 <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
                             </Layout>
                         }
                     />
                     <Route
-                        path="/restaurant/:restaurantId/table/:tableNumber/menu-item/:itemId"
+                        path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber/menu-item/:itemId"
                         element={
                             <Layout>
-                                <HeaderWithRestaurantIdAndTableNumber />
+                                <CustomerHeaderWithParams />
                                 <CustomerMenuItemPage addToBasket={addToBasket} />
                             </Layout>
                         }
                     />
                     <Route
-                        path="/restaurant/:restaurantId/order-basket/:tableNumber"
+                        path="/restaurant/:restaurantId/menu/:menuId/order-basket/:tableNumber"
                         element={
                             <Layout>
-                                <HeaderWithRestaurantIdAndTableNumber />
+                                <CustomerHeaderWithParams />
                                 <OrderBasketPage
                                     basketItems={basketItems}
                                     updateBasketItem={updateBasketItem}
@@ -210,19 +268,19 @@ const App = () => {
                         }
                     />
                     <Route
-                        path="/restaurant/:restaurantId/table/:tableNumber/category/:categoryId"
+                        path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber/category/:categoryId"
                         element={
                             <Layout>
-                                <HeaderWithRestaurantIdAndTableNumber />
+                                <CustomerHeaderWithParams />
                                 <CategoryPage addToBasket={addToBasket} />
                             </Layout>
                         }
                     />
                     <Route
-                        path="/restaurant/:restaurantId/order-success/:tableNumber"
+                        path="/restaurant/:restaurantId/menu/:menuId/order-success/:tableNumber"
                         element={
                             <Layout>
-                                <HeaderWithRestaurantIdAndTableNumber />
+                                <CustomerHeaderWithParams />
                                 <OrderSuccessPage />
                             </Layout>
                         }

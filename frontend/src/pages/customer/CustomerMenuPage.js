@@ -9,100 +9,52 @@ import '../../styles/NewCustomerPages.css';
 
 const CustomerMenuPage = () => {
   const { t, i18n } = useTranslation();
-  const { restaurantId, tableNumber } = useParams();
+  const { restaurantId, tableNumber, menuId } = useParams();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [restaurantName, setRestaurantName] = useState('');
-  const [currentMenu, setCurrentMenu] = useState(null);
-  const [availableMenus, setAvailableMenus] = useState([]);
-  const [showLanguageModal, setShowLanguageModal] = useState(false);
 
-  useEffect(() => {
-    const savedMenuId = localStorage.getItem(`restaurant_${restaurantId}_menu`);
-    if (!savedMenuId) {
-      setShowLanguageModal(true);
-    }
-  }, [restaurantId]);
-
-  const handleLanguageSelect = (menu) => {
-    const selectedData = {
-      menuId: menu.id,
-      menuLanguage: menu.language,
-      uiLanguage: menu.language
-    };
-    
-    localStorage.setItem(`restaurant_${restaurantId}_menu`, selectedData.menuId);
-    localStorage.setItem(`restaurant_${restaurantId}_language`, selectedData.menuLanguage);
-    
-    setCurrentMenu(menu);
-    i18n.changeLanguage(menu.language);
-    setShowLanguageModal(false);
-  };
-
-  useEffect(() => {
-    const fetchMenus = async () => {
-      try {
-        const response = await getRestaurantMenus(restaurantId);
-        const { menus } = response.data;
-        
-        setAvailableMenus(menus);
-        
-        const savedMenuId = localStorage.getItem(`restaurant_${restaurantId}_menu`);
-        const savedLanguage = localStorage.getItem(`restaurant_${restaurantId}_language`);
-        
-        if (savedMenuId) {
-          const matchingMenu = menus.find(menu => menu.id === savedMenuId);
-          if (matchingMenu) {
-            setCurrentMenu(matchingMenu);
-            // Only change language if it's different from current
-            if (i18n.language !== (savedLanguage || matchingMenu.language)) {
-              i18n.changeLanguage(savedLanguage || matchingMenu.language);
-            }
-          }
-        } else {
-          const defaultMenu = menus.find(menu => menu.is_default);
-          if (defaultMenu) {
-            setCurrentMenu(defaultMenu);
-            // Only change language if it's different from current
-            if (i18n.language !== defaultMenu.language) {
-              i18n.changeLanguage(defaultMenu.language);
-            }
-            localStorage.setItem(`restaurant_${restaurantId}_menu`, defaultMenu.id);
-            localStorage.setItem(`restaurant_${restaurantId}_language`, defaultMenu.language);
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching menus:', err);
-      }
-    };
-
-    fetchMenus();
-  }, [restaurantId, i18n]);
+  const [currentMenuId, setCurrentMenuId] = useState(menuId);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const restaurantResponse = await getRestaurantPublicDetails(restaurantId);
         setRestaurantName(restaurantResponse.data.name);
 
-        if (currentMenu) {
-          const categoriesResponse = await getCategories(restaurantId, currentMenu.id);
-          setCategories(categoriesResponse.data);
+        // If menuId is not provided, fetch the default menu
+        let menuToUse = menuId;
+        if (!menuToUse) {
+          const menusResponse = await getRestaurantMenus(restaurantId);
+          const defaultMenu = menusResponse.data.menus.find(menu => menu.is_default);
+          if (defaultMenu) {
+            menuToUse = defaultMenu.id;
+            setCurrentMenuId(menuToUse);
+          } else {
+            throw new Error('No default menu found');
+          }
         }
-        setLoading(false);
+
+        // Fetch categories for the menu
+        const categoriesResponse = await getCategories(restaurantId, menuToUse);
+        console.log('Categories response:', categoriesResponse.data);
+        setCategories(categoriesResponse.data.categories || []);
       } catch (err) {
+        console.error('Error fetching data:', err);
         setError(t('customerMenuPage.errors.fetchFailed'));
+      } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [restaurantId, currentMenu, t]);
+  }, [restaurantId, menuId, t]);
 
   const handleCategoryClick = (categoryId) => {
-    navigate(`/restaurant/${restaurantId}/table/${tableNumber}/category/${categoryId}`);
+    navigate(`/restaurant/${restaurantId}/menu/${currentMenuId}/table/${tableNumber}/category/${categoryId}`);
   };
 
   if (loading) {
@@ -130,41 +82,6 @@ const CustomerMenuPage = () => {
 
   return (
     <div className="customer-page" dir={i18n.dir()}>
-      <Modal
-        show={showLanguageModal}
-        onHide={() => {
-          const defaultMenu = availableMenus.find(menu => menu.is_default);
-          if (defaultMenu) handleLanguageSelect(defaultMenu);
-        }}
-        centered
-        backdrop="static"
-      >
-        <Modal.Header>
-          <Modal.Title className="w-100 text-center">
-            {t('customerMenuPage.selectLanguage')}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="d-grid gap-2">
-            {availableMenus.map(menu => (
-              <Button
-                key={menu.language}
-                variant={menu.is_default ? 'primary' : 'outline-primary'}
-                size="lg"
-                onClick={() => handleLanguageSelect(menu)}
-                className="text-start d-flex justify-content-between align-items-center p-3"
-              >
-                <span className="fs-5">
-                  {menu.language.toUpperCase()}
-                </span>
-                <Badge bg={menu.is_default ? 'light' : 'primary'} text={menu.is_default ? 'primary' : 'light'}>
-                  {menu.categories.length} {t('categories')}
-                </Badge>
-              </Button>
-            ))}
-          </div>
-        </Modal.Body>
-      </Modal>
 
       <Container className="content-container">
         <Row className="g-4">

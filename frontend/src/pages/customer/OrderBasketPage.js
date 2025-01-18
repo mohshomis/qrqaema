@@ -7,6 +7,7 @@ import Footer from '../../components/Footer';
 import PropTypes from 'prop-types';
 import '../../styles/Footer.css';
 import '../../styles/CustomerPages.css';
+import '../../styles/OrderBasketPage.css';
 import '../../App.css';
 import {
   Container,
@@ -14,18 +15,12 @@ import {
   Col,
   Card,
   Button,
-  ListGroup,
   Image,
   Alert,
   Badge,
-  InputGroup,
-  Form,
 } from 'react-bootstrap';
 import {
   FaShoppingCart,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaDollarSign,
   FaPlusCircle,
   FaMinusCircle,
   FaArrowLeft,
@@ -43,7 +38,7 @@ const OrderBasketPage = ({
   setBasketItems,
 }) => {
   const { t, i18n } = useTranslation();
-  const { restaurantId, tableNumber } = useParams();
+  const { restaurantId, tableNumber, menuId } = useParams();
   const navigate = useNavigate();
   const [totalPrice, setTotalPrice] = useState(0);
   const [restaurantBackground, setRestaurantBackground] = useState('');
@@ -116,6 +111,7 @@ const OrderBasketPage = ({
       const orderPayload = {
         restaurant: parseInt(restaurantId, 10),
         table_number: parseInt(tableNumber, 10),
+        menu: menuId,
         items: basketItems.map((item) => ({
           menu_item: item.id,
           quantity: item.quantity,
@@ -131,7 +127,11 @@ const OrderBasketPage = ({
       if (response.status === 201) {
         setBasketItems([]);
         localStorage.removeItem('basket');
-        navigate(`/restaurant/${restaurantId}/order-success/${tableNumber}`);
+        const baseUrl = `/restaurant/${restaurantId}`;
+        const path = menuId 
+          ? `${baseUrl}/menu/${menuId}/order-success/${tableNumber}`
+          : `${baseUrl}/order-success/${tableNumber}`;
+        navigate(path);
       } else {
         alert(t('orderBasketPage.errors.orderFailed'));
       }
@@ -169,150 +169,168 @@ const OrderBasketPage = ({
         />
       )}
 
-      <Container className="my-5">
-        <Row className="justify-content-center">
-          <Col lg={10} md={12}>
-            <Card className="custom-card fade-in">
-              <Card.Header className="bg-transparent border-0">
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                  <h2 className="d-flex align-items-center mb-0">
-                    <FaShoppingCart className="me-2 text-primary" />
-                    {t('orderBasketPage.title')}
-                  </h2>
-                  <div className="d-flex align-items-center">
-                    <FaUtensils className="me-2 text-primary" />
-                    <span className="me-2">{restaurantName}</span>
-                    <Badge bg="success" pill>
+      <Container fluid className="py-4 px-md-5">
+        <Row>
+          {/* Restaurant Info Header */}
+          <Col xs={12} className="mb-4">
+            <Card className="bg-white border-0 shadow-lg">
+              <Card.Body className="d-flex justify-content-between align-items-center py-3">
+                <div className="d-flex align-items-center">
+                  <FaUtensils className="me-3 fs-3 text-primary" />
+                  <div>
+                    <h4 className="mb-0">{restaurantName}</h4>
+                    <Badge bg="primary" pill className="mt-1">
                       {t('orderBasketPage.table')}: {tableNumber}
                     </Badge>
                   </div>
                 </div>
-              </Card.Header>
-
-              <Card.Body>
-                {groupedBasketItems.length === 0 ? (
-                  <Alert variant="info" className="text-center">
-                    <FaInfoCircle className="me-2" />
-                    {t('orderBasketPage.emptyBasket')}
-                  </Alert>
-                ) : (
-                  <>
-                    <ListGroup variant="flush">
-                      {groupedBasketItems.map((item, index) => (
-                        <ListGroup.Item key={index} className="custom-card mb-3 fade-in">
-                          <Row className="align-items-center">
-                            <Col xs={12} md={3} className="mb-3 mb-md-0">
-                              <div className="position-relative">
-                                <Image
-                                  src={item.image}
-                                  alt={item.name}
-                                  className="w-100 rounded"
-                                  style={{ maxHeight: '100px', objectFit: 'cover' }}
-                                  loading="lazy"
-                                />
-                                <Badge 
-                                  bg="primary" 
-                                  className="position-absolute top-0 end-0 m-2"
-                                >
-                                  ${parseFloat(item.price).toFixed(2)}
-                                </Badge>
-                              </div>
-                            </Col>
-
-                            <Col xs={12} md={6}>
-                              <h5 className="mb-2">
-                                <FaCheckCircle className="me-2 text-success" />
-                                {item.name}
-                              </h5>
-                              {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
-                                <div className="small text-muted mb-2">
-                                  {Object.entries(item.selectedOptions).map(([optionName, choice], idx) => (
-                                    <Badge 
-                                      key={idx} 
-                                      bg="secondary" 
-                                      className="me-2 mb-1"
-                                    >
-                                      {optionName}: {choice.name}
-                                      {choice.price_modifier > 0 && ` (+$${choice.price_modifier})`}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              )}
-                            </Col>
-
-                            <Col xs={12} md={3}>
-                              <div className="d-flex flex-column align-items-center">
-                                <InputGroup size="sm" className="mb-2 w-75">
-                                  <Button
-                                    variant="outline-primary"
-                                    onClick={() => handleQuantityChange(item, item.quantity - 1)}
-                                    disabled={item.quantity <= 1}
-                                    className="custom-button"
-                                  >
-                                    <FaMinusCircle />
-                                  </Button>
-                                  <Form.Control
-                                    type="text"
-                                    readOnly
-                                    value={item.quantity}
-                                    className="text-center border-0 bg-transparent text-light"
-                                  />
-                                  <Button
-                                    variant="outline-primary"
-                                    onClick={() => handleQuantityChange(item, item.quantity + 1)}
-                                    className="custom-button"
-                                  >
-                                    <FaPlusCircle />
-                                  </Button>
-                                </InputGroup>
-                                <Button
-                                  variant="danger"
-                                  size="sm"
-                                  onClick={() => removeBasketItem(item)}
-                                  className="custom-button w-75"
-                                >
-                                  <FaTrashAlt className="me-2" />
-                                  {t('orderBasketPage.remove')}
-                                </Button>
-                              </div>
-                            </Col>
-                          </Row>
-                        </ListGroup.Item>
-                      ))}
-                    </ListGroup>
-
-                    <div className="mt-4 p-3 custom-card">
-                      <div className="d-flex justify-content-between align-items-center mb-3">
-                        <h4 className="mb-0">
-                          <FaDollarSign className="me-2 text-success" />
-                          {t('orderBasketPage.totalPrice')}
-                        </h4>
-                        <h3 className="mb-0">${totalPrice.toFixed(2)}</h3>
-                      </div>
-
-                      <div className="d-flex flex-column flex-md-row gap-2 mt-4">
-                        <Button
-                          variant="outline-light"
-                          onClick={() => navigate(-1)}
-                          className="custom-button"
-                        >
-                          <FaArrowLeft className="me-2" />
-                          {t('orderBasketPage.goBack')}
-                        </Button>
-                        <Button
-                          variant="success"
-                          onClick={handlePlaceOrder}
-                          className="custom-button flex-grow-1"
-                        >
-                          <FaReceipt className="me-2" />
-                          {t('orderBasketPage.placeOrder')}
-                        </Button>
-                      </div>
-                    </div>
-                  </>
-                )}
+                <Button
+                  variant="outline-primary"
+                  size="sm"
+                  onClick={() => navigate(-1)}
+                  className="rounded-pill px-3"
+                >
+                  <FaArrowLeft className="me-2" />
+                  {t('orderBasketPage.goBack')}
+                </Button>
               </Card.Body>
             </Card>
+          </Col>
+
+          {/* Main Content */}
+          <Col lg={8} className="mb-4 mb-lg-0">
+            <h4 className="mb-4 text-white d-flex align-items-center">
+              <FaShoppingCart className="me-2 text-primary" />
+              {t('orderBasketPage.title')}
+            </h4>
+
+            {groupedBasketItems.length === 0 ? (
+              <Card className="shadow border-0">
+                <Card.Body className="text-center py-5">
+                  <FaInfoCircle className="text-muted mb-3" style={{ fontSize: '2rem' }} />
+                  <h5 className="text-muted">{t('orderBasketPage.emptyBasket')}</h5>
+                </Card.Body>
+              </Card>
+            ) : (
+              <div className="basket-items-container bg-white rounded-3 shadow">
+                {groupedBasketItems.map((item, index) => (
+                  <div key={index} className="basket-item-row fade-in">
+                    <Row className="align-items-center py-3 px-3">
+                      {/* Item Image */}
+                      <Col xs={3} sm={2}>
+                        <div className="basket-item-image">
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            className="rounded-3"
+                            style={{ width: '60px', height: '60px', objectFit: 'cover' }}
+                            loading="lazy"
+                          />
+                        </div>
+                      </Col>
+
+                      {/* Item Details */}
+                      <Col xs={9} sm={5}>
+                        <h6 className="mb-1 fw-bold">{item.name}</h6>
+                        {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                          <div className="mb-1">
+                            {Object.entries(item.selectedOptions).map(([optionName, choice], idx) => (
+                              <Badge 
+                                key={idx} 
+                                bg="light"
+                                text="dark"
+                                className="me-1 mb-1"
+                                style={{ fontSize: '0.7rem' }}
+                              >
+                                {optionName}: {choice.name}
+                                {choice.price_modifier > 0 && (
+                                  <span className="text-primary ms-1">
+                                    +${choice.price_modifier.toFixed(2)}
+                                  </span>
+                                )}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                        <div className="text-primary fw-bold">
+                          ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                        </div>
+                      </Col>
+
+                      {/* Quantity Controls */}
+                      <Col xs={12} sm={3} className="mt-2 mt-sm-0">
+                        <div className="d-flex align-items-center justify-content-start justify-content-sm-center">
+                          <div className="quantity-control bg-light rounded-pill p-1">
+                            <Button
+                              variant="link"
+                              className="text-dark p-0"
+                              onClick={() => handleQuantityChange(item, item.quantity - 1)}
+                              disabled={item.quantity <= 1}
+                            >
+                              <FaMinusCircle />
+                            </Button>
+                            <span className="mx-3 fw-bold">{item.quantity}</span>
+                            <Button
+                              variant="link"
+                              className="text-dark p-0"
+                              onClick={() => handleQuantityChange(item, item.quantity + 1)}
+                            >
+                              <FaPlusCircle />
+                            </Button>
+                          </div>
+                        </div>
+                      </Col>
+
+                      {/* Remove Button */}
+                      <Col xs={12} sm={2} className="mt-2 mt-sm-0">
+                        <Button
+                          variant="link"
+                          className="text-danger p-0"
+                          onClick={() => removeBasketItem(item)}
+                        >
+                          <FaTrashAlt />
+                        </Button>
+                      </Col>
+                    </Row>
+                    {index < groupedBasketItems.length - 1 && <hr className="my-0" />}
+                  </div>
+                ))}
+              </div>
+            )}
+          </Col>
+
+          {/* Order Summary */}
+          <Col lg={4}>
+            <div className="position-sticky" style={{ top: '2rem' }}>
+              <Card className="shadow border-0">
+                <Card.Body>
+                  <h5 className="mb-4">{t('orderBasketPage.orderSummary')}</h5>
+                  
+                  <div className="d-flex justify-content-between mb-3">
+                    <span className="text-muted">{t('orderBasketPage.subtotal')}</span>
+                    <span>${totalPrice.toFixed(2)}</span>
+                  </div>
+                  
+                  <hr className="my-4" />
+                  
+                  <div className="d-flex justify-content-between mb-4">
+                    <h5 className="mb-0">{t('orderBasketPage.total')}</h5>
+                    <h5 className="mb-0 text-primary">${totalPrice.toFixed(2)}</h5>
+                  </div>
+
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="w-100 rounded-pill"
+                    onClick={handlePlaceOrder}
+                    disabled={groupedBasketItems.length === 0}
+                  >
+                    <FaReceipt className="me-2" />
+                    {t('orderBasketPage.placeOrder')}
+                  </Button>
+                </Card.Body>
+              </Card>
+            </div>
           </Col>
         </Row>
       </Container>
@@ -330,6 +348,7 @@ OrderBasketPage.propTypes = {
       selectedOptions: PropTypes.object,
       price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
       image: PropTypes.string,
+      menu: PropTypes.string, // Menu ID
     })
   ).isRequired,
   updateBasketItem: PropTypes.func.isRequired,

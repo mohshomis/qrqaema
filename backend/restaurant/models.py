@@ -102,9 +102,14 @@ class Restaurant(models.Model):
     def generate_qr_code(self, table_uuid):
         try:
             table = self.tables.get(id=table_uuid)
-            # Step 1: Generate the QR code URL using UUIDs (ensure proper URL format)
+            # Step 1: Generate the QR code URL using UUIDs and default menu
             frontend_url = settings.FRONTEND_URL.rstrip('/')
-            url = f"{frontend_url}/restaurant/{self.id}/table/{table.id}"
+            default_menu = self.menus.filter(is_default=True).first()
+            if not default_menu:
+                default_menu = self.menus.first()  # Fallback to any menu if no default
+            
+            menu_id = default_menu.id if default_menu else None
+            url = f"{frontend_url}/restaurant/{self.id}/menu/{menu_id}/table/{table.id}"
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_H,
@@ -194,6 +199,13 @@ class Restaurant(models.Model):
         return self.name
 
 class Menu(models.Model):
+    LANGUAGE_CHOICES = [
+        ('en', 'English'),
+        ('ar', 'Arabic'),
+        ('tr', 'Turkish'),
+        ('nl', 'Dutch')
+    ]
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -202,7 +214,7 @@ class Menu(models.Model):
     )
     restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE, related_name='menus')
     name = models.CharField(max_length=255)  # e.g., "Lunch Menu", "Dinner Menu"
-    language = models.CharField(max_length=10)  # e.g., "en", "es", "fr"
+    language = models.CharField(max_length=10, choices=LANGUAGE_CHOICES)  # Restricted to supported languages
     is_default = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -221,9 +233,6 @@ class Menu(models.Model):
         # If this is marked as default, unmark other menus as default
         if self.is_default:
             Menu.objects.filter(restaurant=self.restaurant).exclude(id=self.id).update(is_default=False)
-        # If this is the first menu for the restaurant, mark it as default
-        if not Menu.objects.filter(restaurant=self.restaurant).exists():
-            self.is_default = True
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -351,6 +360,27 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order for table {self.table.number} - {self.status}"
+
+    def get_order_details(self):
+        """Get detailed order information including menu details"""
+        items = self.order_items.select_related('menu_item').prefetch_related('selected_options')
+        return {
+            'id': self.id,
+            'status': self.status,
+            'menu': self.menu.id if self.menu else None,
+            'menu_language': self.menu.language if self.menu else None,
+            'items': [
+                {
+                    'menu_item': item.menu_item.name,
+                    'quantity': item.quantity,
+                    'special_request': item.special_request,
+                    'selected_options': [option.name for option in item.selected_options.all()],
+                    'total_price': str(item.total_price)
+                }
+                for item in items
+            ],
+            'additional_info': self.additional_info
+        }
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='order_items', on_delete=models.CASCADE)

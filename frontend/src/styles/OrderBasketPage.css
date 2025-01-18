@@ -1,27 +1,139 @@
-/* OrderBasketPage.css */
+.basket-items-container {
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+    padding-right: 10px;
+}
 
-.order-basket-page {
-    min-height: 100vh;
+.basket-items-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.basket-items-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.basket-items-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.basket-items-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 120px;
+    margin: 0 auto;
+}
+
+.quantity-control button {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.quantity-control button:hover:not(:disabled) {
+    background-color: rgba(0, 123, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.quantity-control button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+.position-sticky {
+    z-index: 100;
+}
+
+@media (max-width: 576px) {
+    .basket-items-container {
+        max-height: none;
+        overflow-y: visible;
+        padding-right: 0;
+    }
+
+    .quantity-control {
+        width: 100%;
+        max-width: 200px;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn-glow {
     position: relative;
-  }
-  
-  .order-basket-page .background-image {
-    /* Additional styling if needed */
-  }
-  
-  .order-basket-page .content {
-    position: relative;
-    z-index: 1;
-  }
-  
-  /* Adjustments for list items */
-  .order-basket-page .list-group-item {
-    border: none;
-    background: transparent;
-  }
-  
-  /* Responsive Image */
-  .order-basket-page img {
-    border-radius: 8px;
-  }
-  
+    overflow: hidden;
+}
+
+.btn-glow::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(45deg);
+    animation: glow 2s infinite;
+}
+
+@keyframes glow {
+    0% {
+        transform: rotate(45deg) translateX(-100%);
+    }
+    100% {
+        transform: rotate(45deg) translateX(100%);
+    }
+}
+
+.custom-spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: #007bff;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

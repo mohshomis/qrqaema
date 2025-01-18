@@ -2,7 +2,15 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from ..models import Restaurant, Category, Table, Menu
 from ..utils.validators import validate_image_file
-from .menu_serializers import MenuSerializer
+import logging
+
+logger = logging.getLogger(__name__)
+
+class MenuBasicSerializer(serializers.ModelSerializer):
+    """Simplified Menu serializer to avoid circular imports"""
+    class Meta:
+        model = Menu
+        fields = ['id', 'name', 'language', 'is_default']
 
 class TableSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
@@ -43,12 +51,13 @@ class TableSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     image_url = serializers.SerializerMethodField(read_only=True)
-    menu = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), required=False, allow_null=True)
+    menu = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), required=True)
+    menu_details = MenuBasicSerializer(source='menu', read_only=True)
     menu_items = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ['id', 'menu', 'name', 'description', 'image', 'image_url', 'order', 'menu_items']
+        fields = ['id', 'menu', 'menu_details', 'name', 'description', 'image', 'image_url', 'order', 'menu_items']
         extra_kwargs = {
             'image': {'required': False, 'allow_null': True},
             'order': {'required': False}
@@ -73,14 +82,8 @@ class CategorySerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
-        # Ensure we have all the related data loaded
-        if not hasattr(instance, '_prefetched_objects_cache'):
-            instance = Category.objects.select_related('menu', 'restaurant').prefetch_related(
-                'menu_items',
-                'menu_items__options',
-                'menu_items__options__choices'
-            ).get(pk=instance.pk)
-        return super().to_representation(instance)
+        representation = super().to_representation(instance)
+        return representation
 
 class RestaurantSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
@@ -88,7 +91,7 @@ class RestaurantSerializer(serializers.ModelSerializer):
     background_image_url = serializers.SerializerMethodField()
     staff = serializers.SerializerMethodField()
     tables = TableSerializer(many=True, read_only=True)
-    menus = MenuSerializer(many=True, read_only=True)
+    menus = MenuBasicSerializer(many=True, read_only=True)
     
     class Meta:
         model = Restaurant

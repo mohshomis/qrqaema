@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, Outlet } from 'react-router-dom';
-import RestaurantManagementHeader from './RestaurantManagementHeader';
+import RestaurantManagementHeader from '../pages/restaurant-owner/components/RestaurantManagementHeader';
 import { AuthContext } from '../AuthContext';
 import { API_URL } from '../services/api';
 import axios from 'axios';

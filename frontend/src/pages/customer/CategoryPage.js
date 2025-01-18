@@ -8,57 +8,17 @@ import '../../styles/NewCustomerPages.css';
 
 const CategoryPage = () => {
   const { t, i18n } = useTranslation();
-  const { restaurantId, categoryId, tableNumber } = useParams();
+  const { restaurantId, categoryId, tableNumber, menuId } = useParams();
   const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentMenu, setCurrentMenu] = useState(null);
-
-  useEffect(() => {
-    const fetchMenus = async () => {
-      try {
-        const response = await getRestaurantMenus(restaurantId);
-        const { menus } = response.data;
-        
-        const savedMenuId = localStorage.getItem(`restaurant_${restaurantId}_menu`);
-        const savedLanguage = localStorage.getItem(`restaurant_${restaurantId}_language`);
-        
-        if (savedMenuId) {
-          const matchingMenu = menus.find(menu => menu.id === savedMenuId);
-          if (matchingMenu) {
-            setCurrentMenu(matchingMenu);
-            // Only change language if it's different from current
-            if (i18n.language !== (savedLanguage || matchingMenu.language)) {
-              i18n.changeLanguage(savedLanguage || matchingMenu.language);
-            }
-          }
-        } else {
-          const defaultMenu = menus.find(menu => menu.is_default);
-          if (defaultMenu) {
-            setCurrentMenu(defaultMenu);
-            // Only change language if it's different from current
-            if (i18n.language !== defaultMenu.language) {
-              i18n.changeLanguage(defaultMenu.language);
-            }
-            localStorage.setItem(`restaurant_${restaurantId}_menu`, defaultMenu.id);
-            localStorage.setItem(`restaurant_${restaurantId}_language`, defaultMenu.language);
-          }
-        }
-      } catch (err) {
-        console.error('Error fetching menus:', err);
-        setError(t('categoryPage.errors.fetchFailed'));
-      }
-    };
-
-    fetchMenus();
-  }, [restaurantId, i18n, t]);
 
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
-        if (currentMenu) {
-          const menuResponse = await getMenuItems(restaurantId, currentMenu.id, categoryId);
+        if (menuId) {
+          const menuResponse = await getMenuItems(restaurantId, menuId, categoryId);
           setMenuItems(menuResponse.data);
         }
         setLoading(false);
@@ -69,13 +29,15 @@ const CategoryPage = () => {
       }
     };
 
-    if (currentMenu) {
-      fetchCategoryData();
-    }
-  }, [restaurantId, categoryId, currentMenu, t]);
+    fetchCategoryData();
+  }, [restaurantId, categoryId, menuId, t]);
 
   const handleMenuItemClick = (itemId) => {
-    navigate(`/restaurant/${restaurantId}/table/${tableNumber}/menu-item/${itemId}`);
+    const baseUrl = `/restaurant/${restaurantId}`;
+    const path = menuId 
+      ? `${baseUrl}/menu/${menuId}/table/${tableNumber}/menu-item/${itemId}`
+      : `${baseUrl}/table/${tableNumber}/menu-item/${itemId}`;
+    navigate(path);
   };
 
   if (loading) {

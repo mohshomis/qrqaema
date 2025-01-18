@@ -5,7 +5,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
-from ..models import Order, OrderItem, Restaurant
+from ..models import Order, OrderItem, Restaurant, Menu
 from ..serializers import OrderSerializer
 
 class OrderViewSet(viewsets.ModelViewSet):
@@ -27,7 +27,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             else:
                 return Order.objects.none()
 
-        return queryset.select_related('restaurant').prefetch_related(
+        return queryset.select_related('restaurant', 'menu').prefetch_related(
             'order_items__menu_item',
             'order_items__selected_options'
         )
@@ -35,6 +35,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         restaurant_id = request.data.get('restaurant')
         table_id = request.data.get('table')
+        menu_id = request.data.get('menu')
 
         # Check for existing pending or in-progress orders
         existing_orders = Order.objects.filter(
@@ -49,6 +50,17 @@ class OrderViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Get menu if provided
+        if menu_id:
+            try:
+                menu = Menu.objects.get(id=menu_id, restaurant_id=restaurant_id)
+                request.data['menu'] = menu.id
+            except Menu.DoesNotExist:
+                return Response(
+                    {'error': 'Invalid menu ID for this restaurant.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
         return super().create(request, *args, **kwargs)
 
     @action(detail=False, methods=['get'], url_path='status', permission_classes=[AllowAny])
@@ -62,29 +74,10 @@ class OrderViewSet(viewsets.ModelViewSet):
                     restaurant_id=restaurant_id,
                     table_id=table_id,
                     status__in=['Pending', 'In Progress', 'Completed']
-                )
+                ).select_related('menu')
 
                 if orders.exists():
-                    order_status = []
-                    for order in orders:
-                        items = OrderItem.objects.filter(order=order).select_related('menu_item')
-                        item_details = [
-                            {
-                                'menu_item': item.menu_item.name,
-                                'quantity': item.quantity,
-                                'special_request': item.special_request,
-                                'selected_options': [option.name for option in item.selected_options.all()],
-                            }
-                            for item in items
-                        ]
-
-                        order_status.append({
-                            'id': order.id,
-                            'status': order.status,
-                            'items': item_details,
-                            'additional_info': order.additional_info
-                        })
-
+                    order_status = [order.get_order_details() for order in orders]
                     return Response(order_status, status=status.HTTP_200_OK)
 
                 return Response({'error': 'No orders found for this table'}, status=status.HTTP_404_NOT_FOUND)

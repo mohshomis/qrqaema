@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import '../styles/Header.css';
+import '../../../styles/Header.css';
 import { Modal, Button, Form, NavDropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { createHelpRequest } from '../services/api';
+import { createHelpRequest } from '../../../services/api';
 import { useTranslation } from 'react-i18next';
 import { FaLanguage } from 'react-icons/fa';
 import { BiCart, BiHelpCircle, BiTable, BiDollarCircle } from 'react-icons/bi';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Header = ({ totalPrice, basket, restaurantId, tableNumber }) => {
+const CustomerHeader = ({ totalPrice, basket, restaurantId, tableNumber, menuId, availableMenus, currentMenu, onMenuChange }) => {
     const navigate = useNavigate();
     const { t, i18n } = useTranslation();
 
@@ -23,11 +23,16 @@ const Header = ({ totalPrice, basket, restaurantId, tableNumber }) => {
 
     const handleViewBasket = () => {
         if (restaurantId && tableNumber) {
-            navigate(`/restaurant/${restaurantId}/order-basket/${tableNumber}`);
+            const baseUrl = `/restaurant/${restaurantId}`;
+            const path = menuId 
+                ? `${baseUrl}/menu/${menuId}/order-basket/${tableNumber}`
+                : `${baseUrl}/order-basket/${tableNumber}`;
+            navigate(path);
         } else {
             toast.error(t('header.errors.missingRestaurantOrTable'));
         }
     };
+
     const handleShowHelpModal = () => setShowHelpModal(true);
     const handleCloseHelpModal = () => {
         setShowHelpModal(false);
@@ -64,8 +69,19 @@ const Header = ({ totalPrice, basket, restaurantId, tableNumber }) => {
     };
 
     const changeLanguage = (lng) => {
+        // Change UI language
         i18n.changeLanguage(lng);
         localStorage.setItem('language', lng);
+
+        // Find and switch to corresponding menu if available
+        if (availableMenus) {
+            const matchingMenu = availableMenus.find(menu => menu.language === lng);
+            if (matchingMenu) {
+                onMenuChange(matchingMenu);
+                localStorage.setItem(`restaurant_${restaurantId}_menu`, matchingMenu.id);
+                localStorage.setItem(`restaurant_${restaurantId}_language`, lng);
+            }
+        }
     };
 
     const renderTooltip = (message) => (props) => (
@@ -117,18 +133,35 @@ const Header = ({ totalPrice, basket, restaurantId, tableNumber }) => {
                             style={{ zIndex: 1050 }}
                             drop="down"
                         >
-                            <NavDropdown.Item onClick={() => changeLanguage('en')}>
-                                🇬🇧 English
-                            </NavDropdown.Item>
-                            <NavDropdown.Item onClick={() => changeLanguage('ar')}>
-                                🇸🇦 العربية
-                            </NavDropdown.Item>
-                            <NavDropdown.Item onClick={() => changeLanguage('tr')}>
-                                🇹🇷 Türkçe
-                            </NavDropdown.Item>
-                            <NavDropdown.Item onClick={() => changeLanguage('nl')}>
-                                🇳🇱 Nederlands
-                            </NavDropdown.Item>
+                            {availableMenus ? (
+                                availableMenus.map(menu => (
+                                    <NavDropdown.Item 
+                                        key={menu.language}
+                                        onClick={() => changeLanguage(menu.language)}
+                                        active={currentMenu?.language === menu.language}
+                                    >
+                                        {menu.language === 'en' && '🇬🇧 English'}
+                                        {menu.language === 'ar' && '🇸🇦 العربية'}
+                                        {menu.language === 'tr' && '🇹🇷 Türkçe'}
+                                        {menu.language === 'nl' && '🇳🇱 Nederlands'}
+                                    </NavDropdown.Item>
+                                ))
+                            ) : (
+                                <>
+                                    <NavDropdown.Item onClick={() => changeLanguage('en')}>
+                                        🇬🇧 English
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => changeLanguage('ar')}>
+                                        🇸🇦 العربية
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => changeLanguage('tr')}>
+                                        🇹🇷 Türkçe
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={() => changeLanguage('nl')}>
+                                        🇳🇱 Nederlands
+                                    </NavDropdown.Item>
+                                </>
+                            )}
                         </NavDropdown>
 
                         {/* View Basket Button */}
@@ -210,4 +243,4 @@ const Header = ({ totalPrice, basket, restaurantId, tableNumber }) => {
     );
 };
 
-export default Header;
+export default CustomerHeader;
