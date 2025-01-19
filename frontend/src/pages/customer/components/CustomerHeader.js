@@ -77,6 +77,7 @@ const CustomerHeader = ({ totalPrice, basket, restaurantId, tableNumber, menuId,
         if (availableMenus) {
             const matchingMenu = availableMenus.find(menu => menu.language === lng);
             if (matchingMenu) {
+                // Let the parent handle navigation and state updates
                 onMenuChange(matchingMenu);
                 localStorage.setItem(`restaurant_${restaurantId}_menu`, matchingMenu.id);
                 localStorage.setItem(`restaurant_${restaurantId}_language`, lng);

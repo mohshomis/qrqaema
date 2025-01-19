@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { getMenuItems, deleteMenuItem, createMenuItem, getMenuItemById, updateMenuItem, getCategories, getRestaurantMenus } from '../../services/api';
 import { FaUtensils, FaPlus, FaTrash, FaEdit, FaArrowLeft } from 'react-icons/fa';
+import OptimizedImage from '../../components/OptimizedImage';
 import {
     Container,
     Row,
@@ -213,7 +214,12 @@ const MenuItemManagementPage = () => {
                             <Card className="h-100 custom-card menu-item-card fade-in">
                                 {item.image_url && (
                                     <div className="card-img-container">
-                                        <Card.Img variant="top" src={item.image_url} alt={item.name} />
+                                        <OptimizedImage
+                                            src={item.image_url}
+                                            alt={item.name}
+                                            className="card-img-top"
+                                            sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, 33vw"
+                                        />
                                         <div className="img-overlay"></div>
                                     </div>
                                 )}

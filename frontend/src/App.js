@@ -1,7 +1,7 @@
 // src/App.js
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import jwtDecode from 'jwt-decode'; // Corrected import statement
 import { getRestaurantMenus } from './services/api';
 import CustomerHeader from './pages/customer/components/CustomerHeader';
@@ -110,6 +110,7 @@ const App = () => {
     // Extract params and handle menu selection
     const CustomerHeaderWithParams = () => {
         const { restaurantId, tableNumber, menuId } = useParams();
+        const navigate = useNavigate();
         const [availableMenus, setAvailableMenus] = useState([]);
         const [currentMenu, setCurrentMenu] = useState(null);
 
@@ -136,6 +137,8 @@ const App = () => {
 
         const handleMenuChange = (newMenu) => {
             setCurrentMenu(newMenu);
+            // Always navigate back to the menu page when changing language/menu
+            navigate(`/restaurant/${restaurantId}/menu/${newMenu.id}/table/${tableNumber}`);
         };
 
         return (

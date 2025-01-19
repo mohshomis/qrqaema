@@ -3,8 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getRestaurantPublicDetails, getRestaurantMenus, getMenuItems } from '../../services/api';
 import { useTranslation } from 'react-i18next';
 import { Container, Row, Col, Button, Alert, Badge } from 'react-bootstrap';
+import OptimizedImage from '../../components/OptimizedImage';
 import { FaReceipt, FaDollarSign, FaInfoCircle, FaArrowLeft } from 'react-icons/fa';
 import '../../styles/NewCustomerPages.css';
+import CustomerHeader from './components/CustomerHeader';
 
 const CategoryPage = () => {
   const { t, i18n } = useTranslation();
@@ -13,6 +15,11 @@ const CategoryPage = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [availableMenus, setAvailableMenus] = useState([]);
+  const [currentMenu, setCurrentMenu] = useState(null);
+
+  // Fetch available menus and current menu
+  // Remove the menu fetching and handling since it's now managed by App.js
 
   useEffect(() => {
     const fetchCategoryData = async () => {
@@ -88,11 +95,11 @@ const CategoryPage = () => {
                 <div className="menu-card fade-in" onClick={() => handleMenuItemClick(item.id)}>
                   <div className="menu-image-container">
                     {item.image_url && (
-                      <img
+                      <OptimizedImage
                         src={item.image_url}
                         alt={item.name}
                         className="menu-image"
-                        loading="lazy"
+                        sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, 33vw"
                       />
                     )}
                     <div className="price-badge">

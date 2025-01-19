@@ -2,10 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { placeOrder, getRestaurantPublicDetails } from '../../services/api';
-import Footer from '../../components/Footer';
+import { placeOrder, getRestaurantPublicDetails, getRestaurantMenus } from '../../services/api';
 import PropTypes from 'prop-types';
-import '../../styles/Footer.css';
 import '../../styles/CustomerPages.css';
 import '../../styles/OrderBasketPage.css';
 import '../../App.css';
@@ -15,10 +13,11 @@ import {
   Col,
   Card,
   Button,
-  Image,
   Alert,
   Badge,
 } from 'react-bootstrap';
+import OptimizedImage from '../../components/OptimizedImage';
+import CustomerHeader from './components/CustomerHeader';
 import {
   FaShoppingCart,
   FaPlusCircle,
@@ -45,6 +44,8 @@ const OrderBasketPage = ({
   const [restaurantName, setRestaurantName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [availableMenus, setAvailableMenus] = useState([]);
+  const [currentMenu, setCurrentMenu] = useState(null);
 
   useEffect(() => {
     const fetchRestaurantDetails = async () => {
@@ -65,6 +66,8 @@ const OrderBasketPage = ({
       fetchRestaurantDetails();
     }
   }, [restaurantId, t]);
+
+  // Remove menu fetching and handling since it's now managed by App.js
 
   const groupedBasketItems = basketItems.reduce((acc, item) => {
     const existingItem = acc.find((groupedItem) => {
@@ -219,12 +222,12 @@ const OrderBasketPage = ({
                       {/* Item Image */}
                       <Col xs={3} sm={2}>
                         <div className="basket-item-image">
-                          <Image
+                          <OptimizedImage
                             src={item.image}
                             alt={item.name}
                             className="rounded-3"
                             style={{ width: '60px', height: '60px', objectFit: 'cover' }}
-                            loading="lazy"
+                            sizes="60px"
                           />
                         </div>
                       </Col>
@@ -334,7 +337,6 @@ const OrderBasketPage = ({
           </Col>
         </Row>
       </Container>
-      <Footer />
     </div>
   );
 };

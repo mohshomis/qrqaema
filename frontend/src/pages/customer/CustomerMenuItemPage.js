@@ -6,13 +6,14 @@ import {
   Container,
   Row,
   Col,
-  Image,
   Button,
   Form,
   InputGroup,
   Alert,
   Badge,
 } from 'react-bootstrap';
+import OptimizedImage from '../../components/OptimizedImage';
+import CustomerHeader from './components/CustomerHeader';
 import { 
   FaMinus, 
   FaPlus, 
@@ -35,7 +36,11 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
   const [error, setError] = useState(null);
   const [animateBasket, setAnimateBasket] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [availableMenus, setAvailableMenus] = useState([]);
+  const [currentMenu, setCurrentMenu] = useState(null);
   const navigate = useNavigate();
+
+  // Remove menu fetching and handling since it's now managed by App.js
 
   useEffect(() => {
     const fetchMenuItem = async () => {
@@ -74,7 +79,7 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
 
   useEffect(() => {
     calculatePrice();
-  }, [selectedOptions, quantity]);
+  }, [selectedOptions, quantity, menuItem]);
 
   const handleOptionChange = (optionId, choiceId) => {
     setSelectedOptions(prev => ({
@@ -86,7 +91,7 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
   const handleAddToBasket = () => {
     if (quantity > 0) {
       const basketItem = {
-        id: Number(menuItem.id), // Convert to number
+        id: Number(menuItem.id),
         name: menuItem.name,
         quantity,
         selectedOptions: {},
@@ -152,23 +157,24 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
     <div className="customer-page min-vh-100 d-flex flex-column" dir={i18n.dir()}>
       {animateBasket && (
         <div className="flying-image">
-          <Image
+          <OptimizedImage
             src={menuItem.image_url}
             alt={menuItem.name}
             className="basket-animation"
+            loading="eager"
           />
         </div>
       )}
 
       <Container className="content-container flex-grow-1 py-4">
-            <div className="menu-card fade-in shadow-lg h-100">
+        <div className="menu-card fade-in shadow-lg h-100">
           <div className="menu-image-container position-relative" style={{ paddingTop: '40%', minHeight: '200px' }}>
-            <img
+            <OptimizedImage
               src={menuItem.image_url}
               alt={menuItem.name}
               className="menu-image rounded-top"
-              loading="lazy"
               style={{ objectFit: 'cover' }}
+              sizes="(max-width: 768px) 100vw, 75vw"
             />
             <div className="price-badge bg-primary text-white px-3 py-2 rounded-pill position-absolute top-0 end-0 m-3">
               <FaDollarSign className="me-1" />
@@ -176,7 +182,7 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
             </div>
           </div>
 
-            <div className="card-content px-3 px-md-4 py-4">
+          <div className="card-content px-3 px-md-4 py-4">
             <h2 className="card-title d-flex align-items-center fs-3 fs-md-2">
               <FaUtensils className="me-2 text-primary" />
               {menuItem.name}

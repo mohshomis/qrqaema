@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button, Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { FaUserCircle, FaUtensils, FaSignOutAlt, FaLanguage, FaEye } from 'react-icons/fa';
@@ -7,12 +7,32 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthContext } from '../../../AuthContext';
 import { useTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
+import { getRestaurantMenus } from '../../../services/api';
 
 const RestaurantManagementHeader = () => {
   const navigate = useNavigate();
   const { logout, userRoles } = useContext(AuthContext);
   const { is_owner, is_staff, restaurant_id } = userRoles;
   const { t, i18n } = useTranslation();
+  const [defaultMenuId, setDefaultMenuId] = useState(null);
+
+  useEffect(() => {
+    const fetchDefaultMenu = async () => {
+      try {
+        const menusResponse = await getRestaurantMenus(restaurant_id);
+        const defaultMenu = menusResponse.data.menus.find(menu => menu.is_default);
+        if (defaultMenu) {
+          setDefaultMenuId(defaultMenu.id);
+        }
+      } catch (error) {
+        console.error('Error fetching default menu:', error);
+      }
+    };
+
+    if (restaurant_id) {
+      fetchDefaultMenu();
+    }
+  }, [restaurant_id]);
 
   const handleLogout = () => {
     logout();
@@ -102,11 +122,12 @@ const RestaurantManagementHeader = () => {
 
                   {/* View Menu Link */}
                   <Nav.Link
-                    href={`/restaurant/${restaurant_id}/table/1`}
+                    href={defaultMenuId ? `/restaurant/${restaurant_id}/menu/${defaultMenuId}/table/1` : '#'}
                     className="text-white d-flex align-items-center"
                     data-tour="header-view-menu"
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={e => !defaultMenuId && e.preventDefault()}
                   >
                     <FaEye className="me-2" /> {t('viewMenu')}
                   </Nav.Link>

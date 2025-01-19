@@ -19,6 +19,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './DashboardPage.css'; 
 import { useTranslation } from 'react-i18next';
 import { Modal, Button, Form } from 'react-bootstrap';
+import OptimizedImage from '../../components/OptimizedImage';
 import Joyride, { STATUS } from 'react-joyride'; // Imported Joyride
 
 const BASE_URL = '';
@@ -586,11 +587,13 @@ const DashboardPage = () => {
                                             <h5 className="card-title mb-4">{t('table')} {tableNumber}</h5>
                                             {qrCodes[index] && (
                                                 <>
-                                                    <img
+                                                    <OptimizedImage
                                                         src={`${BASE_URL}${qrCodes[index]}`}
                                                         alt={`${t('qrCodeFor')} ${t('table')} ${tableNumber}`}
                                                         className="img-fluid mb-3 rounded"
                                                         style={{ maxHeight: '150px' }}
+                                                        sizes="150px"
+                                                        loading="eager"
                                                     />
                                                     <a
                                                         href={`${BASE_URL}${qrCodes[index]}`}

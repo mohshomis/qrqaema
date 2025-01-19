@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getRestaurantPublicDetails, getCategories, getRestaurantMenus } from '../../services/api';
-import Footer from '../../components/Footer';
+import OptimizedImage from '../../components/OptimizedImage';
 import { useTranslation } from 'react-i18next';
 import { Container, Row, Col, Card, Button, Alert, Badge, Modal } from 'react-bootstrap';
 import { FaUtensils, FaList, FaInfoCircle, FaArrowRight } from 'react-icons/fa';
 import '../../styles/NewCustomerPages.css';
+import CustomerHeader from './components/CustomerHeader';
 
 const CustomerMenuPage = () => {
   const { t, i18n } = useTranslation();
@@ -17,6 +18,8 @@ const CustomerMenuPage = () => {
   const [restaurantName, setRestaurantName] = useState('');
 
   const [currentMenuId, setCurrentMenuId] = useState(menuId);
+  const [availableMenus, setAvailableMenus] = useState([]);
+  const [currentMenu, setCurrentMenu] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,23 +28,11 @@ const CustomerMenuPage = () => {
         const restaurantResponse = await getRestaurantPublicDetails(restaurantId);
         setRestaurantName(restaurantResponse.data.name);
 
-        // If menuId is not provided, fetch the default menu
-        let menuToUse = menuId;
-        if (!menuToUse) {
-          const menusResponse = await getRestaurantMenus(restaurantId);
-          const defaultMenu = menusResponse.data.menus.find(menu => menu.is_default);
-          if (defaultMenu) {
-            menuToUse = defaultMenu.id;
-            setCurrentMenuId(menuToUse);
-          } else {
-            throw new Error('No default menu found');
-          }
-        }
-
         // Fetch categories for the menu
-        const categoriesResponse = await getCategories(restaurantId, menuToUse);
-        console.log('Categories response:', categoriesResponse.data);
-        setCategories(categoriesResponse.data.categories || []);
+        if (menuId) {
+          const categoriesResponse = await getCategories(restaurantId, menuId);
+          setCategories(categoriesResponse.data.categories || []);
+        }
       } catch (err) {
         console.error('Error fetching data:', err);
         setError(t('customerMenuPage.errors.fetchFailed'));
@@ -52,6 +43,12 @@ const CustomerMenuPage = () => {
 
     fetchData();
   }, [restaurantId, menuId, t]);
+
+  const handleMenuChange = (newMenu) => {
+    setCurrentMenu(newMenu);
+    setCurrentMenuId(newMenu.id);
+    navigate(`/restaurant/${restaurantId}/menu/${newMenu.id}/table/${tableNumber}`);
+  };
 
   const handleCategoryClick = (categoryId) => {
     navigate(`/restaurant/${restaurantId}/menu/${currentMenuId}/table/${tableNumber}/category/${categoryId}`);
@@ -82,7 +79,6 @@ const CustomerMenuPage = () => {
 
   return (
     <div className="customer-page" dir={i18n.dir()}>
-
       <Container className="content-container">
         <Row className="g-4">
           {categories.map(category => (
@@ -90,11 +86,11 @@ const CustomerMenuPage = () => {
               <div className="menu-card fade-in" onClick={() => handleCategoryClick(category.id)}>
                 <div className="menu-image-container">
                   {category.image_url && (
-                    <img
+                    <OptimizedImage
                       src={category.image_url}
                       alt={category.name}
                       className="menu-image"
-                      loading="lazy"
+                      sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, 33vw"
                     />
                   )}
                   <Badge 

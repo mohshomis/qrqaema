@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getCategories, createCategory, deleteCategory, updateCategory, getRestaurantMenus } from '../../services/api';
 import { FaUtensils, FaPlus, FaTrash, FaEdit, FaArrowRight } from 'react-icons/fa';
+import OptimizedImage from '../../components/OptimizedImage';
 import {
     Container,
     Row,
@@ -192,7 +193,12 @@ const CategoryManagementPage = () => {
                                 >
                                     {category.image_url && (
                                         <div className="card-img-container">
-                                            <Card.Img variant="top" src={category.image_url} alt={category.name} />
+                                            <OptimizedImage
+                                                src={category.image_url}
+                                                alt={category.name}
+                                                className="card-img-top"
+                                                sizes="(max-width: 576px) 100vw, (max-width: 768px) 50vw, 33vw"
+                                            />
                                             <div className="img-overlay"></div>
                                         </div>
                                     )}
