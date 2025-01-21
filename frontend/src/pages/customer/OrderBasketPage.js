@@ -29,6 +29,8 @@ import {
   FaTrashAlt
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Wrapper component to handle URL parameters
 const OrderBasketPageWrapper = ({
@@ -140,14 +142,14 @@ const OrderBasketPage = ({
   const handlePlaceOrder = async () => {
     try {
       if (!restaurantId || !tableNumber) {
-        alert(t('orderBasketPage.errors.invalidRestaurantOrTable'));
+        toast.error(t('orderBasketPage.errors.invalidRestaurantOrTable'));
         return;
       }
 
       // Validate and parse required IDs
       if (!restaurantId || !tableNumber || !menuId) {
         console.error('Missing required IDs:', { restaurantId, tableNumber, menuId });
-        alert(t('orderBasketPage.errors.invalidRestaurantOrTable'));
+        toast.error(t('orderBasketPage.errors.invalidRestaurantOrTable'));
         return;
       }
 
@@ -166,11 +168,18 @@ const OrderBasketPage = ({
           throw new Error(`Invalid item ID for item: ${item.name}`);
         }
         
+        // Extract option IDs from selectedOptions object
+        const selected_options = item.selectedOptions ? 
+          Object.values(item.selectedOptions)
+            .filter(option => option && option.id)
+            .map(option => option.id) 
+          : [];
+        
         // Ensure all numeric fields are properly parsed
         const mappedItem = {
           menu_item: parseInt(item.id, 10),
           quantity: parseInt(item.quantity, 10),
-          selected_options: Array.isArray(item.selected_options) ? item.selected_options : [],
+          selected_options: selected_options,
           special_request: item.special_request || ''
         };
 
@@ -185,25 +194,25 @@ const OrderBasketPage = ({
       console.log('Mapped order items:', order_items);
 
       // Get the table ID from the table number
-      const tableResponse = await getTableId(restaurantId, tableNumber);
-      if (!tableResponse) {
+      const tableId = await getTableId(restaurantId, tableNumber);
+      if (!tableId) {
         console.error('Could not find table:', { restaurantId, tableNumber });
-        alert(t('orderBasketPage.errors.tableNotFound'));
+        toast.error(t('orderBasketPage.errors.tableNotFound'));
         return;
       }
 
-      // Parse the IDs for the payload
+      // Prepare the order payload
       const orderPayload = {
-        restaurant: parseInt(restaurantId, 10),
-        table: tableResponse,
-        menu: parseInt(menuId, 10),
+        restaurant: restaurantId, // Keep UUID as string
+        table: tableId,
+        menu: menuId,
         order_items: order_items,
       };
 
       // Validate the payload values
-      if (isNaN(orderPayload.restaurant) || !orderPayload.table || isNaN(orderPayload.menu)) {
+      if (!orderPayload.restaurant || !orderPayload.table || !orderPayload.menu) {
         console.error('Invalid payload values:', orderPayload);
-        alert(t('orderBasketPage.errors.invalidIds'));
+        toast.error(t('orderBasketPage.errors.invalidIds'));
         return;
       }
 
@@ -222,11 +231,11 @@ const OrderBasketPage = ({
         navigate(path);
       } else {
         console.error('Unexpected response status:', response.status);
-        alert(t('orderBasketPage.errors.orderFailed'));
+        toast.error(t('orderBasketPage.errors.orderFailed'));
       }
     } catch (error) {
       console.error('Error preparing order:', error);
-      alert(error.message || t('orderBasketPage.errors.placeOrderError'));
+      toast.error(error.message || t('orderBasketPage.errors.placeOrderError'));
     }
   };
 
@@ -427,38 +436,28 @@ const OrderBasketPage = ({
   );
 };
 
+const basketItemShape = PropTypes.shape({
+  id: PropTypes.number.isRequired,
+  name: PropTypes.string.isRequired,
+  quantity: PropTypes.number.isRequired,
+  selectedOptions: PropTypes.object,
+  price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  image: PropTypes.string,
+  menu: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Menu ID can be string or number
+});
+
 OrderBasketPage.propTypes = {
-  basketItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      quantity: PropTypes.number.isRequired,
-      selectedOptions: PropTypes.object,
-      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      image: PropTypes.string,
-      menu: PropTypes.string, // Menu ID
-    })
-  ).isRequired,
+  basketItems: PropTypes.arrayOf(basketItemShape).isRequired,
   updateBasketItem: PropTypes.func.isRequired,
   removeBasketItem: PropTypes.func.isRequired,
   setBasketItems: PropTypes.func.isRequired,
   restaurantId: PropTypes.string.isRequired,
-  tableNumber: PropTypes.string.isRequired,
-  menuId: PropTypes.string.isRequired,
+  tableNumber: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  menuId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 
 OrderBasketPageWrapper.propTypes = {
-  basketItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      quantity: PropTypes.number.isRequired,
-      selectedOptions: PropTypes.object,
-      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-      image: PropTypes.string,
-      menu: PropTypes.string, // Menu ID
-    })
-  ).isRequired,
+  basketItems: PropTypes.arrayOf(basketItemShape).isRequired,
   updateBasketItem: PropTypes.func.isRequired,
   removeBasketItem: PropTypes.func.isRequired,
   setBasketItems: PropTypes.func.isRequired,

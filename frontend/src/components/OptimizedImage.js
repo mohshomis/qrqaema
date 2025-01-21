@@ -9,7 +9,25 @@ const OptimizedImage = ({
   sizes = '100vw',
   loading = 'lazy'
 }) => {
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(!src);
+
+  if (!src) {
+    return (
+      <div 
+        className={`optimized-image-placeholder ${className}`}
+        style={{
+          backgroundColor: '#f8f9fa',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '100px',
+          ...style
+        }}
+      >
+        <span role="img" aria-label="no image">🖼️</span>
+      </div>
+    );
+  }
   
   // Generate WebP URL if the original is a JPEG or PNG
   const getWebPUrl = (url) => {
@@ -81,12 +99,20 @@ const OptimizedImage = ({
 };
 
 OptimizedImage.propTypes = {
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   alt: PropTypes.string.isRequired,
   className: PropTypes.string,
   style: PropTypes.object,
   sizes: PropTypes.string,
   loading: PropTypes.oneOf(['lazy', 'eager', 'auto'])
+};
+
+OptimizedImage.defaultProps = {
+  src: null,
+  className: '',
+  style: {},
+  sizes: '100vw',
+  loading: 'lazy'
 };
 
 export default OptimizedImage;

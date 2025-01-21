@@ -141,12 +141,21 @@ export const getTableId = async (restaurantId, tableNumber) => {
             headers: {} // Public endpoint
         });
         console.log('Tables response:', response.data);
-        const parsedTableNumber = parseInt(tableNumber, 10);
-        const table = response.data.find(t => t.number === parsedTableNumber);
-        console.log('Found table:', table);
-        return table ? table.id : null;
+        
+        // Since backend now filters by table number, we should get exactly one table
+        if (response.data && response.data.length === 1) {
+            const table = response.data[0];
+            console.log('Found table:', table);
+            return table.id;
+        } else {
+            console.error('Table not found or multiple tables returned');
+            return null;
+        }
     } catch (error) {
         console.error('Error fetching table ID:', error);
+        if (error.response?.status === 404) {
+            return null;
+        }
         throw error;
     }
 };

@@ -138,41 +138,56 @@ class OrderViewSet(viewsets.ModelViewSet):
     def get_order_status(self, request):
         logger.info("=== Getting Order Status ===")
         restaurant_id = request.query_params.get('restaurant')
-        table_id = request.query_params.get('table_number')
+        table_number = request.query_params.get('table_number')
         
-        logger.info("Params - Restaurant ID: %s, Table ID: %s", restaurant_id, table_id)
+        logger.info("Params - Restaurant ID: %s, Table Number: %s", restaurant_id, table_number)
 
-        if restaurant_id and table_id:
+        if not restaurant_id or not table_number:
+            logger.error("Missing required parameters - restaurant_id: %s, table_number: %s", restaurant_id, table_number)
+            return Response({'error': 'Both restaurant ID and table number are required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # First get the table by its number
             try:
-                logger.info("Querying orders for restaurant %s and table %s", restaurant_id, table_id)
-                orders = Order.objects.filter(
+                table = Table.objects.get(
                     restaurant_id=restaurant_id,
-                    table_id=table_id,
-                    status__in=['Pending', 'In Progress', 'Completed']
-                ).select_related('menu')
+                    number=table_number
+                )
+                logger.info("Found table: %s", table.id)
+            except Table.DoesNotExist:
+                logger.error("Table not found - restaurant: %s, table number: %s", restaurant_id, table_number)
+                return Response(
+                    {'error': f'Table {table_number} not found for this restaurant.'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
 
-                if orders.exists():
-                    logger.info("Found %d orders", orders.count())
-                    order_status = []
-                    for order in orders:
-                        try:
-                            status_details = order.get_order_details()
-                            order_status.append(status_details)
-                            logger.info("Order %s status: %s", order.id, status_details)
-                        except Exception as detail_error:
-                            logger.error("Error getting details for order %s: %s", order.id, str(detail_error))
-                    
-                    return Response(order_status, status=status.HTTP_200_OK)
+            # Now query orders using the table ID
+            logger.info("Querying orders for restaurant %s and table %s", restaurant_id, table.id)
+            orders = Order.objects.filter(
+                restaurant_id=restaurant_id,
+                table=table,
+                status__in=['Pending', 'In Progress', 'Completed']
+            ).select_related('menu')
 
-                logger.info("No orders found for restaurant %s and table %s", restaurant_id, table_id)
-                return Response({'error': 'No orders found for this table'}, status=status.HTTP_404_NOT_FOUND)
+            if orders.exists():
+                logger.info("Found %d orders", orders.count())
+                order_status = []
+                for order in orders:
+                    try:
+                        status_details = order.get_order_details()
+                        order_status.append(status_details)
+                        logger.info("Order %s status: %s", order.id, status_details)
+                    except Exception as detail_error:
+                        logger.error("Error getting details for order %s: %s", order.id, str(detail_error))
+                
+                return Response(order_status, status=status.HTTP_200_OK)
 
-            except Exception as e:
-                logger.error("Error retrieving order status: %s", str(e))
-                return Response({'error': 'Failed to retrieve order status'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            logger.info("No orders found for restaurant %s and table %s", restaurant_id, table.id)
+            return Response({'error': 'No orders found for this table'}, status=status.HTTP_404_NOT_FOUND)
 
-        logger.error("Invalid request parameters - restaurant_id: %s, table_id: %s", restaurant_id, table_id)
-        return Response({'error': 'Invalid restaurant or table ID.'}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            logger.error("Error retrieving order status: %s", str(e))
+            return Response({'error': 'Failed to retrieve order status'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def perform_update(self, serializer):
         logger.info("=== Updating Order ===")

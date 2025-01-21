@@ -300,6 +300,13 @@
       "invalidIds": "Invalid restaurant or category ID."
     }
   },
+  "customerMenuPage": {
+    "items": "Items",
+    "viewItems": "View Items",
+    "loading": "Loading...",
+    "error": "Error loading menu",
+    "noCategories": "No categories available"
+  },
   "customerMenuItemPage": {
     "loading": "Loading...",
     "errors": {

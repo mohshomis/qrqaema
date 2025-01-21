@@ -31,7 +31,6 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    margin-top: 56px; /* To offset the fixed navbar height */
 }
 
 .welcome-section::before {

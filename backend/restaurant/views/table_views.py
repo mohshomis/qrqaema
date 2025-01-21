@@ -31,23 +31,33 @@ class TableViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         restaurant_id = self.kwargs.get('restaurant_id')
+        table_number = self.request.query_params.get('table_number')
         
-        if user.is_superuser:
-            queryset = Table.objects.all()
-        elif user.is_authenticated:
-            try:
-                restaurant = Restaurant.objects.get(pk=restaurant_id)
-                queryset = Table.objects.filter(
-                    restaurant=restaurant
-                ).filter(
-                    models.Q(restaurant__owner=user) | models.Q(restaurant__staff=user)
-                )
-            except Restaurant.DoesNotExist:
-                queryset = Table.objects.none()
-        else:
-            queryset = Table.objects.none()
-
-        return queryset
+        try:
+            restaurant = Restaurant.objects.get(pk=restaurant_id)
+            queryset = Table.objects.filter(restaurant=restaurant)
+            
+            # If table_number is provided, filter by it
+            if table_number is not None:
+                try:
+                    table_number = int(table_number)
+                    queryset = queryset.filter(number=table_number)
+                except ValueError:
+                    return Table.objects.none()
+            
+            # Apply user-based filtering only for authenticated endpoints
+            if self.action not in ['list', 'retrieve']:
+                if user.is_authenticated and not user.is_superuser:
+                    queryset = queryset.filter(
+                        models.Q(restaurant__owner=user) | models.Q(restaurant__staff=user)
+                    )
+                elif not user.is_superuser:
+                    return Table.objects.none()
+                    
+            return queryset
+            
+        except Restaurant.DoesNotExist:
+            return Table.objects.none()
 
     def create(self, request, *args, **kwargs):
         try:

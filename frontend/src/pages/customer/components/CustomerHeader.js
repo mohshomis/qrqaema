@@ -22,28 +22,27 @@ const CustomerHeader = ({ totalPrice, basket, restaurantId, tableNumber, menuId,
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleViewBasket = () => {
-        if (!restaurantId || !tableNumber || !menuId) {
-            console.error('Missing required IDs:', { restaurantId, tableNumber, menuId });
-            toast.error(t('header.errors.missingRestaurantOrTable'));
+        if (!restaurantId) {
+            console.error('Missing restaurant ID');
+            toast.error(t('header.errors.missingRestaurantId'));
             return;
         }
 
-        // Ensure all IDs are valid
-        const parsedRestaurantId = parseInt(restaurantId, 10);
-        const parsedTableNumber = parseInt(tableNumber, 10);
-        const parsedMenuId = parseInt(menuId, 10);
-
-        if (isNaN(parsedRestaurantId) || isNaN(parsedTableNumber) || isNaN(parsedMenuId)) {
-            console.error('Invalid ID values:', {
-                restaurantId: parsedRestaurantId,
-                tableNumber: parsedTableNumber,
-                menuId: parsedMenuId
-            });
-            toast.error(t('header.errors.invalidIds'));
+        if (!tableNumber || isNaN(tableNumber)) {
+            console.error('Invalid table number:', tableNumber);
+            toast.error(t('header.errors.invalidTableNumber'));
             return;
         }
 
-        navigate(`/restaurant/${parsedRestaurantId}/menu/${parsedMenuId}/order-basket/${parsedTableNumber}`);
+        if (!menuId || isNaN(menuId)) {
+            console.error('Invalid menu ID:', menuId);
+            toast.error(t('header.errors.invalidMenuId'));
+            return;
+        }
+
+        // For restaurant ID, we keep it as a string since it's a UUID
+        // For table number and menu ID, we ensure they're valid numbers
+        navigate(`/restaurant/${restaurantId}/menu/${menuId}/order-basket/${tableNumber}`);
     };
 
     const handleShowHelpModal = () => setShowHelpModal(true);

@@ -110,45 +110,59 @@ const App = () => {
 
     // Extract params and handle menu selection
     const CustomerHeaderWithParams = () => {
-        const { restaurantId, tableNumber, menuId } = useParams();
+        const { restaurantId: rawRestaurantId, tableNumber: rawTableNumber, menuId: rawMenuId } = useParams();
         const navigate = useNavigate();
-        const { i18n } = useTranslation();
+        const { i18n, t } = useTranslation();
         const [availableMenus, setAvailableMenus] = useState([]);
         const [currentMenu, setCurrentMenu] = useState(null);
+        const [error, setError] = useState(null);
+
+        // Validate and parse URL parameters
+        const restaurantId = rawRestaurantId;  // Keep UUID as string
+        const tableNumber = parseInt(rawTableNumber, 10);
+        const menuId = rawMenuId;  // Keep as string to match navigation
 
         useEffect(() => {
             const fetchMenus = async () => {
                 try {
+                    // Validate required parameters
+                    if (!restaurantId || isNaN(tableNumber)) {
+                        setError('Invalid restaurant or table number');
+                        return;
+                    }
+
                     const response = await getRestaurantMenus(restaurantId);
                     const menus = response.data.menus || [];
                     setAvailableMenus(menus);
                     
                     // If menuId is provided, find that menu
                     if (menuId) {
-                        const menu = menus.find(m => m.id === menuId);
-                        if (menu) setCurrentMenu(menu);
-                    } else {
-                        // If no menuId, try to find menu matching current language
-                        const userLanguage = localStorage.getItem('language') || i18n.language;
-                        const matchingMenu = menus.find(menu => menu.language === userLanguage);
-                        const defaultMenu = menus.find(menu => menu.is_default);
-                        
-                        if (matchingMenu) {
-                            setCurrentMenu(matchingMenu);
-                            navigate(`/restaurant/${restaurantId}/menu/${matchingMenu.id}/table/${tableNumber}`);
-                        } else if (defaultMenu) {
-                            setCurrentMenu(defaultMenu);
-                            navigate(`/restaurant/${restaurantId}/menu/${defaultMenu.id}/table/${tableNumber}`);
+                        const menu = menus.find(m => m.id.toString() === menuId);
+                        if (menu) {
+                            setCurrentMenu(menu);
+                            return;
                         }
+                    }
+
+                    // If no valid menuId, try to find menu matching current language
+                    const userLanguage = localStorage.getItem('language') || i18n.language;
+                    const matchingMenu = menus.find(menu => menu.language === userLanguage);
+                    const defaultMenu = menus.find(menu => menu.is_default);
+                    
+                    if (matchingMenu) {
+                        setCurrentMenu(matchingMenu);
+                        navigate(`/restaurant/${restaurantId}/menu/${matchingMenu.id}/table/${tableNumber}`);
+                    } else if (defaultMenu) {
+                        setCurrentMenu(defaultMenu);
+                        navigate(`/restaurant/${restaurantId}/menu/${defaultMenu.id}/table/${tableNumber}`);
                     }
                 } catch (error) {
                     console.error('Error fetching menus:', error);
+                    setError('Error loading menus');
                 }
             };
 
-            if (restaurantId) {
-                fetchMenus();
-            }
+            fetchMenus();
         }, [restaurantId, menuId, i18n.language, navigate, tableNumber]);
 
         const handleMenuChange = (newMenu) => {
@@ -157,7 +171,12 @@ const App = () => {
             navigate(`/restaurant/${restaurantId}/menu/${newMenu.id}/table/${tableNumber}`);
         };
 
-        return (
+        return error ? (
+            <div className="alert alert-danger m-3">
+                <i className="bi bi-exclamation-triangle me-2"></i>
+                {error}
+            </div>
+        ) : (
             <CustomerHeader 
                 basket={basketItems} 
                 totalPrice={totalPrice} 

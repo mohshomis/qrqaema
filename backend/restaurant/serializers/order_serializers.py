@@ -37,7 +37,7 @@ class OrderSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(read_only=True)
     restaurant = serializers.PrimaryKeyRelatedField(queryset=Restaurant.objects.all())
     table = serializers.PrimaryKeyRelatedField(queryset=Table.objects.all())
-    items = OrderItemSerializer(source='order_items', many=True, required=False)
+    items = OrderItemSerializer(source='order_items', many=True, required=True)
     menu = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all(), required=False)
     menu_language = serializers.CharField(source='menu.language', read_only=True)
 

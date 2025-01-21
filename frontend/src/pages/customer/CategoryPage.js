@@ -18,20 +18,21 @@ const CategoryPage = () => {
   const [availableMenus, setAvailableMenus] = useState([]);
   const [currentMenu, setCurrentMenu] = useState(null);
 
-  // Fetch available menus and current menu
-  // Remove the menu fetching and handling since it's now managed by App.js
-
   useEffect(() => {
     const fetchCategoryData = async () => {
       try {
-        if (menuId) {
-          const menuResponse = await getMenuItems(restaurantId, menuId, categoryId);
-          setMenuItems(menuResponse.data);
+        setLoading(true);
+        if (!menuId || !categoryId) {
+          setError(t('categoryPage.errors.invalidIds'));
+          return;
         }
-        setLoading(false);
+
+        const menuResponse = await getMenuItems(restaurantId, menuId, categoryId);
+        setMenuItems(menuResponse.data);
       } catch (err) {
         console.error('Error fetching menu items:', err);
         setError(t('categoryPage.errors.fetchFailed'));
+      } finally {
         setLoading(false);
       }
     };
@@ -40,11 +41,15 @@ const CategoryPage = () => {
   }, [restaurantId, categoryId, menuId, t]);
 
   const handleMenuItemClick = (itemId) => {
-    const baseUrl = `/restaurant/${restaurantId}`;
-    const path = menuId 
-      ? `${baseUrl}/menu/${menuId}/table/${tableNumber}/menu-item/${itemId}`
-      : `${baseUrl}/table/${tableNumber}/menu-item/${itemId}`;
-    navigate(path);
+    if (!menuId) {
+      console.error('Menu ID is required');
+      return;
+    }
+    navigate(`/restaurant/${restaurantId}/menu/${menuId}/table/${tableNumber}/menu-item/${itemId}`);
+  };
+
+  const handleBackClick = () => {
+    navigate(`/restaurant/${restaurantId}/menu/${menuId}/table/${tableNumber}`);
   };
 
   if (loading) {
@@ -76,7 +81,7 @@ const CategoryPage = () => {
         <div className="d-flex justify-content-between align-items-center mb-4">
           <Button
             variant="outline-primary"
-            onClick={() => navigate(-1)}
+            onClick={handleBackClick}
             className="action-button outline-button"
             style={{ width: 'auto' }}
           >

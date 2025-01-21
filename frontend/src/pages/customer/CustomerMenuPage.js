@@ -17,10 +17,6 @@ const CustomerMenuPage = () => {
   const [error, setError] = useState(null);
   const [restaurantName, setRestaurantName] = useState('');
 
-  const [currentMenuId, setCurrentMenuId] = useState(menuId);
-  const [availableMenus, setAvailableMenus] = useState([]);
-  const [currentMenu, setCurrentMenu] = useState(null);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,14 +40,12 @@ const CustomerMenuPage = () => {
     fetchData();
   }, [restaurantId, menuId, t]);
 
-  const handleMenuChange = (newMenu) => {
-    setCurrentMenu(newMenu);
-    setCurrentMenuId(newMenu.id);
-    navigate(`/restaurant/${restaurantId}/menu/${newMenu.id}/table/${tableNumber}`);
-  };
-
   const handleCategoryClick = (categoryId) => {
-    navigate(`/restaurant/${restaurantId}/menu/${currentMenuId}/table/${tableNumber}/category/${categoryId}`);
+    if (!menuId) {
+      console.error('Menu ID is required');
+      return;
+    }
+    navigate(`/restaurant/${restaurantId}/menu/${menuId}/table/${tableNumber}/category/${categoryId}`);
   };
 
   if (loading) {

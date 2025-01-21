@@ -49,10 +49,14 @@ urlpatterns = [
         name='set_default_menu'
     ),
 
-    # Add explicit path for add_table
+    # Add explicit path for add_table and table lookup
     path('restaurants/<uuid:restaurant_id>/add_table/',
          TableViewSet.as_view({'post': 'create'}),
          name='restaurant-add-table'),
+    
+    path('restaurants/<uuid:restaurant_id>/tables/',
+         TableViewSet.as_view({'get': 'list'}),
+         name='restaurant-tables-list'),
          
     # Include the main router URLs
     path('', include(router.urls)),
