@@ -22,15 +22,28 @@ const CustomerHeader = ({ totalPrice, basket, restaurantId, tableNumber, menuId,
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleViewBasket = () => {
-        if (restaurantId && tableNumber) {
-            const baseUrl = `/restaurant/${restaurantId}`;
-            const path = menuId 
-                ? `${baseUrl}/menu/${menuId}/order-basket/${tableNumber}`
-                : `${baseUrl}/order-basket/${tableNumber}`;
-            navigate(path);
-        } else {
+        if (!restaurantId || !tableNumber || !menuId) {
+            console.error('Missing required IDs:', { restaurantId, tableNumber, menuId });
             toast.error(t('header.errors.missingRestaurantOrTable'));
+            return;
         }
+
+        // Ensure all IDs are valid
+        const parsedRestaurantId = parseInt(restaurantId, 10);
+        const parsedTableNumber = parseInt(tableNumber, 10);
+        const parsedMenuId = parseInt(menuId, 10);
+
+        if (isNaN(parsedRestaurantId) || isNaN(parsedTableNumber) || isNaN(parsedMenuId)) {
+            console.error('Invalid ID values:', {
+                restaurantId: parsedRestaurantId,
+                tableNumber: parsedTableNumber,
+                menuId: parsedMenuId
+            });
+            toast.error(t('header.errors.invalidIds'));
+            return;
+        }
+
+        navigate(`/restaurant/${parsedRestaurantId}/menu/${parsedMenuId}/order-basket/${parsedTableNumber}`);
     };
 
     const handleShowHelpModal = () => setShowHelpModal(true);

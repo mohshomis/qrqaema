@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { placeOrder, getRestaurantPublicDetails, getRestaurantMenus } from '../../services/api';
+import { placeOrder, getRestaurantPublicDetails, getRestaurantMenus, getTableId } from '../../services/api';
 import PropTypes from 'prop-types';
 import '../../styles/CustomerPages.css';
 import '../../styles/OrderBasketPage.css';
@@ -30,14 +30,47 @@ import {
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
-const OrderBasketPage = ({
+// Wrapper component to handle URL parameters
+const OrderBasketPageWrapper = ({
   basketItems,
   updateBasketItem,
   removeBasketItem,
   setBasketItems,
 }) => {
+  const params = useParams();
+  const parsedParams = {
+    restaurantId: params.restaurantId,
+    tableNumber: params.tableNumber,
+    menuId: params.menuId
+  };
+  
+  console.log('Raw URL Parameters:', params);
+  console.log('Parsed Parameters:', parsedParams);
+  
+  return (
+    <OrderBasketPage
+      {...{
+        basketItems,
+        updateBasketItem,
+        removeBasketItem,
+        setBasketItems,
+        ...parsedParams
+      }}
+    />
+  );
+};
+
+// Main component
+const OrderBasketPage = ({
+  basketItems,
+  updateBasketItem,
+  removeBasketItem,
+  setBasketItems,
+  restaurantId,
+  tableNumber,
+  menuId
+}) => {
   const { t, i18n } = useTranslation();
-  const { restaurantId, tableNumber, menuId } = useParams();
   const navigate = useNavigate();
   const [totalPrice, setTotalPrice] = useState(0);
   const [restaurantBackground, setRestaurantBackground] = useState('');
@@ -111,21 +144,73 @@ const OrderBasketPage = ({
         return;
       }
 
+      // Validate and parse required IDs
+      if (!restaurantId || !tableNumber || !menuId) {
+        console.error('Missing required IDs:', { restaurantId, tableNumber, menuId });
+        alert(t('orderBasketPage.errors.invalidRestaurantOrTable'));
+        return;
+      }
+
+      // Log the values we're working with
+      console.log('Preparing order with values:', {
+        restaurantId,
+        tableNumber,
+        menuId,
+        basketItemsCount: basketItems.length
+      });
+
+      // Map basket items to order_items format
+      const order_items = basketItems.map(item => {
+        console.log('Processing item:', item);
+        if (!item.id) {
+          throw new Error(`Invalid item ID for item: ${item.name}`);
+        }
+        
+        // Ensure all numeric fields are properly parsed
+        const mappedItem = {
+          menu_item: parseInt(item.id, 10),
+          quantity: parseInt(item.quantity, 10),
+          selected_options: Array.isArray(item.selected_options) ? item.selected_options : [],
+          special_request: item.special_request || ''
+        };
+
+        // Validate the mapped item
+        if (isNaN(mappedItem.menu_item) || isNaN(mappedItem.quantity)) {
+          throw new Error(`Invalid numeric values for item: ${item.name}`);
+        }
+
+        return mappedItem;
+      });
+
+      console.log('Mapped order items:', order_items);
+
+      // Get the table ID from the table number
+      const tableResponse = await getTableId(restaurantId, tableNumber);
+      if (!tableResponse) {
+        console.error('Could not find table:', { restaurantId, tableNumber });
+        alert(t('orderBasketPage.errors.tableNotFound'));
+        return;
+      }
+
+      // Parse the IDs for the payload
       const orderPayload = {
         restaurant: parseInt(restaurantId, 10),
-        table_number: parseInt(tableNumber, 10),
-        menu: menuId,
-        items: basketItems.map((item) => ({
-          menu_item: item.id,
-          quantity: item.quantity,
-          selected_options: item.selectedOptions
-            ? Object.values(item.selectedOptions).map((option) => option.id)
-            : [],
-          special_request: item.special_request || '',
-        })),
+        table: tableResponse,
+        menu: parseInt(menuId, 10),
+        order_items: order_items,
       };
 
+      // Validate the payload values
+      if (isNaN(orderPayload.restaurant) || !orderPayload.table || isNaN(orderPayload.menu)) {
+        console.error('Invalid payload values:', orderPayload);
+        alert(t('orderBasketPage.errors.invalidIds'));
+        return;
+      }
+
+      console.log('Sending order payload:', JSON.stringify(orderPayload, null, 2));
+
       const response = await placeOrder(orderPayload);
+      console.log('Order response:', response);
 
       if (response.status === 201) {
         setBasketItems([]);
@@ -136,11 +221,12 @@ const OrderBasketPage = ({
           : `${baseUrl}/order-success/${tableNumber}`;
         navigate(path);
       } else {
+        console.error('Unexpected response status:', response.status);
         alert(t('orderBasketPage.errors.orderFailed'));
       }
     } catch (error) {
-      console.error(t('orderBasketPage.errors.placeOrderError'), error);
-      alert(t('orderBasketPage.errors.placeOrderError'));
+      console.error('Error preparing order:', error);
+      alert(error.message || t('orderBasketPage.errors.placeOrderError'));
     }
   };
 
@@ -356,6 +442,26 @@ OrderBasketPage.propTypes = {
   updateBasketItem: PropTypes.func.isRequired,
   removeBasketItem: PropTypes.func.isRequired,
   setBasketItems: PropTypes.func.isRequired,
+  restaurantId: PropTypes.string.isRequired,
+  tableNumber: PropTypes.string.isRequired,
+  menuId: PropTypes.string.isRequired,
 };
 
-export default OrderBasketPage;
+OrderBasketPageWrapper.propTypes = {
+  basketItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      quantity: PropTypes.number.isRequired,
+      selectedOptions: PropTypes.object,
+      price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+      image: PropTypes.string,
+      menu: PropTypes.string, // Menu ID
+    })
+  ).isRequired,
+  updateBasketItem: PropTypes.func.isRequired,
+  removeBasketItem: PropTypes.func.isRequired,
+  setBasketItems: PropTypes.func.isRequired,
+};
+
+export default OrderBasketPageWrapper;

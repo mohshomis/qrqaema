@@ -97,15 +97,19 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
         selectedOptions: {},
         price: calculatedPrice,
         image: menuItem.image_url,
-        menu: menuId
+        menu: menuId ? parseInt(menuId, 10) : null
       };
 
+      // Convert selected options to array format for backend
+      const selectedOptionsArray = [];
       Object.keys(selectedOptions).forEach(optionId => {
         const selectedChoiceId = selectedOptions[optionId];
         const option = menuItem.options.find(opt => opt.id === Number(optionId));
         if (option) {
           const choice = option.choices.find(choice => choice.id === selectedChoiceId);
           if (choice) {
+            selectedOptionsArray.push(choice.id);
+            // Also store display info for the basket
             basketItem.selectedOptions[option.name] = {
               id: choice.id,
               name: choice.name,
@@ -114,15 +118,29 @@ const CustomerMenuItemPage = ({ addToBasket }) => {
           }
         }
       });
+      basketItem.selected_options = selectedOptionsArray;
 
       setAnimateBasket(true);
       setTimeout(() => {
         addToBasket(basketItem);
-        const baseUrl = `/restaurant/${restaurantId}`;
-        const path = menuId 
-          ? `${baseUrl}/menu/${menuId}/table/${tableNumber}`
-          : `${baseUrl}/table/${tableNumber}`;
-        navigate(path);
+        // Log navigation params
+        console.log('Navigation params:', {
+          restaurantId: restaurantId,
+          menuId: menuId,
+          tableNumber: tableNumber,
+          type: {
+            restaurantId: typeof restaurantId,
+            menuId: typeof menuId,
+            tableNumber: typeof tableNumber
+          }
+        });
+        
+        // Ensure all params are properly parsed before navigation
+        const parsedRestaurantId = restaurantId.toString();
+        const parsedMenuId = menuId.toString();
+        const parsedTableNumber = tableNumber.toString();
+        
+        navigate(`/restaurant/${parsedRestaurantId}/menu/${parsedMenuId}/order-basket/${parsedTableNumber}`);
         setAnimateBasket(false);
       }, 1000);
     }

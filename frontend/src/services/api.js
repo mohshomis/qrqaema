@@ -132,14 +132,76 @@ export const deleteOrder = (orderId) => {
     return axiosInstance.delete(`orders/${orderId}/`);
 };
 
+// Get Table ID from table number
+export const getTableId = async (restaurantId, tableNumber) => {
+    try {
+        console.log('Fetching table ID for:', { restaurantId, tableNumber });
+        const response = await axiosInstance.get(`restaurants/${restaurantId}/tables/`, {
+            params: { table_number: tableNumber },
+            headers: {} // Public endpoint
+        });
+        console.log('Tables response:', response.data);
+        const parsedTableNumber = parseInt(tableNumber, 10);
+        const table = response.data.find(t => t.number === parsedTableNumber);
+        console.log('Found table:', table);
+        return table ? table.id : null;
+    } catch (error) {
+        console.error('Error fetching table ID:', error);
+        throw error;
+    }
+};
+
 // Place an Order
 export const placeOrder = async (data) => {
     try {
-        console.log(data);
-        const response = await axiosInstance.post('orders/', data);
+        console.log('Placing order with data:', JSON.stringify(data, null, 2));
+        
+        // Validate required fields
+        if (!data.restaurant || !data.table || !data.menu) {
+            console.error('Missing required fields:', { 
+                restaurant: data.restaurant, 
+                table: data.table, 
+                menu: data.menu 
+            });
+            throw new Error('Missing required fields');
+        }
+
+        // Validate order items
+        if (!data.order_items || !data.order_items.length) {
+            console.error('No order items provided');
+            throw new Error('Order items are required');
+        }
+
+        // Validate each order item
+        data.order_items.forEach((item, index) => {
+            console.log(`Validating item ${index}:`, item);
+            if (!item.menu_item || !item.quantity) {
+                console.error(`Invalid item at index ${index}:`, item);
+                throw new Error(`Invalid item data at index ${index}`);
+            }
+        });
+
+        const response = await axiosInstance.post('orders/', data, {
+            headers: {
+                'Content-Type': 'application/json',
+                // Public endpoint
+            }
+        });
+        
+        console.log('Order placed successfully:', response.data);
         return response;
     } catch (error) {
-        throw error.response;
+        console.error('Error placing order:', error);
+        console.error('Error details:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status
+        });
+        
+        if (error.response?.data) {
+            throw error.response;
+        }
+        throw error;
     }
 };
 
