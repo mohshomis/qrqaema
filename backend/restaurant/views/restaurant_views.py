@@ -36,6 +36,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
                 'name': restaurant.name,
                 'logo_url': logo_url,
                 'background_image_url': background_image_url,
+                'currency': restaurant.currency,
             }
             return Response(public_data, status=status.HTTP_200_OK)
         except Restaurant.DoesNotExist:

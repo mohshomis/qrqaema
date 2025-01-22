@@ -86,7 +86,47 @@ class Restaurant(models.Model):
     country = models.CharField(max_length=100, null=True)
     city = models.CharField(max_length=100, null=True)
     postal_code = models.CharField(max_length=20, null=True)
-    currency = models.CharField(max_length=10, default='EUR')  # ISO currency code
+    CURRENCY_CHOICES = [
+        # Major Global Currencies
+        ('USD', 'US Dollar ($)'),
+        ('EUR', 'Euro (€)'),
+        ('GBP', 'British Pound (£)'),
+        ('JPY', 'Japanese Yen (¥)'),
+        ('CNY', 'Chinese Yuan (¥)'),
+        ('CHF', 'Swiss Franc (Fr)'),
+        ('CAD', 'Canadian Dollar (C$)'),
+        ('AUD', 'Australian Dollar (A$)'),
+        
+        # Middle Eastern & Arabic Currencies
+        ('SAR', 'Saudi Riyal (ر.س)'),
+        ('AED', 'UAE Dirham (د.إ)'),
+        ('QAR', 'Qatari Riyal (ر.ق)'),
+        ('KWD', 'Kuwaiti Dinar (د.ك)'),
+        ('BHD', 'Bahraini Dinar (د.ب)'),
+        ('OMR', 'Omani Rial (ر.ع)'),
+        ('EGP', 'Egyptian Pound (ج.م)'),
+        ('JOD', 'Jordanian Dinar (د.ا)'),
+        ('LBP', 'Lebanese Pound (ل.ل)'),
+        ('IQD', 'Iraqi Dinar (ع.د)'),
+        
+        # Other Regional Currencies
+        ('TRY', 'Turkish Lira (₺)'),
+        ('INR', 'Indian Rupee (₹)'),
+        ('PKR', 'Pakistani Rupee (₨)'),
+        ('RUB', 'Russian Ruble (₽)'),
+        ('SGD', 'Singapore Dollar (S$)'),
+        ('HKD', 'Hong Kong Dollar (HK$)'),
+        ('MYR', 'Malaysian Ringgit (RM)'),
+        ('IDR', 'Indonesian Rupiah (Rp)'),
+        ('THB', 'Thai Baht (฿)'),
+        ('KRW', 'South Korean Won (₩)')
+    ]
+    currency = models.CharField(
+        max_length=10,
+        choices=CURRENCY_CHOICES,
+        default='EUR',
+        help_text='Select the currency for menu prices'
+    )
     number_of_employees = models.IntegerField(default=1)
     profile_completed = models.BooleanField(default=False)  # Track profile completion status
     facebook = models.URLField(blank=True, null=True)
