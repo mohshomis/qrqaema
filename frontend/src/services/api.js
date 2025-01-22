@@ -23,6 +23,13 @@ export const login = async (credentials) => {
         const response = await axiosInstance.post('token/', credentials);
         localStorage.setItem('token', response.data.access);
         localStorage.setItem('refreshToken', response.data.refresh);
+        
+        // Decode the JWT token to get the restaurant ID
+        const tokenPayload = JSON.parse(atob(response.data.access.split('.')[1]));
+        if (tokenPayload.restaurant_id) {
+            localStorage.setItem('restaurantId', tokenPayload.restaurant_id);
+        }
+        
         return response;
     } catch (error) {
         throw error.response;
@@ -33,6 +40,7 @@ export const login = async (credentials) => {
 export const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('restaurantId');
     window.location.href = '/login';
 };
 
@@ -51,10 +59,17 @@ const refreshToken = async () => {
             localStorage.setItem('refreshToken', response.data.refresh);
         }
 
+        // Update restaurant ID from new token
+        const tokenPayload = JSON.parse(atob(response.data.access.split('.')[1]));
+        if (tokenPayload.restaurant_id) {
+            localStorage.setItem('restaurantId', tokenPayload.restaurant_id);
+        }
+
         return response.data.access;
     } catch (error) {
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('restaurantId');
         window.location.href = '/login';
         throw error;
     }
