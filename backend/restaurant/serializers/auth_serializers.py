@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode
-from django.core.mail import send_mail
+from django.core.mail import send_mail, get_connection
 from django.conf import settings
 from textwrap import dedent
 from django.db import transaction
@@ -11,6 +11,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from authentication.tokens import account_activation_token
 from ..models import Restaurant
 from .restaurant_serializers import RestaurantSerializer
+from time import sleep
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,24 +19,22 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'password', 'email']
         extra_kwargs = {'password': {'write_only': True}}
 
-    def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("This username is already taken.")
-        return value
-
-    def validate_email(self, value):
-        if value and User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("This email is already registered.")
-        return value
-
     def create(self, validated_data):
-        user = User(
-            username=validated_data['username'],
-            email=validated_data.get('email')
-        )
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
+        with transaction.atomic():
+            # Lock the rows to prevent race conditions
+            if User.objects.select_for_update().filter(username=validated_data['username']).exists():
+                raise serializers.ValidationError("This username is already taken.")
+            
+            if validated_data.get('email') and User.objects.select_for_update().filter(email=validated_data['email']).exists():
+                raise serializers.ValidationError("This email is already registered.")
+
+            user = User(
+                username=validated_data['username'],
+                email=validated_data.get('email')
+            )
+            user.set_password(validated_data['password'])
+            user.save()
+            return user
 
 class PasswordResetSerializer(serializers.Serializer):
     email = serializers.EmailField()
@@ -146,83 +145,8 @@ class RegistrationSerializer(serializers.Serializer):
         )
         print("RegistrationSerializer initialized with context:", self.context)
 
-    def create(self, validated_data):
-        print("\n=== Starting RegistrationSerializer Create ===")
-        if 'request' not in self.context:
-            print("Error: 'request' missing from context")
-            raise KeyError("'request' is missing from serializer context.")
-
-        with transaction.atomic():
-            print("Starting transaction")
-            
-            # User Creation
-            print("Extracting user data")
-            user_data = validated_data.pop('user')
-            print("User data:", user_data)
-            
-            try:
-                print("Creating user")
-                user = User.objects.create_user(
-                    username=user_data['username'],
-                    email=user_data.get('email'),
-                    password=user_data['password'],
-                    is_active=False
-                )
-                print("User created successfully:", user.username)
-            except Exception as user_creation_error:
-                print("Error creating user:", str(user_creation_error))
-                print("Error type:", type(user_creation_error).__name__)
-                import traceback
-                print("Traceback:", traceback.format_exc())
-                raise serializers.ValidationError({'user': str(user_creation_error)})
-
-            # Restaurant Creation
-            print("Extracting restaurant data")
-            restaurant_data = validated_data.pop('restaurant')
-            print("Restaurant data:", restaurant_data)
-            
-            try:
-                print("Initializing restaurant JSON fields")
-                restaurant_data.setdefault('payment_methods', [])
-                restaurant_data.setdefault('tags', [])
-                restaurant_data.setdefault('address', '')
-                restaurant_data.setdefault('phone_number', '')
-                restaurant_data.setdefault('country', '')
-                restaurant_data.setdefault('city', '')
-                
-                print("Creating restaurant")
-                restaurant = Restaurant.objects.create(
-                    owner=user,
-                    **restaurant_data
-                )
-                print("Restaurant created successfully:", restaurant.name)
-            except Exception as restaurant_creation_error:
-                print("Error creating restaurant:", str(restaurant_creation_error))
-                print("Error type:", type(restaurant_creation_error).__name__)
-                import traceback
-                print("Traceback:", traceback.format_exc())
-                raise serializers.ValidationError({'restaurant': str(restaurant_creation_error)})
-
-            # Sending Activation Email
-            try:
-                print("Sending activation email")
-                self.send_activation_email(user, self.context['request'])
-                print("Activation email sent successfully")
-            except Exception as email_error:
-                print("Error sending activation email:", str(email_error))
-                print("Error type:", type(email_error).__name__)
-                import traceback
-                print("Traceback:", traceback.format_exc())
-                # Log the error but don't raise it - allow registration to complete
-                print("Continuing with registration despite email error")
-
-            print("Registration completed successfully")
-            return {
-                'user': user,
-                'restaurant': restaurant,
-            }
-
-    def send_activation_email(self, user, request):
+    def send_activation_email_with_retry(self, user, request, max_retries=3):
+        """Send activation email with retry mechanism"""
         token = account_activation_token.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         frontend_activation_link = f"{settings.FRONTEND_URL}/activate/{uid}/{token}/"
@@ -250,4 +174,104 @@ class RegistrationSerializer(serializers.Serializer):
 
             This email was sent to {user.email}. If this wasn't you, please let us know.
         """)
-        send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
+
+        last_error = None
+        for attempt in range(max_retries):
+            try:
+                # Get a new connection for each attempt
+                connection = get_connection(fail_silently=False)
+                
+                # Try to send email
+                send_mail(
+                    subject,
+                    message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email],
+                    connection=connection
+                )
+                print(f"Email sent successfully on attempt {attempt + 1}")
+                return True
+            except Exception as e:
+                last_error = e
+                print(f"Email sending failed on attempt {attempt + 1}: {str(e)}")
+                if attempt < max_retries - 1:
+                    # Exponential backoff: 1s, 2s, 4s
+                    sleep_time = 2 ** attempt
+                    print(f"Waiting {sleep_time} seconds before retry...")
+                    sleep(sleep_time)
+                    continue
+        
+        # If we get here, all retries failed
+        print("All email sending attempts failed")
+        raise serializers.ValidationError({
+            'email': f'Failed to send activation email after {max_retries} attempts. Please try registering again or contact support.'
+        })
+
+    def create(self, validated_data):
+        print("\n=== Starting RegistrationSerializer Create ===")
+        if 'request' not in self.context:
+            print("Error: 'request' missing from context")
+            raise KeyError("'request' is missing from serializer context.")
+
+        with transaction.atomic():
+            print("Starting transaction")
+            
+            # User Creation
+            print("Extracting user data")
+            user_data = validated_data.pop('user')
+            print("User data:", user_data)
+            
+            # Check for existing user/email with row locking
+            if User.objects.select_for_update().filter(username=user_data['username']).exists():
+                raise serializers.ValidationError({'user': 'This username is already taken.'})
+            
+            if user_data.get('email') and User.objects.select_for_update().filter(email=user_data['email']).exists():
+                raise serializers.ValidationError({'user': 'This email is already registered.'})
+
+            try:
+                print("Creating user")
+                user = User.objects.create_user(
+                    username=user_data['username'],
+                    email=user_data.get('email'),
+                    password=user_data['password'],
+                    is_active=False
+                )
+                print("User created successfully:", user.username)
+
+                # Restaurant Creation
+                print("Extracting restaurant data")
+                restaurant_data = validated_data.pop('restaurant')
+                print("Restaurant data:", restaurant_data)
+                
+                print("Initializing restaurant JSON fields")
+                restaurant_data.setdefault('payment_methods', [])
+                restaurant_data.setdefault('tags', [])
+                restaurant_data.setdefault('address', '')
+                restaurant_data.setdefault('phone_number', '')
+                restaurant_data.setdefault('country', '')
+                restaurant_data.setdefault('city', '')
+                
+                print("Creating restaurant")
+                restaurant = Restaurant.objects.create(
+                    owner=user,
+                    **restaurant_data
+                )
+                print("Restaurant created successfully:", restaurant.name)
+
+                # Sending Activation Email (now part of transaction)
+                print("Sending activation email")
+                self.send_activation_email_with_retry(user, self.context['request'])
+                print("Activation email sent successfully")
+
+                print("Registration completed successfully")
+                return {
+                    'user': user,
+                    'restaurant': restaurant,
+                }
+
+            except Exception as creation_error:
+                print("Error during creation:", str(creation_error))
+                print("Error type:", type(creation_error).__name__)
+                import traceback
+                print("Traceback:", traceback.format_exc())
+                raise serializers.ValidationError({'error': str(creation_error)})

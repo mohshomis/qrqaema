@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import debounce from 'lodash/debounce';
 import { useNavigate } from 'react-router-dom';
 import { registerUserAndRestaurant } from '../../services/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,6 +18,7 @@ const RegisterPage = () => {
     });
     const [errors, setErrors] = useState({});
     const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -63,6 +65,76 @@ const RegisterPage = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    // Debounce the registration API call
+    const debouncedRegister = useCallback(
+        debounce(async (registrationData) => {
+            try {
+                await registerUserAndRestaurant(registrationData);
+                setShowSuccessModal(true);
+            } catch (err) {
+                console.error('Registration error:', err);
+                const errorData = err.error || err.response?.data || err;
+                console.log('Error data:', errorData);
+
+                const newErrors = {};
+                
+                // Handle user-related errors
+                if (errorData?.user) {
+                    if (typeof errorData.user === 'string') {
+                        newErrors.api = errorData.user;
+                    } else {
+                        if (errorData.user.username) {
+                            newErrors.username = Array.isArray(errorData.user.username) 
+                                ? errorData.user.username[0] 
+                                : errorData.user.username;
+                        }
+                        if (errorData.user.email) {
+                            newErrors.email = Array.isArray(errorData.user.email) 
+                                ? errorData.user.email[0] 
+                                : errorData.user.email;
+                        }
+                        if (errorData.user.password) {
+                            newErrors.password = Array.isArray(errorData.user.password) 
+                                ? errorData.user.password[0] 
+                                : errorData.user.password;
+                        }
+                    }
+                }
+
+                // Handle restaurant-related errors
+                if (errorData?.restaurant) {
+                    if (typeof errorData.restaurant === 'string') {
+                        newErrors.restaurantName = errorData.restaurant;
+                    } else if (errorData.restaurant.name) {
+                        newErrors.restaurantName = Array.isArray(errorData.restaurant.name) 
+                            ? errorData.restaurant.name[0] 
+                            : errorData.restaurant.name;
+                    }
+                }
+
+                // Handle direct email errors
+                if (errorData?.email) {
+                    newErrors.email = Array.isArray(errorData.email) 
+                        ? errorData.email[0] 
+                        : errorData.email;
+                }
+
+                // If no specific errors were found, set a generic error
+                if (Object.keys(newErrors).length === 0) {
+                    newErrors.api = typeof errorData === 'string' 
+                        ? errorData 
+                        : t('register.errors.unexpectedError');
+                }
+
+                console.log('Setting errors:', newErrors);
+                setErrors(prev => ({ ...prev, ...newErrors }));
+            } finally {
+                setIsSubmitting(false);
+            }
+        }, 500),
+        [t]
+    );
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
@@ -78,67 +150,12 @@ const RegisterPage = () => {
             }
         };
 
-        try {
-            await registerUserAndRestaurant(registrationData);
-            setShowSuccessModal(true);
-        } catch (err) {
-            console.error('Registration error:', err);
-            const errorData = err.error || err.response?.data || err;
-            console.log('Error data:', errorData);
-
-            const newErrors = {};
-            
-            // Handle user-related errors
-            if (errorData?.user) {
-                if (typeof errorData.user === 'string') {
-                    newErrors.api = errorData.user;
-                } else {
-                    if (errorData.user.username) {
-                        newErrors.username = Array.isArray(errorData.user.username) 
-                            ? errorData.user.username[0] 
-                            : errorData.user.username;
-                    }
-                    if (errorData.user.email) {
-                        newErrors.email = Array.isArray(errorData.user.email) 
-                            ? errorData.user.email[0] 
-                            : errorData.user.email;
-                    }
-                    if (errorData.user.password) {
-                        newErrors.password = Array.isArray(errorData.user.password) 
-                            ? errorData.user.password[0] 
-                            : errorData.user.password;
-                    }
-                }
-            }
-
-            // Handle restaurant-related errors
-            if (errorData?.restaurant) {
-                if (typeof errorData.restaurant === 'string') {
-                    newErrors.restaurantName = errorData.restaurant;
-                } else if (errorData.restaurant.name) {
-                    newErrors.restaurantName = Array.isArray(errorData.restaurant.name) 
-                        ? errorData.restaurant.name[0] 
-                        : errorData.restaurant.name;
-                }
-            }
-
-            // Handle direct email errors
-            if (errorData?.email) {
-                newErrors.email = Array.isArray(errorData.email) 
-                    ? errorData.email[0] 
-                    : errorData.email;
-            }
-
-            // If no specific errors were found, set a generic error
-            if (Object.keys(newErrors).length === 0) {
-                newErrors.api = typeof errorData === 'string' 
-                    ? errorData 
-                    : t('register.errors.unexpectedError');
-            }
-
-            console.log('Setting errors:', newErrors);
-            setErrors(prev => ({ ...prev, ...newErrors }));
+        if (isSubmitting) {
+            return;
         }
+
+        setIsSubmitting(true);
+        debouncedRegister(registrationData);
     };
 
     const handleCloseSuccessModal = () => {
@@ -228,8 +245,12 @@ const RegisterPage = () => {
                     {errors.api && <p className="text-danger text-center">{errors.api}</p>}
 
                     <div className="d-grid gap-2">
-                        <button type="submit" className="btn btn-primary">
-                            {t('register.buttons.register')}
+                        <button 
+                            type="submit" 
+                            className="btn btn-primary"
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? t('register.buttons.registering') : t('register.buttons.register')}
                         </button>
                     </div>
                 </form>
