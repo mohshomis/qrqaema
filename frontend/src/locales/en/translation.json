@@ -452,7 +452,11 @@
     },
     "success": {
       "message": "Account and restaurant created successfully! Please check your email to activate your account.",
-      "redirect": "You will be redirected to the login page shortly..."
+      "redirect": "You will be redirected to the login page shortly...",
+      "title": "Registration Successful",
+      "activationEmail": "An activation email has been sent to your email address.",
+      "completeProfile": "Please check your email and click the activation link to complete your registration.",
+      "ok": "OK"
     },
     "errors": {
       "passwordsDoNotMatch": "Passwords do not match.",

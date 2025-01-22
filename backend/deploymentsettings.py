@@ -25,10 +25,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-q015y3czon%-uwn9r6xtq%%&26lh8+_1fb6ea5=3k3z$u#_owq'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-
-
-
+# Email Settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.privateemail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'info@qrqaema.com'
+EMAIL_HOST_PASSWORD = 'Aa0685403314_'
+DEFAULT_FROM_EMAIL = 'QR Qaema <info@qrqaema.com>'
+SUPPORT_EMAIL = 'info@qrqaema.com'
 
 # Application definition
 
@@ -56,7 +61,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',  
-
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -149,7 +153,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOWED_ORIGINS = [
     'https://restaurant-order-system-5047963048eb.herokuapp.com',
-    'http://localhost:3000',  # For local development
+    'https://www.qrqaema.com',
+    'https://qrqaema.com',
+    'http://localhost:3000'  # For local development
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -186,17 +192,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Define the base URL for your frontend
-FRONTEND_URL = 'restaurant-order-system-a38af740ae3a.herokuapp.com/'  # Update this with your actual frontend URL
+FRONTEND_URL = 'https://www.qrqaema.com'
 
 
 # Only in production
 DEBUG = False
-
-# # Configure secure headers
-# SECURE_SSL_REDIRECT = True
-# CSRF_COOKIE_SECURE = True
-# SESSION_COOKIE_SECURE = True
-
 
 # Static files configuration
 STATIC_URL = '/static/'
@@ -212,6 +212,8 @@ ALLOWED_HOSTS = [
     'restaurant-order-system-5047963048eb.herokuapp.com',
     'restaurant-order-system-a38af740ae3a.herokuapp.com',
     'restaurant-order-system.herokuapp.com',
+    'www.qrqaema.com',
+    'qrqaema.com',
     'localhost',
     '127.0.0.1'
 ]

@@ -239,6 +239,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 FRONTEND_URL = 'http://localhost:3000'  # Update this with your actual frontend URL
 
 # Email Settings
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
-DEFAULT_FROM_EMAIL = 'noreply@qrqaema.com'
-SUPPORT_EMAIL = 'support@qrqaema.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.privateemail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'info@qrqaema.com'
+EMAIL_HOST_PASSWORD = 'Aa0685403314_'
+DEFAULT_FROM_EMAIL = 'QR Qaema <info@qrqaema.com>'
+SUPPORT_EMAIL = 'info@qrqaema.com'

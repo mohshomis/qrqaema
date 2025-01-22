@@ -447,7 +447,11 @@
     },
     "success": {
       "message": "Account en restaurant succesvol aangemaakt! Controleer uw e-mail om uw account te activeren.",
-      "redirect": "U wordt zo meteen doorgestuurd naar de inlogpagina..."
+      "redirect": "U wordt zo meteen doorgestuurd naar de inlogpagina...",
+      "title": "Registratie Succesvol",
+      "activationEmail": "Er is een activatie-e-mail verzonden naar uw e-mailadres.",
+      "completeProfile": "Controleer uw e-mail en klik op de activatielink om uw registratie te voltooien.",
+      "ok": "OK"
     },
     "errors": {
       "passwordsDoNotMatch": "Wachtwoorden komen niet overeen.",

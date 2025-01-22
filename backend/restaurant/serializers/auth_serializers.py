@@ -18,6 +18,16 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username', 'password', 'email']
         extra_kwargs = {'password': {'write_only': True}}
 
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("This username is already taken.")
+        return value
+
+    def validate_email(self, value):
+        if value and User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email is already registered.")
+        return value
+
     def create(self, validated_data):
         user = User(
             username=validated_data['username'],
@@ -43,7 +53,7 @@ class PasswordResetSerializer(serializers.Serializer):
             user = User.objects.get(email=email)
             token = PasswordResetTokenGenerator().make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            frontend_reset_path = f"password-reset-confirm/{uid}/{token}/"
+            frontend_reset_path = f"/password-reset-confirm/{uid}/{token}/"
             reset_link = f"{settings.FRONTEND_URL}{frontend_reset_path}"
 
             subject = 'Password Reset Request - QrQaema'
@@ -203,7 +213,8 @@ class RegistrationSerializer(serializers.Serializer):
                 print("Error type:", type(email_error).__name__)
                 import traceback
                 print("Traceback:", traceback.format_exc())
-                raise serializers.ValidationError({'email': str(email_error)})
+                # Log the error but don't raise it - allow registration to complete
+                print("Continuing with registration despite email error")
 
             print("Registration completed successfully")
             return {
@@ -214,7 +225,7 @@ class RegistrationSerializer(serializers.Serializer):
     def send_activation_email(self, user, request):
         token = account_activation_token.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        frontend_activation_link = f"{settings.FRONTEND_URL}activate/{uid}/{token}/"
+        frontend_activation_link = f"{settings.FRONTEND_URL}/activate/{uid}/{token}/"
 
         subject = 'Activate Your QrQaema Account'
         message = dedent(f"""
@@ -228,7 +239,7 @@ class RegistrationSerializer(serializers.Serializer):
             
             If you didn't sign up for this account, feel free to ignore this email.
 
-            If you have any questions, reach out to us at {settings.SUPPORT_EMAIL}.
+            If you have any questions, reach out to us at {getattr(settings, 'SUPPORT_EMAIL', 'support@qrqaema.com')}.
 
             Thanks for joining QrQaema!
 

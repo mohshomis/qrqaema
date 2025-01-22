@@ -83,7 +83,7 @@ const RegisterPage = () => {
             setShowSuccessModal(true);
         } catch (err) {
             console.error('Registration error:', err);
-            const errorData = err.error || err.response?.data;
+            const errorData = err.error || err.response?.data || err;
             console.log('Error data:', errorData);
 
             const newErrors = {};
@@ -94,13 +94,19 @@ const RegisterPage = () => {
                     newErrors.api = errorData.user;
                 } else {
                     if (errorData.user.username) {
-                        newErrors.username = errorData.user.username;
+                        newErrors.username = Array.isArray(errorData.user.username) 
+                            ? errorData.user.username[0] 
+                            : errorData.user.username;
                     }
                     if (errorData.user.email) {
-                        newErrors.email = errorData.user.email;
+                        newErrors.email = Array.isArray(errorData.user.email) 
+                            ? errorData.user.email[0] 
+                            : errorData.user.email;
                     }
                     if (errorData.user.password) {
-                        newErrors.password = errorData.user.password;
+                        newErrors.password = Array.isArray(errorData.user.password) 
+                            ? errorData.user.password[0] 
+                            : errorData.user.password;
                     }
                 }
             }
@@ -110,18 +116,24 @@ const RegisterPage = () => {
                 if (typeof errorData.restaurant === 'string') {
                     newErrors.restaurantName = errorData.restaurant;
                 } else if (errorData.restaurant.name) {
-                    newErrors.restaurantName = errorData.restaurant.name;
+                    newErrors.restaurantName = Array.isArray(errorData.restaurant.name) 
+                        ? errorData.restaurant.name[0] 
+                        : errorData.restaurant.name;
                 }
             }
 
-            // Handle email-related errors
+            // Handle direct email errors
             if (errorData?.email) {
-                newErrors.email = errorData.email;
+                newErrors.email = Array.isArray(errorData.email) 
+                    ? errorData.email[0] 
+                    : errorData.email;
             }
 
             // If no specific errors were found, set a generic error
             if (Object.keys(newErrors).length === 0) {
-                newErrors.api = t('register.errors.unexpectedError');
+                newErrors.api = typeof errorData === 'string' 
+                    ? errorData 
+                    : t('register.errors.unexpectedError');
             }
 
             console.log('Setting errors:', newErrors);

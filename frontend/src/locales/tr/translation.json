@@ -447,7 +447,11 @@
     },
     "success": {
       "message": "Hesap ve restoran başarıyla oluşturuldu! Lütfen hesabınızı etkinleştirmek için e-postanızı kontrol edin.",
-      "redirect": "Kısa süre içinde giriş sayfasına yönlendirileceksiniz..."
+      "redirect": "Kısa süre içinde giriş sayfasına yönlendirileceksiniz...",
+      "title": "Kayıt Başarılı",
+      "activationEmail": "Aktivasyon e-postası adresinize gönderildi.",
+      "completeProfile": "Lütfen e-postanızı kontrol edin ve kaydınızı tamamlamak için aktivasyon bağlantısına tıklayın.",
+      "ok": "Tamam"
     },
     "errors": {
       "passwordsDoNotMatch": "Şifreler eşleşmiyor.",
