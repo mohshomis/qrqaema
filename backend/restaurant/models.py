@@ -77,17 +77,18 @@ class Restaurant(models.Model):
         blank=True
     )
     name = models.CharField(max_length=255)
-    address = models.TextField(blank=True, null=True)
-    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    address = models.TextField(null=True)  # Required after activation
+    phone_number = models.CharField(max_length=15, null=True)  # Required after activation
     logo = models.ImageField(upload_to=get_restaurant_logo_path, blank=True, null=True)
     background_image = models.ImageField(upload_to=get_restaurant_background_path, blank=True, null=True)
     
-    # New fields
-    country = models.CharField(max_length=100, blank=True, null=True)
-    city = models.CharField(max_length=100, blank=True, null=True)
-    postal_code = models.CharField(max_length=20, blank=True, null=True)
+    # Required fields after activation
+    country = models.CharField(max_length=100, null=True)
+    city = models.CharField(max_length=100, null=True)
+    postal_code = models.CharField(max_length=20, null=True)
     currency = models.CharField(max_length=10, default='EUR')  # ISO currency code
     number_of_employees = models.IntegerField(default=1)
+    profile_completed = models.BooleanField(default=False)  # Track profile completion status
     facebook = models.URLField(blank=True, null=True)
     instagram = models.URLField(blank=True, null=True)
     payment_methods = models.JSONField(default=list,blank=True, null=True)  # e.g., ['Cash', 'Credit Card', 'Mobile Payments']

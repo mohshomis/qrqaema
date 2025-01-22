@@ -789,5 +789,34 @@
     "orderReceived": "Your order has been received!",
     "orderWaiting": "Your order is in the queue.",
     "orderCancelled": "Your order has been cancelled."
+  },
+  "profileCompletion": {
+    "title": "Complete Your Restaurant Profile",
+    "description": "Please complete your profile to continue using the system",
+    "form": {
+      "address": "Address",
+      "addressPlaceholder": "Enter your restaurant's address",
+      "phoneNumber": "Phone Number",
+      "phoneNumberPlaceholder": "Enter your restaurant's phone number",
+      "country": "Country",
+      "countryPlaceholder": "Select your country",
+      "city": "City",
+      "cityPlaceholder": "Enter your city",
+      "postalCode": "Postal Code",
+      "postalCodePlaceholder": "Enter postal code",
+      "currency": "Currency",
+      "currencyPlaceholder": "Select currency",
+      "employees": "Number of Employees",
+      "employeesPlaceholder": "Enter number of employees"
+    },
+    "submit": "Complete Profile",
+    "submitting": "Submitting...",
+    "errors": {
+      "required": "This field is required",
+      "invalidPhone": "Invalid phone number format",
+      "invalidPostalCode": "Invalid postal code format"
+    },
+    "success": "Profile completed successfully",
+    "error": "Error completing profile"
   }
 }

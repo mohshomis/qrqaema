@@ -32,7 +32,8 @@ import MenuItemEditPage from './pages/restaurant-owner/MenuItemEditPage';
 import PasswordResetRequestPage from './pages/shared/PasswordResetRequestPage'; // New Import
 import PasswordResetConfirmPage from './pages/shared/PasswordResetConfirmPage'; // New Import
 import ActivateAccountPage from './pages/shared/ActivateAccountPage'; // New Import
-import UsernameRecoveryPage from './pages/shared/UsernameRecoveryPage'; // New Import
+import UsernameRecoveryPage from './pages/shared/UsernameRecoveryPage';
+import ProfileCompletionPage from './pages/auth/ProfileCompletionPage';
 import { AuthProvider } from './AuthContext'; // Import AuthProvider
 import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute
 
@@ -216,6 +217,9 @@ const App = () => {
 
                     {/* Username Recovery Route */}
                     <Route path="/username-recovery" element={<UsernameRecoveryPage />} />
+
+                    {/* Profile Completion Route */}
+                    <Route path="/complete-profile" element={<ProfileCompletionPage />} />
 
                     {/* Authenticated Routes */}
                     <Route

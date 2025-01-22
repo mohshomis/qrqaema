@@ -109,6 +109,11 @@ urlpatterns = [
         RestaurantViewSet.as_view({'patch': 'update_profile'}),
         name='restaurant_update_profile'
     ),
+    path(
+        'restaurants/<uuid:pk>/complete-profile/',
+        RestaurantViewSet.as_view({'patch': 'complete_profile'}),
+        name='restaurant_complete_profile'
+    ),
 
     # Staff management endpoints using UUIDs
     path(

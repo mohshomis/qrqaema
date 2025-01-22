@@ -310,14 +310,6 @@ export const registerUserAndRestaurant = async (registrationData) => {
     }
 };
 
-// Complete restaurant profile after registration
-export const completeRestaurantProfile = (restaurantId, profileData) => {
-    return axiosInstance.patch(`restaurants/${restaurantId}/update-profile/`, profileData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    });
-};
 
 // Function to create a new user (Public endpoint)
 export const createUser = async (userData) => {
@@ -355,6 +347,15 @@ export const validateUserData = (userData) => {
 // Get Restaurant Profile
 export const getRestaurantProfile = (restaurantId) => {
     return axiosInstance.get(`restaurants/${restaurantId}/profile/`);
+};
+
+// Complete Restaurant Profile
+export const completeRestaurantProfile = (restaurantId, profileData) => {
+    return axiosInstance.patch(`restaurants/${restaurantId}/complete-profile/`, profileData, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
 };
 
 // Update Restaurant Profile using PATCH
