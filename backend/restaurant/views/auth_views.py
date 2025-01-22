@@ -65,7 +65,10 @@ class RegistrationView(APIView):
                     return Response({
                         'message': 'Registration successful. Please check your email to activate your account.',
                         'user': data['user'].username,
-                        'restaurant': data['restaurant'].name
+                        'restaurant': {
+                            'id': str(data['restaurant'].id),
+                            'name': data['restaurant'].name
+                        }
                     }, status=status.HTTP_201_CREATED)
                 except Exception as e:
                     print("Error during save operation:", str(e))
