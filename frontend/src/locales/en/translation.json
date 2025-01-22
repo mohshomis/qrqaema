@@ -1,4 +1,93 @@
 {
+  "seo": {
+    "title": "QR Qaema - Digital Menu System",
+    "description": "Transform your restaurant with digital menus and QR code ordering",
+    "keywords": "restaurant menu, qr code menu, digital menu, restaurant ordering",
+    "author": "QR Qaema",
+    "og": {
+      "title": "QR Qaema - Digital Menu System",
+      "description": "Transform your restaurant with digital menus",
+      "url": "https://qrqaema.com",
+      "type": "website",
+      "image": "https://qrqaema.com/images/og-image.jpg"
+    },
+    "twitter": {
+      "card": "summary_large_image",
+      "title": "QR Qaema - Digital Menu System",
+      "description": "Transform your restaurant with digital menus",
+      "image": "https://qrqaema.com/images/twitter-image.jpg"
+    }
+  },
+  "hero": {
+    "title": "Transform Your Restaurant Experience",
+    "subtitle": "Digital menus and QR code ordering made simple",
+    "discoverFeatures": "Discover Features",
+    "startNow": "Start Now"
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "step1": {
+      "title": "Create Your Menu",
+      "description": "Easily set up your digital menu with categories, items, and options"
+    },
+    "step2": {
+      "title": "Generate QR Codes",
+      "description": "Get unique QR codes for each table in your restaurant"
+    },
+    "step3": {
+      "title": "Start Taking Orders",
+      "description": "Customers scan, order, and pay - all through their phones"
+    }
+  },
+  "features": {
+    "title": "Features",
+    "feature1": {
+      "title": "Digital Menu Management",
+      "description": "Create and update your menu items instantly"
+    },
+    "feature2": {
+      "title": "QR Code Integration",
+      "description": "Unique QR codes for each table"
+    },
+    "feature3": {
+      "title": "Order Management",
+      "description": "Track and manage orders in real-time"
+    }
+  },
+  "pricing": {
+    "title": "Simple Pricing",
+    "subtitle": "One plan, all features included",
+    "plan": "Professional Plan",
+    "price": "$49/month",
+    "description": "Everything you need to digitize your restaurant",
+    "button": "Get Started",
+    "features": {
+      "feature1": "Unlimited Menu Items",
+      "feature2": "Real-time Order Management",
+      "feature3": "Custom QR Codes",
+      "feature4": "24/7 Support"
+    }
+  },
+  "testimonials": {
+    "title": "What Our Customers Say",
+    "testimonial1": "QR Qaema has transformed how we handle orders. Our customers love it!",
+    "user1": "John Smith, Restaurant Owner",
+    "testimonial2": "Easy to set up and even easier to use. Highly recommended!",
+    "user2": "Sarah Johnson, Café Manager",
+    "testimonial3": "The best digital menu system we've ever used.",
+    "user3": "Mike Brown, Bar Owner"
+  },
+  "cta": {
+    "title": "Ready to Transform Your Restaurant?",
+    "subtitle": "Join thousands of restaurants already using QR Qaema",
+    "button": "Get Started Now"
+  },
+  "footer": {
+    "rights": "All rights reserved",
+    "privacyPolicy": "Privacy Policy",
+    "termsAndConditions": "Terms & Conditions",
+    "poweredBy": "Powered by ShoTech Solutions"
+  },
   "manageEmployees": "Manage Employees",
   "manageMenu": "Manage Menu",
   "profile": "Profile",
@@ -37,6 +126,9 @@
   "errors": {
     "loadDataFailed": "Failed to load table data or QR codes",
     "fetchOrdersError": "Error fetching orders:",
+    "fetchHelpRequestsError": "Error fetching help requests",
+    "deleteHelpRequestError": "Error deleting help request",
+    "respondHelpRequestError": "Error responding to help request",
     "addTableError": "Failed to add table.",
     "removeTableError": "Failed to remove table.",
     "fetchCategories": "Failed to fetch categories.",
@@ -77,19 +169,39 @@
     "accountActivated": "Your account has been activated successfully!"
   },
   "loading": "Loading...",
-  "manageCategories": "Manage Categories",
-  "categoryName": "Category Name",
-  "enterCategoryNamePlaceholder": "Enter category name",
-  "categoryImage": "Category Image",
-  "newCategoryImagePreview": "New Category Image Preview",
-  "editCategoryImagePreview": "Edit Category Image Preview",
-  "addCategory": "Add Category",
-  "addingCategory": "Adding...",
-  "categoriesList": "Categories List",
-  "loadingCategories": "Loading categories...",
-  "noCategoriesAvailable": "No categories available.",
-  "edit": "Edit",
-  "delete": "Delete",
+  "categoryManagement": {
+    "title": "Manage Categories",
+    "addCategory": "Add Category",
+    "editCategory": "Edit Category",
+    "createCategory": "Create Category",
+    "update": "Update",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "noCategories": "No categories available",
+    "form": {
+      "name": "Category Name",
+      "image": "Category Image"
+    },
+    "deleteConfirm": {
+      "title": "Delete Category",
+      "message": "Are you sure you want to delete {{name}}?"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch categories",
+      "nameRequired": "Category name is required",
+      "createFailed": "Failed to create category",
+      "updateFailed": "Failed to update category",
+      "deleteFailed": "Failed to delete category",
+      "invalidCategory": "Invalid category"
+    },
+    "success": {
+      "created": "Category created successfully",
+      "updated": "Category updated successfully",
+      "deleted": "Category deleted successfully"
+    }
+  },
   "confirm": {
     "deleteCategory": "Are you sure you want to delete this category?",
     "deleteMenuItem": "Are you sure you want to delete this menu item?",
@@ -129,9 +241,73 @@
   "addBooleanOption": "Add Boolean Option",
   "createMenuItem": "Create Menu Item",
   "updatingMenuItem": "Updating...",
-  "menuItemManagement": "Menu Item Management",
-  "loadingMenuItems": "Loading menu items...",
-  "noMenuItemsAvailable": "No menu items available. Please add a new menu item.",
+  "menuManagement": {
+    "title": "Menu Management",
+    "addMenu": "Add Menu",
+    "editMenu": "Edit Menu",
+    "createMenu": "Create Menu",
+    "update": "Update",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "default": "Default",
+    "form": {
+      "language": "Language",
+      "selectLanguage": "Select Language",
+      "setDefault": "Set as Default Menu"
+    },
+    "deleteConfirm": {
+      "title": "Delete Menu",
+      "message": "Are you sure you want to delete {{name}}?"
+    },
+    "errors": {
+      "fetchFailed": "Failed to fetch menus",
+      "saveFailed": "Failed to save menu",
+      "deleteFailed": "Failed to delete menu",
+      "setDefaultFailed": "Failed to set default menu"
+    },
+    "success": {
+      "created": "Menu created successfully",
+      "updated": "Menu updated successfully",
+      "deleted": "Menu deleted successfully",
+      "defaultUpdated": "Default menu updated successfully"
+    }
+  },
+  "menuItemManagement": {
+    "title": "Menu Item Management",
+    "loadingItems": "Loading menu items...",
+    "noItemsAvailable": "No menu items available. Please add a new menu item.",
+    "backToCategories": "Back to Categories",
+    "addItem": "Add Item",
+    "edit": "Edit",
+    "delete": "Delete",
+    "createItem": "Create Menu Item",
+    "cancel": "Cancel",
+    "create": "Create",
+    "form": {
+      "name": "Name",
+      "description": "Description",
+      "price": "Price",
+      "image": "Image"
+    },
+    "deleteConfirm": {
+      "title": "Delete Menu Item",
+      "message": "Are you sure you want to delete {{name}}?"
+    },
+    "errors": {
+      "menuNotFound": "Menu not found",
+      "categoryNotFound": "Category not found",
+      "fetchFailed": "Failed to fetch menu items",
+      "createFailed": "Failed to create menu item",
+      "invalidItem": "Invalid menu item",
+      "deleteFailed": "Failed to delete menu item"
+    },
+    "success": {
+      "created": "Menu item created successfully",
+      "deleted": "Menu item deleted successfully"
+    }
+  },
   "backgroundImage": "Background Image",
   "backgroundImageAlt": "Background Image",
   "backgroundImagePreview": "Background Image Preview",
@@ -140,19 +316,36 @@
   "logoPreview": "Logo Preview",
   "updateRestaurantProfile": "Update Restaurant Profile",
   "loadingRestaurantProfile": "Loading restaurant profile...",
-  "staffManagement": "Staff Management",
-  "addNewStaff": "Add New Staff",
-  "addStaff": "Add Staff",
-  "remove": "Remove",
-  "addAnotherStaff": "Add Another Staff",
-  "passwordRequirements": "Password must be at least 8 characters.",
-  "username": "Username",
-  "enterUsername": "Enter username",
-  "actions": "Actions",
-  "loadingStaff": "Loading staff...",
-  "noStaff": "No staff members.",
-  "close": "Close",
-  "updatingStaff": "Updating...",
+  "staffManagement": {
+    "title": "Staff Management",
+    "addNewStaff": "Add New Staff",
+    "addStaff": "Add Staff",
+    "addingStaff": "Adding staff...",
+    "remove": "Remove",
+    "addAnotherStaff": "Add Another Staff",
+    "passwordRequirements": "Password must be at least 8 characters.",
+    "username": "Username",
+    "enterUsername": "Enter username",
+    "actions": "Actions",
+    "loadingStaff": "Loading staff...",
+    "noStaff": "No staff members.",
+    "close": "Close",
+    "updatingStaff": "Updating...",
+    "errors": {
+      "fetchStaff": "Failed to fetch staff members",
+      "fillRequiredFields": "Please fill in all required fields",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "addStaffFailed": "Failed to add staff member",
+      "removeStaffFailed": "Failed to remove staff member"
+    },
+    "success": {
+      "staffAdded": "Staff member added successfully",
+      "staffRemoved": "Staff member removed successfully"
+    },
+    "confirm": {
+      "removeStaff": "Are you sure you want to remove this staff member?"
+    }
+  },
   "password": "Password",
   "enterPassword": "Enter password",
   "activateAccount": "Activate Account",
@@ -205,6 +398,13 @@
   },
   "register": {
     "title": "Create a New Account",
+    "buttons": {
+      "next": "Next",
+      "previous": "Previous",
+      "finish": "Finish",
+      "updating": "Updating...",
+      "updateProfile": "Update Profile"
+    },
     "userForm": {
       "username": "Username",
       "email": "Email",
@@ -227,6 +427,12 @@
       "postalCode": "Postal Code",
       "currency": "Currency",
       "numberOfEmployees": "Number of Employees",
+      "logo": "Logo",
+      "logoAlt": "Restaurant Logo",
+      "logoPreview": "Logo Preview",
+      "backgroundImage": "Background Image",
+      "backgroundImageAlt": "Restaurant Background Image",
+      "backgroundImagePreview": "Background Image Preview",
       "placeholders": {
         "name": "Enter your restaurant's name",
         "address": "Enter the address",
@@ -275,6 +481,31 @@
     "sendButton": "Send Username",
     "errorSending": "An error occurred while sending the username."
   },
+  "header": {
+    "tableNumber": "Table",
+    "total": "Total",
+    "viewBasket": "View Basket",
+    "viewBasketAriaLabel": "View your order basket",
+    "requestHelp": "Request Help",
+    "requestHelpAriaLabel": "Request staff assistance",
+    "helpRequestSuccess": "Help request sent successfully",
+    "helpRequestFailed": "Failed to send help request: {{error}}",
+    "helpRequestError": "Error sending help request",
+    "helpModal": {
+      "title": "Request Help",
+      "descriptionLabel": "How can we help you?",
+      "descriptionPlaceholder": "Enter your request here (optional)",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "submitting": "Submitting..."
+    },
+    "errors": {
+      "missingRestaurantId": "Missing restaurant ID",
+      "invalidTableNumber": "Invalid table number",
+      "invalidMenuId": "Invalid menu ID",
+      "submitHelpRequest": "Error submitting help request"
+    }
+  },
   "navbar": {
     "brand": "Menu Management System",
     "home": "Home",
@@ -284,7 +515,13 @@
     "dashboard": "Go to Dashboard",
     "login": "Login",
     "register": "Register",
-    "language": "Language"
+    "language": "Language",
+    "languages": {
+      "english": "English",
+      "arabic": "العربية",
+      "turkish": "Türkçe",
+      "dutch": "Nederlands"
+    }
   },
   "categoryPage": {
     "title": "Menu for {{restaurantName}}",
@@ -292,6 +529,8 @@
     "price": "Price",
     "noItems": "No items available in this category.",
     "backButton": "Back",
+    "viewDetails": "View Details",
+    "itemCount": "{{count}} Items",
     "aria": {
       "backgroundImage": "Restaurant background image"
     },
@@ -303,9 +542,12 @@
   "customerMenuPage": {
     "items": "Items",
     "viewItems": "View Items",
-    "loading": "Loading...",
+    "loading": "Loading menu...",
     "error": "Error loading menu",
-    "noCategories": "No categories available"
+    "noCategories": "No categories available",
+    "errors": {
+      "fetchFailed": "Failed to load menu items or restaurant details"
+    }
   },
   "customerMenuItemPage": {
     "loading": "Loading...",
@@ -327,6 +569,7 @@
     "decreaseQuantity": "Decrease quantity",
     "increaseQuantity": "Increase quantity",
     "addToBasket": "Add to Basket",
+    "back": "Back",
     "alerts": {
       "minQuantity": "Please select at least one item."
     }
@@ -401,11 +644,15 @@
     "selectedOptions": "Selected Options",
     "selectedBooleans": "Selected Add-ons",
     "totalPrice": "Total Price",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "orderSummary": "Order Summary",
     "currency": "USD",
     "goBack": "Go Back",
     "placeOrder": "Place Order",
     "remove": "Remove",
     "removeItem": "Remove Item",
+    "table": "Table",
     "aria": {
       "backgroundImage": "Restaurant background image"
     },
@@ -417,7 +664,9 @@
       "placeOrderFailed": "Failed to place order.",
       "placeOrderError": "An error occurred while placing the order. Please try again.",
       "invalidRestaurantOrTable": "Invalid restaurant ID or table number.",
-      "noItemsSelected": "Please select at least one item to place an order."
+      "noItemsSelected": "Please select at least one item to place an order.",
+      "tableNotFound": "Table not found for this restaurant",
+      "orderFailed": "Failed to place order"
     }
   },
   "orderPage": {
@@ -467,14 +716,65 @@
     "selectedOptions": "Selected Options",
     "noOrderDetails": "No order details available.",
     "orderAgain": "Order Again",
+    "back": "Back",
+    "whileYouWait": "While You Wait",
+    "statusMessage": "Order Status: {{status}}",
     "success": {
       "statusUpdated": "Order status updated to {{status}}."
     },
     "errors": {
       "fetchOrderStatus": "Failed to fetch order status.",
       "noOrdersForTable": "No orders found for this table."
+    },
+    "status": {
+      "Initial": "Order Received",
+      "Received": "Order Confirmed",
+      "Preparing": "Preparing Your Order",
+      "Ready": "Order Ready",
+      "Delivered": "Order Delivered"
     }
   },
+  "tour": {
+    "header": "This is your main navigation header",
+    "headerLogout": "Click here to log out",
+    "headerManageEmployees": "Manage your restaurant staff",
+    "headerManageMenu": "Manage your restaurant menu",
+    "headerManageCategories": "Manage menu categories",
+    "headerManageMenuItems": "Manage menu items",
+    "headerProfile": "Access your profile settings",
+    "headerLanguageSelector": "Change the application language",
+    "headerBrand": "Your restaurant brand",
+    "headerViewMenu": "View your restaurant's menu",
+    "completedOrdersCard": "View all completed orders",
+    "inProgressOrdersCard": "View orders being prepared",
+    "pendingOrdersCard": "View new incoming orders",
+    "helpRequestSection": "Manage customer help requests",
+    "helpRequestItem": "View and respond to help requests",
+    "addTableButton": "Add new tables to your restaurant",
+    "tableCard": "View table details and QR code",
+    "recentOrdersTable": "View your most recent orders"
+  },
+  "helpRequest": {
+    "details": "Help Request Details",
+    "response": "Staff Response",
+    "yourResponse": "Your Response",
+    "enterResponse": "Enter your response here...",
+    "respondToAccept": "Accept Help Request",
+    "respondToDecline": "Decline Help Request",
+    "enterResponseValidation": "Please enter a response",
+    "accepted": "Help request accepted",
+    "declined": "Help request declined",
+    "deleted": "Help request deleted",
+    "deleteConfirmation": "Are you sure you want to delete this help request?",
+    "noHelpRequests": "No help requests at this time",
+    "indicatorTitle": "This table has a pending help request"
+  },
+  "anonymous": "Anonymous",
+  "noDescription": "No description provided",
+  "accept": "Accept",
+  "decline": "Decline",
+  "cancel": "Cancel",
+  "helpRequests": "Help Requests",
   "ticTacToe": {
     "playWhileWaiting": "Let's play while waiting!",
     "cell": "Cell",
@@ -484,5 +784,10 @@
     "youLost": "You lost!",
     "resetGame": "Reset Game",
     "maxResetsReached": "You have reached the maximum number of resets. Try again next time!"
+  },
+  "statusIcon": {
+    "orderReceived": "Your order has been received!",
+    "orderWaiting": "Your order is in the queue.",
+    "orderCancelled": "Your order has been cancelled."
   }
 }

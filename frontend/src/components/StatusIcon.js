@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faHourglassHalf, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
+import { useTranslation } from 'react-i18next';
 import './StatusIcon.css'; // Custom styles for the status icon
 
 const StatusIcon = ({ status }) => {
+    const { t } = useTranslation();
     const [displayIcon, setDisplayIcon] = useState('Initial'); // 'Initial' for green check, 'Waiting' for hourglass
     const [displayMessage, setDisplayMessage] = useState(''); // Message corresponding to the current icon
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -13,23 +15,23 @@ const StatusIcon = ({ status }) => {
     useEffect(() => {
         // Initially display the green check icon and its message
         setDisplayIcon('Initial');
-        setDisplayMessage('تم إرسال طلبك بنجاح!');
+        setDisplayMessage(t('statusIcon.orderReceived'));
         setIsTransitioning(true);
 
         // After 5 seconds, switch to the yellow hourglass icon and its message
         const timer = setTimeout(() => {
             if (status === 'Completed') {
                 setDisplayIcon('Waiting');
-                setDisplayMessage('طلبك في قائمة الانتظار.');
+                setDisplayMessage(t('statusIcon.orderWaiting'));
             } else if (status === 'Cancelled') {
                 setDisplayIcon('Cancelled');
-                setDisplayMessage('تم إلغاء طلبك.');
+                setDisplayMessage(t('statusIcon.orderCancelled'));
             }
             setIsTransitioning(false);
         }, 5000); // 5000 milliseconds = 5 seconds
 
         return () => clearTimeout(timer);
-    }, [status]); // Re-run if the status prop changes
+    }, [status, t]); // Re-run if the status prop changes or translations change
 
     const getIcon = (currentStatus) => {
         switch (currentStatus) {

@@ -193,8 +193,8 @@ const CustomerHeader = ({ totalPrice, basket, restaurantId, tableNumber, menuId,
                             </button>
                         </OverlayTrigger>
 
-                        {/* Help Request Button */}
-                        <OverlayTrigger
+                        {/* Help Request Button - Temporarily hidden, will be implemented later */}
+                        {/* <OverlayTrigger
                             placement="bottom"
                             overlay={renderTooltip(t('header.requestHelpAriaLabel'))}
                         >
@@ -206,13 +206,13 @@ const CustomerHeader = ({ totalPrice, basket, restaurantId, tableNumber, menuId,
                                 <BiHelpCircle size={20} className="me-1" />
                                 <span className="d-none d-md-inline">{t('header.requestHelp')}</span>
                             </button>
-                        </OverlayTrigger>
+                        </OverlayTrigger> */}
                     </div>
                 </div>
             </header>
 
-            {/* Help Request Modal */}
-            <Modal show={showHelpModal} onHide={handleCloseHelpModal} centered>
+            {/* Help Request Modal - Temporarily hidden, will be implemented later */}
+            {/* <Modal show={showHelpModal} onHide={handleCloseHelpModal} centered>
                 <Modal.Header closeButton>
                     <Modal.Title>{t('header.helpModal.title')}</Modal.Title>
                 </Modal.Header>
@@ -238,7 +238,7 @@ const CustomerHeader = ({ totalPrice, basket, restaurantId, tableNumber, menuId,
                         </Button>
                     </Modal.Footer>
                 </Form>
-            </Modal>
+            </Modal> */}
 
             {/* Toast Container for Notifications */}
             <ToastContainer
