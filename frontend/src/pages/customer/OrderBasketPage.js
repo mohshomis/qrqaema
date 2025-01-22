@@ -3,6 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { placeOrder, getRestaurantPublicDetails, getRestaurantMenus, getTableId } from '../../services/api';
+import { useRestaurant } from '../../contexts/RestaurantContext';
+import { RestaurantProvider } from '../../contexts/RestaurantContext';
+import { formatPrice } from '../../utils/currencyUtils';
 import PropTypes from 'prop-types';
 import '../../styles/CustomerPages.css';
 import '../../styles/OrderBasketPage.css';
@@ -50,15 +53,17 @@ const OrderBasketPageWrapper = ({
   console.log('Parsed Parameters:', parsedParams);
   
   return (
-    <OrderBasketPage
-      {...{
-        basketItems,
-        updateBasketItem,
-        removeBasketItem,
-        setBasketItems,
-        ...parsedParams
-      }}
-    />
+    <RestaurantProvider restaurantId={parsedParams.restaurantId}>
+      <OrderBasketPage
+        {...{
+          basketItems,
+          updateBasketItem,
+          removeBasketItem,
+          setBasketItems,
+          ...parsedParams
+        }}
+      />
+    </RestaurantProvider>
   );
 };
 
@@ -73,36 +78,19 @@ const OrderBasketPage = ({
   menuId
 }) => {
   const { t, i18n } = useTranslation();
+  const restaurantDetails = useRestaurant();
   const navigate = useNavigate();
   const [totalPrice, setTotalPrice] = useState(0);
-  const [restaurantBackground, setRestaurantBackground] = useState('');
-  const [restaurantName, setRestaurantName] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [availableMenus, setAvailableMenus] = useState([]);
   const [currentMenu, setCurrentMenu] = useState(null);
 
   useEffect(() => {
-    const fetchRestaurantDetails = async () => {
-      try {
-        const restaurantResponse = await getRestaurantPublicDetails(restaurantId);
-        const restaurantData = restaurantResponse.data;
-        setRestaurantBackground(restaurantData.background_image_url);
-        setRestaurantName(restaurantData.name);
-      } catch (error) {
-        console.error(t('orderBasketPage.errors.fetchRestaurantDetails'), error);
-        setError(t('orderBasketPage.errors.fetchRestaurantDetails'));
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (restaurantId) {
-      fetchRestaurantDetails();
+    if (!restaurantDetails.loading) {
+      setLoading(false);
     }
-  }, [restaurantId, t]);
-
-  // Remove menu fetching and handling since it's now managed by App.js
+  }, [restaurantDetails]);
 
   const groupedBasketItems = basketItems.reduce((acc, item) => {
     const existingItem = acc.find((groupedItem) => {
@@ -203,7 +191,7 @@ const OrderBasketPage = ({
 
       // Prepare the order payload
       const orderPayload = {
-        restaurant: restaurantId, // Keep UUID as string
+        restaurant: restaurantId,
         table: tableId,
         menu: menuId,
         order_items: order_items,
@@ -239,7 +227,7 @@ const OrderBasketPage = ({
     }
   };
 
-  if (loading) {
+  if (loading || restaurantDetails.loading) {
     return (
       <Container className="my-5 text-center">
         <div className="custom-spinner" />
@@ -248,14 +236,24 @@ const OrderBasketPage = ({
     );
   }
 
+  if (error || restaurantDetails.error) {
+    return (
+      <Container className="my-5">
+        <Alert variant="danger">
+          {error || restaurantDetails.error}
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
     <div className="page-container" dir={i18n.dir()}>
       <div className="background-overlay"></div>
-      {restaurantBackground && (
+      {restaurantDetails.background_image_url && (
         <div
           className="background-image"
           style={{
-            backgroundImage: `url(${restaurantBackground})`,
+            backgroundImage: `url(${restaurantDetails.background_image_url})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
@@ -276,7 +274,7 @@ const OrderBasketPage = ({
                 <div className="d-flex align-items-center">
                   <FaUtensils className="me-3 fs-3 text-primary" />
                   <div>
-                    <h4 className="mb-0">{restaurantName}</h4>
+                    <h4 className="mb-0">{restaurantDetails.name}</h4>
                     <Badge bg="primary" pill className="mt-1">
                       {t('orderBasketPage.table')}: {tableNumber}
                     </Badge>
@@ -343,7 +341,7 @@ const OrderBasketPage = ({
                                 {optionName}: {choice.name}
                                 {choice.price_modifier > 0 && (
                                   <span className="text-primary ms-1">
-                                    +${choice.price_modifier.toFixed(2)}
+                                    +{formatPrice(choice.price_modifier, restaurantDetails.currency)}
                                   </span>
                                 )}
                               </Badge>
@@ -351,7 +349,7 @@ const OrderBasketPage = ({
                           </div>
                         )}
                         <div className="text-primary fw-bold">
-                          ${(parseFloat(item.price) * item.quantity).toFixed(2)}
+                          {formatPrice(parseFloat(item.price) * item.quantity, restaurantDetails.currency)}
                         </div>
                       </Col>
 
@@ -406,14 +404,14 @@ const OrderBasketPage = ({
                   
                   <div className="d-flex justify-content-between mb-3">
                     <span className="text-muted">{t('orderBasketPage.subtotal')}</span>
-                    <span>${totalPrice.toFixed(2)}</span>
+                    <span>{formatPrice(totalPrice, restaurantDetails.currency)}</span>
                   </div>
                   
                   <hr className="my-4" />
                   
                   <div className="d-flex justify-content-between mb-4">
                     <h5 className="mb-0">{t('orderBasketPage.total')}</h5>
-                    <h5 className="mb-0 text-primary">${totalPrice.toFixed(2)}</h5>
+                    <h5 className="mb-0 text-primary">{formatPrice(totalPrice, restaurantDetails.currency)}</h5>
                   </div>
 
                   <Button

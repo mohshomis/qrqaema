@@ -271,8 +271,10 @@ const App = () => {
                         path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber"
                         element={
                             <Layout>
-                                <CustomerHeaderWithParams />
-                                <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
+                                <RestaurantProvider restaurantId={restaurantId}>
+                                    <CustomerHeaderWithParams />
+                                    <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
+                                </RestaurantProvider>
                             </Layout>
                         }
                     />
@@ -281,8 +283,10 @@ const App = () => {
                         path="/restaurant/:restaurantId/table/:tableNumber"
                         element={
                             <Layout>
-                                <CustomerHeaderWithParams />
-                                <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
+                                <RestaurantProvider restaurantId={restaurantId}>
+                                    <CustomerHeaderWithParams />
+                                    <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
+                                </RestaurantProvider>
                             </Layout>
                         }
                     />
@@ -290,8 +294,10 @@ const App = () => {
                         path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber/menu-item/:itemId"
                         element={
                             <Layout>
-                                <CustomerHeaderWithParams />
-                                <CustomerMenuItemPage addToBasket={addToBasket} />
+                                <RestaurantProvider restaurantId={restaurantId}>
+                                    <CustomerHeaderWithParams />
+                                    <CustomerMenuItemPage addToBasket={addToBasket} />
+                                </RestaurantProvider>
                             </Layout>
                         }
                     />
@@ -299,13 +305,15 @@ const App = () => {
                         path="/restaurant/:restaurantId/menu/:menuId/order-basket/:tableNumber"
                         element={
                             <Layout>
-                                <CustomerHeaderWithParams />
-                                <OrderBasketPage
-                                    basketItems={basketItems}
-                                    updateBasketItem={updateBasketItem}
-                                    removeBasketItem={removeBasketItem}
-                                    setBasketItems={setBasketItems}
-                                />
+                                <RestaurantProvider restaurantId={restaurantId}>
+                                    <CustomerHeaderWithParams />
+                                    <OrderBasketPage
+                                        basketItems={basketItems}
+                                        updateBasketItem={updateBasketItem}
+                                        removeBasketItem={removeBasketItem}
+                                        setBasketItems={setBasketItems}
+                                    />
+                                </RestaurantProvider>
                             </Layout>
                         }
                     />
@@ -313,8 +321,10 @@ const App = () => {
                         path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber/category/:categoryId"
                         element={
                             <Layout>
-                                <CustomerHeaderWithParams />
-                                <CategoryPage addToBasket={addToBasket} />
+                                <RestaurantProvider restaurantId={restaurantId}>
+                                    <CustomerHeaderWithParams />
+                                    <CategoryPage addToBasket={addToBasket} />
+                                </RestaurantProvider>
                             </Layout>
                         }
                     />
@@ -322,8 +332,10 @@ const App = () => {
                         path="/restaurant/:restaurantId/menu/:menuId/order-success/:tableNumber"
                         element={
                             <Layout>
-                                <CustomerHeaderWithParams />
-                                <OrderSuccessPage />
+                                <RestaurantProvider restaurantId={restaurantId}>
+                                    <CustomerHeaderWithParams />
+                                    <OrderSuccessPage />
+                                </RestaurantProvider>
                             </Layout>
                         }
                     />

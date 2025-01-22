@@ -147,7 +147,11 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'https://restaurant-order-system-5047963048eb.herokuapp.com',
+    'http://localhost:3000',  # For local development
+]
+CORS_ALLOW_CREDENTIALS = True
 
 LOGGING = {
     'version': 1,

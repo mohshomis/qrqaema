@@ -4,13 +4,16 @@ import { getRestaurantPublicDetails, getRestaurantMenus, getMenuItems } from '..
 import { useTranslation } from 'react-i18next';
 import { Container, Row, Col, Button, Alert, Badge } from 'react-bootstrap';
 import OptimizedImage from '../../components/OptimizedImage';
-import { FaReceipt, FaDollarSign, FaInfoCircle, FaArrowLeft } from 'react-icons/fa';
+import { FaReceipt, FaInfoCircle, FaArrowLeft } from 'react-icons/fa';
+import { useRestaurant } from '../../contexts/RestaurantContext';
+import { formatPrice } from '../../utils/currencyUtils';
 import '../../styles/NewCustomerPages.css';
 import CustomerHeader from './components/CustomerHeader';
 
 const CategoryPage = () => {
   const { t, i18n } = useTranslation();
   const { restaurantId, categoryId, tableNumber, menuId } = useParams();
+  const restaurantDetails = useRestaurant();
   const navigate = useNavigate();
   const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -108,8 +111,7 @@ const CategoryPage = () => {
                       />
                     )}
                     <div className="price-badge">
-                      <FaDollarSign className="me-1" />
-                      {Number(item.price).toFixed(2)}
+                      {formatPrice(item.price, restaurantDetails.currency)}
                     </div>
                   </div>
                   <div className="card-content">

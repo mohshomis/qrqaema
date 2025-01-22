@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getRestaurantPublicDetails, getCategories, getRestaurantMenus } from '../../services/api';
+import { getCategories } from '../../services/api';
 import OptimizedImage from '../../components/OptimizedImage';
 import { useTranslation } from 'react-i18next';
-import { Container, Row, Col, Card, Button, Alert, Badge, Modal } from 'react-bootstrap';
-import { FaUtensils, FaList, FaInfoCircle, FaArrowRight } from 'react-icons/fa';
+import { Container, Row, Col, Card, Button, Alert, Badge } from 'react-bootstrap';
+import { FaList, FaInfoCircle, FaArrowRight } from 'react-icons/fa';
+import { useRestaurant } from '../../contexts/RestaurantContext';
+import { RestaurantProvider } from '../../contexts/RestaurantContext';
 import '../../styles/NewCustomerPages.css';
 import CustomerHeader from './components/CustomerHeader';
+
+const CustomerMenuPageWrapper = () => {
+  const { restaurantId } = useParams();
+  return (
+    <RestaurantProvider restaurantId={restaurantId}>
+      <CustomerMenuPage />
+    </RestaurantProvider>
+  );
+};
 
 const CustomerMenuPage = () => {
   const { t, i18n } = useTranslation();
@@ -15,15 +26,12 @@ const CustomerMenuPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [restaurantName, setRestaurantName] = useState('');
+  const restaurantDetails = useRestaurant();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const restaurantResponse = await getRestaurantPublicDetails(restaurantId);
-        setRestaurantName(restaurantResponse.data.name);
-
         // Fetch categories for the menu
         if (menuId) {
           const categoriesResponse = await getCategories(restaurantId, menuId);
@@ -37,8 +45,10 @@ const CustomerMenuPage = () => {
       }
     };
 
-    fetchData();
-  }, [restaurantId, menuId, t]);
+    if (!restaurantDetails.loading) {
+      fetchData();
+    }
+  }, [restaurantId, menuId, t, restaurantDetails.loading]);
 
   const handleCategoryClick = (categoryId) => {
     if (!menuId) {
@@ -48,7 +58,7 @@ const CustomerMenuPage = () => {
     navigate(`/restaurant/${restaurantId}/menu/${menuId}/table/${tableNumber}/category/${categoryId}`);
   };
 
-  if (loading) {
+  if (loading || restaurantDetails.loading) {
     return (
       <div className="customer-page">
         <Container className="content-container">
@@ -58,13 +68,13 @@ const CustomerMenuPage = () => {
     );
   }
 
-  if (error) {
+  if (error || restaurantDetails.error) {
     return (
       <div className="customer-page">
         <Container className="content-container">
           <Alert variant="danger">
             <FaInfoCircle className="me-2" />
-            {error}
+            {error || restaurantDetails.error}
           </Alert>
         </Container>
       </div>
@@ -117,4 +127,4 @@ const CustomerMenuPage = () => {
   );
 };
 
-export default CustomerMenuPage;
+export default CustomerMenuPageWrapper;
