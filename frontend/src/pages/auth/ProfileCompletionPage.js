@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Form, Button, Container, Card, Alert } from 'react-bootstrap';
-import { completeRestaurantProfile } from '../../services/api';
+import { completeRestaurantProfile, getRestaurantProfile } from '../../services/api';
+import { AuthContext } from '../../AuthContext';
 
 const ProfileCompletionPage = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { userRoles } = useContext(AuthContext);
     const [formData, setFormData] = useState({
         address: '',
         phone_number: '',
@@ -53,11 +55,38 @@ const ProfileCompletionPage = () => {
                 throw new Error(t('profileCompletion.errors.invalidPostalCode'));
             }
 
-            const restaurantId = localStorage.getItem('restaurantId');
-            await completeRestaurantProfile(restaurantId, formData);
+            const restaurantId = userRoles?.restaurant_id;
             
-            // Redirect to dashboard on success
-            navigate('/dashboard');
+            if (!restaurantId) {
+                throw new Error(t('profileCompletion.errors.noRestaurantId'));
+            }
+            
+            console.log('Completing profile for restaurant:', restaurantId);
+            const completionResponse = await completeRestaurantProfile(restaurantId, formData);
+            console.log('Profile completion response:', completionResponse.data);
+            
+            // Verify profile completion status
+            const profileResponse = await getRestaurantProfile(restaurantId);
+            console.log('Profile verification response:', profileResponse.data);
+            
+            const profileData = profileResponse.data;
+            console.log('Profile data:', profileData);
+            
+            if (!profileData) {
+                console.error('Invalid profile response:', profileResponse);
+                throw new Error(t('profileCompletion.errors.invalidResponse'));
+            }
+            
+            // Check if all required fields are present
+            const requiredProfileFields = ['address', 'phone_number', 'country', 'city', 'postal_code'];
+            const hasAllFields = requiredProfileFields.every(field => profileData[field]);
+            
+            if (hasAllFields) {
+                navigate('/dashboard');
+            } else {
+                console.error('Profile not marked as completed:', profileResponse.data);
+                throw new Error(t('profileCompletion.errors.completionFailed'));
+            }
         } catch (err) {
             setError(err.message || t('profileCompletion.error'));
         } finally {

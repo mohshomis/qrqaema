@@ -1,61 +1,41 @@
 // src/pages/LoginPage.js
 
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import { useNavigate, Link, useLocation } from 'react-router-dom'; // useLocation added for redirecting back after login
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap for styling
-import './LoginPage.css'; // Add a custom CSS file for any additional styles
-import { AuthContext } from '../../AuthContext'; // Import AuthContext
-import { useTranslation } from 'react-i18next'; // Import useTranslation
+import React, { useState, useContext } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './LoginPage.css';
+import { AuthContext } from '../../AuthContext';
+import { useTranslation } from 'react-i18next';
+import { login as apiLogin } from '../../services/api';
 
 const LoginPage = () => {
-    const { t, i18n } = useTranslation(); // Initialize translation
+    const { t, i18n } = useTranslation();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false); // Loading state
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation(); // Get the location object to handle redirect after login
-    const { login } = useContext(AuthContext); // Access login via Context
-
-    // Check if user is already logged in (i.e., if a token exists in localStorage)
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            navigate('/dashboard');
-        }
-    }, [navigate]);
+    const location = useLocation();
+    const { login: authLogin } = useContext(AuthContext);
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        
-        // Clear previous error message
         setError('');
 
-        // Basic validation
         if (!username || !password) {
             setError(t('login.errors.requiredFields'));
             return;
         }
 
         try {
-            setLoading(true); // Start loading
+            setLoading(true);
             console.log("Attempting to login with:", { username, password });
 
-            // Send login request to backend
-            const response = await axios.post(`${process.env.REACT_APP_API_URL}/token/`, {
-                username,
-                password,
-            });
-
+            const response = await apiLogin({ username, password });
             console.log("Login response:", response);
 
-            // Store JWT token in localStorage
-            const { access } = response.data;
-            localStorage.setItem('token', access);
-
-            // Call the login function to set authentication state
-            login(access);
+            // Let AuthContext handle token storage and decoding
+            authLogin(response.data.access);
 
             // Redirect to the page the user wanted to visit or dashboard
             const redirectPath = location.state?.from?.pathname || '/dashboard';
@@ -73,7 +53,7 @@ const LoginPage = () => {
                 setError(t('login.errors.unexpectedError'));
             }
         } finally {
-            setLoading(false); // Stop loading
+            setLoading(false);
         }
     };
 

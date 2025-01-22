@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'; // Import useTranslation
 
 const MenuItemEditPage = () => {
     const { t, i18n } = useTranslation(); // Initialize translation
-    const { restaurantId, menuItemId } = useParams();
+    const { restaurantId, menuId, menuItemId } = useParams();
     const navigate = useNavigate();
     const [menuItem, setMenuItem] = useState(null);
     const [name, setName] = useState('');
@@ -27,11 +27,14 @@ const MenuItemEditPage = () => {
     const [existingImageUrl, setExistingImageUrl] = useState(null); // To display current image
 
     useEffect(() => {
-        // Fetch categories for the restaurant
+        // Fetch categories for the restaurant and menu
         const fetchCategories = async () => {
             try {
-                const response = await getCategories(restaurantId);
-                setCategories(response.data);
+                if (!menuId) {
+                    throw new Error('Menu ID is required');
+                }
+                const response = await getCategories(restaurantId, menuId);
+                setCategories(response.data.categories || []);
             } catch (error) {
                 console.error(t('errors.fetchCategories'), error);
                 toast.error(t('errors.fetchCategories'));
@@ -59,7 +62,7 @@ const MenuItemEditPage = () => {
 
         fetchCategories();
         fetchMenuItem();
-    }, [restaurantId, menuItemId, t]);
+    }, [restaurantId, menuId, menuItemId, t]);
 
     // Handle image selection and compression
     const handleImageChange = async (e) => {
@@ -173,6 +176,7 @@ const MenuItemEditPage = () => {
         formData.append('price', price);
         formData.append('category', categoryId);
         formData.append('restaurant', restaurantId);
+        formData.append('menu', menuId);
 
         // If a new image file is selected, append it
         if (imageFile) {
@@ -186,7 +190,7 @@ const MenuItemEditPage = () => {
         try {
             await updateMenuItem(menuItemId, formData);
             toast.success(t('success.menuItemUpdated'));
-            navigate(`/restaurant/${restaurantId}/menu-items`);
+            navigate(`/restaurant/${restaurantId}/menus/${menuId}/menu-items`);
         } catch (error) {
             console.error(t('errors.updateMenuItemFailed'), error);
             // Extract and display error messages from the backend

@@ -20,56 +20,47 @@ const getAuthHeaders = () => {
 // Login function
 export const login = async (credentials) => {
     try {
+        console.log('Attempting login...');
         const response = await axiosInstance.post('token/', credentials);
-        localStorage.setItem('token', response.data.access);
-        localStorage.setItem('refreshToken', response.data.refresh);
-        
-        // Decode the JWT token to get the restaurant ID
-        const tokenPayload = JSON.parse(atob(response.data.access.split('.')[1]));
-        if (tokenPayload.restaurant_id) {
-            localStorage.setItem('restaurantId', tokenPayload.restaurant_id);
-        }
-        
+        console.log('Login successful');
         return response;
     } catch (error) {
-        throw error.response;
+        console.error('Login error:', error);
+        throw error.response || error;
     }
 };
 
 // Logout function
 export const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('restaurantId');
     window.location.href = '/login';
 };
 
 // Function to refresh token
 const refreshToken = async () => {
     try {
+        console.log('Attempting to refresh token...');
         const refresh = localStorage.getItem('refreshToken');
-        if (!refresh) throw new Error('No refresh token available');
+        if (!refresh) {
+            console.error('No refresh token available');
+            throw new Error('No refresh token available');
+        }
 
         const response = await axiosInstance.post('token/refresh/', {
             refresh: refresh
         });
+        console.log('Token refresh successful');
 
+        // Store the new access token
         localStorage.setItem('token', response.data.access);
         if (response.data.refresh) {
             localStorage.setItem('refreshToken', response.data.refresh);
         }
 
-        // Update restaurant ID from new token
-        const tokenPayload = JSON.parse(atob(response.data.access.split('.')[1]));
-        if (tokenPayload.restaurant_id) {
-            localStorage.setItem('restaurantId', tokenPayload.restaurant_id);
-        }
-
         return response.data.access;
     } catch (error) {
+        console.error('Token refresh failed:', error);
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
-        localStorage.removeItem('restaurantId');
         window.location.href = '/login';
         throw error;
     }
@@ -136,9 +127,17 @@ export const getMenuItems = (restaurantId, menuId, categoryId) => {
     });
 };
 
-// Get a Menu Item by restaurantId and itemId
-export const getMenuItemById = (restaurantId, menuItemId) => {
-    return axiosInstance.get(`restaurants/${restaurantId}/menu-items/${menuItemId}/`);
+// Get a Menu Item by ID
+export const getMenuItemById = async (restaurantId, menuItemId) => {
+    try {
+        console.log('Fetching menu item:', { restaurantId, menuItemId });
+        const response = await axiosInstance.get(`restaurants/${restaurantId}/menu-items/${menuItemId}/`);
+        console.log('Menu item response:', response.data);
+        return response;
+    } catch (error) {
+        console.error('Error fetching menu item:', error);
+        throw error;
+    }
 };
 
 // Get Orders
@@ -317,6 +316,12 @@ export const registerUserAndRestaurant = async (registrationData) => {
             }
         });
         console.log('Registration successful:', response.data);
+        
+        // Store restaurant ID if it's in the response
+        if (response.data?.restaurant?.id) {
+            localStorage.setItem('restaurantId', response.data.restaurant.id);
+        }
+        
         return response;
     } catch (error) {
         console.error('Registration error:', error);
@@ -369,12 +374,25 @@ export const getRestaurantProfile = (restaurantId) => {
 };
 
 // Complete Restaurant Profile
-export const completeRestaurantProfile = (restaurantId, profileData) => {
-    return axiosInstance.patch(`restaurants/${restaurantId}/complete-profile/`, profileData, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
+export const completeRestaurantProfile = async (restaurantId, profileData) => {
+    if (!restaurantId) {
+        console.error('Restaurant ID is required for profile completion');
+        throw new Error('Restaurant ID is required');
+    }
+
+    try {
+        console.log('Completing profile for restaurant:', restaurantId);
+        const response = await axiosInstance.patch(`restaurants/${restaurantId}/complete-profile/`, profileData, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        console.log('Profile completion successful:', response.data);
+        return response;
+    } catch (error) {
+        console.error('Profile completion failed:', error.response?.data || error.message);
+        throw error.response?.data || error;
+    }
 };
 
 // Update Restaurant Profile using PATCH
@@ -419,15 +437,29 @@ export const deleteCategory = (categoryId) => {
     });
 };
 
-// Get Categories for a specific restaurant
-export const getCategories = (restaurantId, menuId) => {
+// Get Categories for a specific restaurant and menu
+export const getCategories = async (restaurantId, menuId) => {
     if (!menuId) {
+        console.error('Menu ID is required for fetching categories');
         throw new Error('Menu ID is required');
     }
-    return axiosInstance.get(`restaurants/${restaurantId}/categories/`, {
-        params: { menu: menuId },
-        headers: {} // Public endpoint
-    });
+    if (!restaurantId) {
+        console.error('Restaurant ID is required for fetching categories');
+        throw new Error('Restaurant ID is required');
+    }
+
+    try {
+        console.log('Fetching categories for restaurant:', restaurantId, 'menu:', menuId);
+        const response = await axiosInstance.get(`restaurants/${restaurantId}/categories/`, {
+            params: { menu: menuId },
+            headers: {} // Public endpoint
+        });
+        console.log('Categories response:', response.data);
+        return response;
+    } catch (error) {
+        console.error('Error fetching categories:', error);
+        throw error;
+    }
 };
 
 export const getCategoryById = (categoryId) => {
@@ -453,8 +485,24 @@ export const createMenuItem = (formData) => {
 };
 
 // Update Menu Item Details
-export const updateMenuItem = (menuItemId, formData) => {
-    return axiosInstance.patch(`menu-items/${menuItemId}/`, formData);
+export const updateMenuItem = async (menuItemId, formData) => {
+    try {
+        console.log('Updating menu item:', menuItemId);
+        console.log('Form data:', {
+            name: formData.get('name'),
+            description: formData.get('description'),
+            price: formData.get('price'),
+            category: formData.get('category'),
+            restaurant: formData.get('restaurant'),
+            menu: formData.get('menu')
+        });
+        const response = await axiosInstance.patch(`menu-items/${menuItemId}/`, formData);
+        console.log('Menu item update response:', response.data);
+        return response;
+    } catch (error) {
+        console.error('Error updating menu item:', error);
+        throw error;
+    }
 };
 
 // Delete Menu Item

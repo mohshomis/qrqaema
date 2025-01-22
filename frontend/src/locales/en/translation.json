@@ -818,7 +818,8 @@
     "errors": {
       "required": "This field is required",
       "invalidPhone": "Invalid phone number format",
-      "invalidPostalCode": "Invalid postal code format"
+      "invalidPostalCode": "Invalid postal code format",
+      "noRestaurantId": "Restaurant ID not found. Please try logging in again"
     },
     "success": "Profile completed successfully",
     "error": "Error completing profile"

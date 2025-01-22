@@ -1,12 +1,8 @@
-// src/AuthContext.js
+import React, { createContext, useState, useEffect, useCallback } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
-import React, { createContext, useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode'; // Correct import
-
-// Create the AuthContext
 export const AuthContext = createContext();
 
-// Create the AuthProvider component
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loadingAuth, setLoadingAuth] = useState(true);
@@ -17,22 +13,32 @@ export const AuthProvider = ({ children }) => {
         restaurant_id: null,
     });
 
-    // Function to handle login and store the token
-    const login = (token) => {
-        localStorage.setItem('token', token);
-        setIsAuthenticated(true);
-        setToken(token);
-        const decodedToken = jwtDecode(token);
-        setUserRoles({
-            is_owner: decodedToken.is_owner,
-            is_staff: decodedToken.is_staff,
-            restaurant_id: decodedToken.restaurant_id,
-        });
-    };
+    const updateAuthState = useCallback((token) => {
+        try {
+            const decodedToken = jwtDecode(token);
+            setIsAuthenticated(true);
+            setToken(token);
+            setUserRoles({
+                is_owner: decodedToken.is_owner,
+                is_staff: decodedToken.is_staff,
+                restaurant_id: decodedToken.restaurant_id,
+            });
+            localStorage.setItem('token', token);
+        } catch (error) {
+            console.error("Error updating auth state:", error);
+            logout();
+        }
+    }, []);
 
-    // Function to handle logout and remove the token
-    const logout = () => {
+    const login = useCallback((token) => {
+        console.log('Logging in with token');
+        updateAuthState(token);
+    }, [updateAuthState]);
+
+    const logout = useCallback(() => {
+        console.log('Logging out');
         localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
         setIsAuthenticated(false);
         setToken(null);
         setUserRoles({
@@ -40,36 +46,42 @@ export const AuthProvider = ({ children }) => {
             is_staff: false,
             restaurant_id: null,
         });
-    };
+    }, []);
 
     // Check for existing token and validate it
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-        if (storedToken) {
-            try {
-                const decodedToken = jwtDecode(storedToken);
-                if (decodedToken.exp * 1000 < Date.now()) {
-                    // Token has expired
+        const validateToken = async () => {
+            const storedToken = localStorage.getItem('token');
+            if (storedToken) {
+                try {
+                    const decodedToken = jwtDecode(storedToken);
+                    if (decodedToken.exp * 1000 < Date.now()) {
+                        console.log('Token expired');
+                        logout();
+                    } else {
+                        console.log('Token valid, updating auth state');
+                        updateAuthState(storedToken);
+                    }
+                } catch (error) {
+                    console.error("Error validating token:", error);
                     logout();
-                } else {
-                    setIsAuthenticated(true);
-                    setToken(storedToken);
-                    setUserRoles({
-                        is_owner: decodedToken.is_owner,
-                        is_staff: decodedToken.is_staff,
-                        restaurant_id: decodedToken.restaurant_id,
-                    });
                 }
-            } catch (error) {
-                console.error("Error decoding token:", error);
-                logout();
             }
-        }
-        setLoadingAuth(false);
-    }, []);
+            setLoadingAuth(false);
+        };
+
+        validateToken();
+    }, [logout, updateAuthState]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, token, userRoles }}>
+        <AuthContext.Provider value={{ 
+            isAuthenticated, 
+            login, 
+            logout, 
+            token, 
+            userRoles,
+            updateAuthState 
+        }}>
             {!loadingAuth && children}
         </AuthContext.Provider>
     );

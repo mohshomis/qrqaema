@@ -788,5 +788,34 @@
     "orderReceived": "Uw bestelling is ontvangen!",
     "orderWaiting": "Uw bestelling staat in de wachtrij.",
     "orderCancelled": "Uw bestelling is geannuleerd."
+  },
+  "profileCompletion": {
+    "title": "Voltooi Uw Restaurantprofiel",
+    "description": "Voltooi uw restaurantprofiel om door te gaan met het gebruik van het systeem",
+    "form": {
+      "address": "Adres",
+      "addressPlaceholder": "Voer het adres van uw restaurant in",
+      "phoneNumber": "Telefoonnummer",
+      "phoneNumberPlaceholder": "Voer het telefoonnummer van uw restaurant in",
+      "country": "Land",
+      "countryPlaceholder": "Selecteer uw land",
+      "city": "Stad",
+      "cityPlaceholder": "Voer uw stad in",
+      "postalCode": "Postcode",
+      "postalCodePlaceholder": "Voer uw postcode in",
+      "currency": "Valuta",
+      "currencyPlaceholder": "Selecteer uw valuta",
+      "employees": "Aantal Medewerkers",
+      "employeesPlaceholder": "Voer het aantal medewerkers in"
+    },
+    "submit": "Profiel Voltooien",
+    "submitting": "Bezig met verzenden...",
+    "errors": {
+      "required": "Dit veld is verplicht",
+      "invalidPhone": "Ongeldig telefoonnummerformaat",
+      "invalidPostalCode": "Ongeldige postcode"
+    },
+    "success": "Profiel succesvol voltooid",
+    "error": "Fout bij het voltooien van het profiel"
   }
 }
