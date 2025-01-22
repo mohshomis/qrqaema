@@ -30,10 +30,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.privateemail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'info@qrqaema.com'
+EMAIL_HOST_USER = 'noreply@qrqaema.com'
 EMAIL_HOST_PASSWORD = 'Aa0685403314_'
-DEFAULT_FROM_EMAIL = 'QR Qaema <info@qrqaema.com>'
-SUPPORT_EMAIL = 'info@qrqaema.com'
+DEFAULT_FROM_EMAIL = 'QR Qaema <noreply@qrqaema.com>'
+SUPPORT_EMAIL = 'noreply@qrqaema.com'
 
 # Application definition
 
