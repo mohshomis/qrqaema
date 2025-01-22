@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
-import jwtDecode from 'jwt-decode'; // Corrected import statement
+import jwtDecode from 'jwt-decode';
 import { useTranslation } from 'react-i18next';
+import { RestaurantProvider } from './contexts/RestaurantContext';
 import { getRestaurantMenus } from './services/api';
 import CustomerHeader from './pages/customer/components/CustomerHeader';
 import HomePageHeader from './pages/landing/components/HomePageHeader';
@@ -29,36 +30,39 @@ import CategoryManagementPage from './pages/restaurant-owner/CategoryManagementP
 import MenuItemManagementPage from './pages/restaurant-owner/MenuItemManagementPage';
 import MenuItemCreatePage from './pages/restaurant-owner/MenuItemCreatePage';
 import MenuItemEditPage from './pages/restaurant-owner/MenuItemEditPage';
-import PasswordResetRequestPage from './pages/shared/PasswordResetRequestPage'; // New Import
-import PasswordResetConfirmPage from './pages/shared/PasswordResetConfirmPage'; // New Import
-import ActivateAccountPage from './pages/shared/ActivateAccountPage'; // New Import
+import PasswordResetRequestPage from './pages/shared/PasswordResetRequestPage';
+import PasswordResetConfirmPage from './pages/shared/PasswordResetConfirmPage';
+import ActivateAccountPage from './pages/shared/ActivateAccountPage';
 import UsernameRecoveryPage from './pages/shared/UsernameRecoveryPage';
 import ProfileCompletionPage from './pages/auth/ProfileCompletionPage';
-import { AuthProvider } from './AuthContext'; // Import AuthProvider
-import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute
+import { AuthProvider } from './AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
-// Function to retrieve basket from localStorage (optional for persistence)
+// Function to retrieve basket from localStorage
 const loadBasketFromLocalStorage = () => {
     const storedBasket = localStorage.getItem('basket');
     return storedBasket ? JSON.parse(storedBasket) : [];
+};
+
+// Route wrapper component to handle params
+const RouteWrapper = ({ children }) => {
+    const params = useParams();
+    return children(params);
 };
 
 const App = () => {
     const [basketItems, setBasketItems] = useState(loadBasketFromLocalStorage);
     const [totalPrice, setTotalPrice] = useState(0);
 
-    // Calculate total price whenever basketItems changes
     useEffect(() => {
         const newTotalPrice = basketItems.reduce((total, item) => total + item.price * item.quantity, 0);
         setTotalPrice(newTotalPrice);
     }, [basketItems]);
 
-    // Synchronize basket state with localStorage to persist after page refresh
     useEffect(() => {
         localStorage.setItem('basket', JSON.stringify(basketItems));
     }, [basketItems]);
 
-    // Add an item to the basket
     const addToBasket = (item) => {
         setBasketItems((prevItems) => {
             const existingItem = prevItems.find(
@@ -82,7 +86,6 @@ const App = () => {
         });
     };
 
-    // Update the quantity of an item in the basket
     const updateBasketItem = (item, quantity) => {
         if (quantity > 0) {
             setBasketItems((prevItems) =>
@@ -97,7 +100,6 @@ const App = () => {
         }
     };
 
-    // Remove an item from the basket
     const removeBasketItem = (item) => {
         setBasketItems((prevItems) =>
             prevItems.filter(
@@ -109,7 +111,6 @@ const App = () => {
         );
     };
 
-    // Extract params and handle menu selection
     const CustomerHeaderWithParams = () => {
         const { restaurantId: rawRestaurantId, tableNumber: rawTableNumber, menuId: rawMenuId } = useParams();
         const navigate = useNavigate();
@@ -118,15 +119,13 @@ const App = () => {
         const [currentMenu, setCurrentMenu] = useState(null);
         const [error, setError] = useState(null);
 
-        // Validate and parse URL parameters
-        const restaurantId = rawRestaurantId;  // Keep UUID as string
+        const restaurantId = rawRestaurantId;
         const tableNumber = parseInt(rawTableNumber, 10);
-        const menuId = rawMenuId;  // Keep as string to match navigation
+        const menuId = rawMenuId;
 
         useEffect(() => {
             const fetchMenus = async () => {
                 try {
-                    // Validate required parameters
                     if (!restaurantId || isNaN(tableNumber)) {
                         setError('Invalid restaurant or table number');
                         return;
@@ -136,7 +135,6 @@ const App = () => {
                     const menus = response.data.menus || [];
                     setAvailableMenus(menus);
                     
-                    // If menuId is provided, find that menu
                     if (menuId) {
                         const menu = menus.find(m => m.id.toString() === menuId);
                         if (menu) {
@@ -145,7 +143,6 @@ const App = () => {
                         }
                     }
 
-                    // If no valid menuId, try to find menu matching current language
                     const userLanguage = localStorage.getItem('language') || i18n.language;
                     const matchingMenu = menus.find(menu => menu.language === userLanguage);
                     const defaultMenu = menus.find(menu => menu.is_default);
@@ -168,7 +165,6 @@ const App = () => {
 
         const handleMenuChange = (newMenu) => {
             setCurrentMenu(newMenu);
-            // Always navigate back to the menu page when changing language/menu
             navigate(`/restaurant/${restaurantId}/menu/${newMenu.id}/table/${tableNumber}`);
         };
 
@@ -195,7 +191,6 @@ const App = () => {
         <AuthProvider>
             <Router>
                 <Routes>
-                    {/* Route for Home Page */}
                     <Route path="/" element={
                         <>
                             <HomePageHeader />
@@ -203,144 +198,135 @@ const App = () => {
                         </>
                     } />
 
-                    {/* Auth-related Routes */}
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/logout" element={<LogoutPage />} />
-
-                    {/* Account Activation Route */}
                     <Route path="/activate/:uidb64/:token/" element={<ActivateAccountPage />} />
-
-                    {/* Password Reset Routes */}
                     <Route path="/password-reset" element={<PasswordResetRequestPage />} />
                     <Route path="/password-reset-confirm/:uidb64/:token/" element={<PasswordResetConfirmPage />} />
-
-                    {/* Username Recovery Route */}
                     <Route path="/username-recovery" element={<UsernameRecoveryPage />} />
-
-                    {/* Profile Completion Route */}
                     <Route path="/complete-profile" element={<ProfileCompletionPage />} />
 
-                    {/* Authenticated Routes */}
-                    <Route
-                        path="/dashboard"
-                        element={
-                            <PrivateRoute>
-                                <DashboardPage />
-                            </PrivateRoute>
-                        }
-                    />
-                    <Route
-                        path="/orders/:restaurantId"
-                        element={
-                            <PrivateRoute>
-                                <OrderPage />
-                            </PrivateRoute>
-                        }
-                    />
+                    <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
+                    <Route path="/orders/:restaurantId" element={<PrivateRoute><OrderPage /></PrivateRoute>} />
 
-                    {/* Restaurant management routes for authenticated users */}
-                    <Route
-                        path="/restaurant/:restaurantId/*"
-                        element={
-                            <PrivateRoute>
-                                <RestaurantManagementLayout />
-                            </PrivateRoute>
-                        }
-                    >
+                    <Route path="/restaurant/:restaurantId/*" element={<PrivateRoute><RestaurantManagementLayout /></PrivateRoute>}>
                         <Route path="profile" element={<RestaurantProfilePage />} />
-        {/* Menu Management Routes */}
-        <Route path="menus" element={<MenuManagementPage />} />
-        <Route path="menus/:menuId/categories" element={<CategoryManagementPage />} />
-        <Route path="menus/:menuId/categories/:categoryId/edit" element={<CategoryEditPage />} />
-        <Route path="menus/:menuId/menu-items" element={<MenuItemManagementPage />} />
-        <Route path="menus/:menuId/menu-items/create" element={<MenuItemCreatePage />} />
-        <Route path="menus/:menuId/menu-items/:menuItemId/edit" element={<MenuItemEditPage />} />
+                        <Route path="menus" element={<MenuManagementPage />} />
+                        <Route path="menus/:menuId/categories" element={<CategoryManagementPage />} />
+                        <Route path="menus/:menuId/categories/:categoryId/edit" element={<CategoryEditPage />} />
+                        <Route path="menus/:menuId/menu-items" element={<MenuItemManagementPage />} />
+                        <Route path="menus/:menuId/menu-items/create" element={<MenuItemCreatePage />} />
+                        <Route path="menus/:menuId/menu-items/:menuItemId/edit" element={<MenuItemEditPage />} />
                         <Route path="staff" element={<StaffManagementPage />} />
                         <Route path="categories" element={<CategoryManagementPage />} />
                         <Route path="categories/:categoryId/edit" element={<CategoryEditPage />} />
-                        {/* Added MenuItem management routes */}
                         <Route path="menu-items" element={<MenuItemManagementPage />} />
                         <Route path="menu-items/create" element={<MenuItemCreatePage />} />
                         <Route path="menu-items/:menuItemId/edit" element={<MenuItemEditPage />} />
                     </Route>
 
-                    {/* Public (Non-Authenticated) Customer Routes */}
-                    {/* Route for QR code access with menu ID */}
                     <Route
                         path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber"
                         element={
-                            <Layout>
-                                <RestaurantProvider restaurantId={restaurantId}>
-                                    <CustomerHeaderWithParams />
-                                    <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
-                                </RestaurantProvider>
-                            </Layout>
-                        }
-                    />
-                    {/* Fallback route without menu ID */}
-                    <Route
-                        path="/restaurant/:restaurantId/table/:tableNumber"
-                        element={
-                            <Layout>
-                                <RestaurantProvider restaurantId={restaurantId}>
-                                    <CustomerHeaderWithParams />
-                                    <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
-                                </RestaurantProvider>
-                            </Layout>
-                        }
-                    />
-                    <Route
-                        path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber/menu-item/:itemId"
-                        element={
-                            <Layout>
-                                <RestaurantProvider restaurantId={restaurantId}>
-                                    <CustomerHeaderWithParams />
-                                    <CustomerMenuItemPage addToBasket={addToBasket} />
-                                </RestaurantProvider>
-                            </Layout>
-                        }
-                    />
-                    <Route
-                        path="/restaurant/:restaurantId/menu/:menuId/order-basket/:tableNumber"
-                        element={
-                            <Layout>
-                                <RestaurantProvider restaurantId={restaurantId}>
-                                    <CustomerHeaderWithParams />
-                                    <OrderBasketPage
-                                        basketItems={basketItems}
-                                        updateBasketItem={updateBasketItem}
-                                        removeBasketItem={removeBasketItem}
-                                        setBasketItems={setBasketItems}
-                                    />
-                                </RestaurantProvider>
-                            </Layout>
-                        }
-                    />
-                    <Route
-                        path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber/category/:categoryId"
-                        element={
-                            <Layout>
-                                <RestaurantProvider restaurantId={restaurantId}>
-                                    <CustomerHeaderWithParams />
-                                    <CategoryPage addToBasket={addToBasket} />
-                                </RestaurantProvider>
-                            </Layout>
-                        }
-                    />
-                    <Route
-                        path="/restaurant/:restaurantId/menu/:menuId/order-success/:tableNumber"
-                        element={
-                            <Layout>
-                                <RestaurantProvider restaurantId={restaurantId}>
-                                    <CustomerHeaderWithParams />
-                                    <OrderSuccessPage />
-                                </RestaurantProvider>
-                            </Layout>
+                            <RouteWrapper>
+                                {(params) => (
+                                    <Layout>
+                                        <RestaurantProvider restaurantId={params.restaurantId}>
+                                            <CustomerHeaderWithParams />
+                                            <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
+                                        </RestaurantProvider>
+                                    </Layout>
+                                )}
+                            </RouteWrapper>
                         }
                     />
 
-                    {/* Redirect unknown routes to Home Page */}
+                    <Route
+                        path="/restaurant/:restaurantId/table/:tableNumber"
+                        element={
+                            <RouteWrapper>
+                                {(params) => (
+                                    <Layout>
+                                        <RestaurantProvider restaurantId={params.restaurantId}>
+                                            <CustomerHeaderWithParams />
+                                            <CustomerMenuPage basketItems={basketItems} addToBasket={addToBasket} />
+                                        </RestaurantProvider>
+                                    </Layout>
+                                )}
+                            </RouteWrapper>
+                        }
+                    />
+
+                    <Route
+                        path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber/menu-item/:itemId"
+                        element={
+                            <RouteWrapper>
+                                {(params) => (
+                                    <Layout>
+                                        <RestaurantProvider restaurantId={params.restaurantId}>
+                                            <CustomerHeaderWithParams />
+                                            <CustomerMenuItemPage addToBasket={addToBasket} />
+                                        </RestaurantProvider>
+                                    </Layout>
+                                )}
+                            </RouteWrapper>
+                        }
+                    />
+
+                    <Route
+                        path="/restaurant/:restaurantId/menu/:menuId/order-basket/:tableNumber"
+                        element={
+                            <RouteWrapper>
+                                {(params) => (
+                                    <Layout>
+                                        <RestaurantProvider restaurantId={params.restaurantId}>
+                                            <CustomerHeaderWithParams />
+                                            <OrderBasketPage
+                                                basketItems={basketItems}
+                                                updateBasketItem={updateBasketItem}
+                                                removeBasketItem={removeBasketItem}
+                                                setBasketItems={setBasketItems}
+                                            />
+                                        </RestaurantProvider>
+                                    </Layout>
+                                )}
+                            </RouteWrapper>
+                        }
+                    />
+
+                    <Route
+                        path="/restaurant/:restaurantId/menu/:menuId/table/:tableNumber/category/:categoryId"
+                        element={
+                            <RouteWrapper>
+                                {(params) => (
+                                    <Layout>
+                                        <RestaurantProvider restaurantId={params.restaurantId}>
+                                            <CustomerHeaderWithParams />
+                                            <CategoryPage addToBasket={addToBasket} />
+                                        </RestaurantProvider>
+                                    </Layout>
+                                )}
+                            </RouteWrapper>
+                        }
+                    />
+
+                    <Route
+                        path="/restaurant/:restaurantId/menu/:menuId/order-success/:tableNumber"
+                        element={
+                            <RouteWrapper>
+                                {(params) => (
+                                    <Layout>
+                                        <RestaurantProvider restaurantId={params.restaurantId}>
+                                            <CustomerHeaderWithParams />
+                                            <OrderSuccessPage />
+                                        </RestaurantProvider>
+                                    </Layout>
+                                )}
+                            </RouteWrapper>
+                        }
+                    />
+
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </Router>
